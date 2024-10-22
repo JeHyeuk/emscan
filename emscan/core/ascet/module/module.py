@@ -1,9 +1,9 @@
 try:
-    from ...env import PATH
+    from ...config import PATH
     from .._error import AmdFormatError
     from ._core import main, implementation, data, specificationCode, specificationBlock
 except ImportError:
-    from emscan.env import PATH
+    from emscan.config import PATH
     from emscan.core.ascet._error import AmdFormatError
     from emscan.core.ascet.module._core import main, implementation, data, specificationCode, specificationBlock
 from pandas import DataFrame

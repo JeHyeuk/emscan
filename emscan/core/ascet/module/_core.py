@@ -1,11 +1,11 @@
 try:
     from . import _tags
     from .._error import AmdFormatError
-    from ...env import PATH
+    from ...config import PATH
 except ImportError:
     from emscan.core.ascet.module import _tags
     from emscan.core.ascet._error import AmdFormatError
-    from emscan.env import PATH
+    from emscan.config import PATH
 from xml.etree.ElementTree import ElementTree
 from xml.dom.minidom import parseString
 from pandas import DataFrame, Series

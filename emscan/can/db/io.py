@@ -1,9 +1,9 @@
 try:
     from ._column import autofix
-    from ...env import PATH
+    from ...config import PATH
 except ImportError:
     from emscan.can.db._column import autofix
-    from emscan.env import PATH
+    from emscan.config import PATH
 from datetime import datetime
 from pandas import DataFrame
 from pyperclip import paste
