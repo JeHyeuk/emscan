@@ -1,0 +1,2 @@
+class AmdFormatError(FileExistsError):
+    pass
