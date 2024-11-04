@@ -1,8 +1,9 @@
 try:
     from .error import PathNotFoundError
+    from .deco import memorize
 except ImportError:
     from emscan.config.error import PathNotFoundError
-from dataclasses import dataclass
+    from emscan.config.deco import memorize
 from typing import List, Union
 import os, stat, shutil, zipfile
 
@@ -99,8 +100,7 @@ def unzip(src:str, to:str="") -> bool:
     return True
 
 
-
-class _path_(str):
+class Path(str):
 
     def __new__(cls, _dir):
         if not os.path.isdir(_dir):
@@ -114,6 +114,9 @@ class _path_(str):
         self.__dict__[key] = value
 
     def __getattr__(self, item):
+        if item == 'db':
+            # SVN ONLY
+            return self.file('wc.db')
         if item in self.__dict__:
             return self.__dict__[item]
         return str.__getattribute__(self, item)
@@ -123,9 +126,9 @@ class _path_(str):
             _path = _path.replace("/", "\\")
         for _root, _paths, _files in os.walk(self._root):
             if "\\" in _path and _root.endswith(_path):
-                return _path_(_root)
+                return Path(_root)
             if _path in _paths:
-                return _path_(os.path.join(_root, _path))
+                return Path(os.path.join(_root, _path))
         raise PathNotFoundError(f"Unable to find: {_path} in root directory: {self._root}")
 
     def file(self, *files) -> Union[List[str], str]:
@@ -142,7 +145,51 @@ class _path_(str):
                     found.append(os.path.join(_root, _files[n]))
         if len(found) == 1:
             return found[0]
+        if not found:
+            raise FileNotFoundError
         return found
+
+
+class _SVN(Path):
+    @memorize
+    def BUILD(self) -> Path:
+        build = self.path('GSL_Build')
+        build.IR = build.path('8_IntegrationRequest')
+        build.SDD = build.path('7_Notes')
+        build.CONF = build.path(r'1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename')
+        return build
+
+    @memorize
+    def CAN(self) -> Path:
+        can = self.path(r'dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1')
+        can.SPEC = can.path(r'11_ProjectManagement\CAN_Database\dev')
+        can.DBC = can.path(r'11_ProjectManagement\CAN_Database\dbc')
+        can.MD = can.path(r'11_ProjectManagement\CAN_Model\_29_CommunicationVehicle')
+        can.TC = can.path(r'11_ProjectManagement\CAN_TestCase')
+        return can
+
+    @memorize
+    def MD(self) -> Path:
+        md = self.path(r'model\ascet\trunk')
+        md.LIB = md.path(r'HMC_ECU_Library')
+        md.DSM = md.path(r'HMC_ECU_Library\HMC_DiagLibrary\DSM_Types')
+        md.CAN = md.path(r'HNB_GASOLINE\_29_CommunicationVehicle')
+        return md
+
+    @memorize
+    def HIST(self) -> Path:
+        return self.path(r'GSL_Release\4_SW변경이력')
+
+
+class _ASCET(Path):
+    def __init__(self, _dir:str):
+        super().__init__(_dir)
+        os.makedirs(os.path.join(self, r'bin'), exist_ok=True)
+        self.EXPORT = self.path(r'Export')
+        self.WS = self.path(r'Workspaces')
+        self.BIN = self.path(r'bin')
+        return
+
 
 
 # Alias
@@ -150,47 +197,30 @@ ROOT      = os.path.dirname(os.path.dirname(__file__))
 DESKTOP   = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
 DOWNLOADS = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Downloads')
 PICTURES  = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Pictures')
+SVN       = _SVN(r"D:\svn")
+ASCET     = _ASCET(r"D:\ETASData\ASCET6.1")
 
-@dataclass
-class SVN:
-    ROOT:_path_ = _path_(r"D:\svn")
-    if os.getlogin() == '22011148':
-        # 개별 PC 경로 상이할 경우 예외 처리 추가
-        pass
-
-    BUILD = ROOT.path('GSL_Build')
-    BSW = DEV = ROOT.path('dev.bsw')
-    CAN = ROOT.path(r'hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement')
-    CAN.DB = CAN.path('CAN_Database/dev')
-    MODEL = MD = MDL = ROOT.path('ascet/trunk')
-    MODEL.DB = MODEL.file('wc.db')
-    MODEL.CAN = MODEL.path(r'HNB_GASOLINE\_29_CommunicationVehicle')
-    RELEASE = ROOT.path('GSL_Release')
-
-    # CAN.SPEC = SVN.CAN.path('CAN_Database')
-    # CAN.TC = SVN.CAN.path('CAN_TestCase')
-    # CAN.MD = SVN.CAN.path('CAN_Model')
-
-@dataclass
-class ASCET:
-    ROOT: _path_ = _path_(r"D:\ETASData\ASCET6.1")
-    EXPORT = ROOT.path('Export')
-    BIN = EXPORT.path('bin')
-    WS = ROOT.path('Workspaces')
-    os.makedirs(BIN, exist_ok=True)
+# In case for individual path
+# if os.getlogin() == '22011148':
+#     SVN = _SVN(r"D:\svn")
 
 
 
 if __name__ == "__main__":
     # print(ROOT)
-    # print(SVN)
+    print(SVN.BUILD)
+    print(SVN.BUILD.IR)
+    print(SVN.BUILD.IR.db)
+    print(SVN.BUILD.SDD.db)
+    print(SVN.BUILD.CONF.db)
+
     # print(SVN.BUILD)
     # print(SVN.CAN)
     # print(SVN.MD)
     # print(SVN.MD.CAN)
     # print(SVN.MD.DB)
 
-    print(ASCET.BIN)
+    # print(ASCET.BIN)
 
     # print(SVN.RELEASE)
     # print(SVN.CAN)

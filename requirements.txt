@@ -7,8 +7,11 @@ mdfreader
 numpy
 pandas
 pandoc
+PIL
 plotly
 py7zr
+pyautogui
+pygetwindow
 pypandoc
 pyperclip
 python-can

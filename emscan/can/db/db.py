@@ -1,11 +1,11 @@
 try:
     from .io import DBio
     from ._column import Columns
-    from ._objs import CANmem, MessageDb, SignalDb
+    from ._objs import CANmem, MessageObj, SignalObj
 except ImportError:
     from emscan.can.db.io import DBio
     from emscan.can.db._column import Columns
-    from emscan.can.db._objs import CANmem, MessageDb, SignalDb
+    from emscan.can.db._objs import CANmem, MessageObj, SignalObj
 from pandas import DataFrame
 from typing import Union
 import pandas as pd
@@ -22,12 +22,16 @@ class db(DataFrame):
         self.reset(source)
         return
 
-    def __call__(self, message_or_signal:str, column:str="") -> Union[MessageDb, SignalDb, str, int, float]:
+    def __call__(self, message_or_signal:str, column:str="") -> Union[MessageObj, SignalObj, str, int, float]:
         if message_or_signal in self["Message"].values:
             return self.get_message(message_or_signal, column)
         elif message_or_signal in self["Signal"].values:
             return self.get_signal(message_or_signal, column)
         raise KeyError(f"No such message or signal: {message_or_signal}")
+
+    @property
+    def elements(self) -> DataFrame:
+        return self.copy()
 
     @property
     def source(self) -> str:
@@ -75,14 +79,14 @@ class db(DataFrame):
                 self[col] = self[col].astype(prop["dtype"])
         self.fillna("", inplace=True)
 
-        self._message = CANmem(**{msg:MessageDb(df) for msg, df in self.groupby(by="Message")})
+        self._message = CANmem(**{msg:MessageObj(df) for msg, df in self.groupby(by="Message")})
         return
 
     def constraint(self, key):
         self.reset(self[key].copy())
         return
 
-    def get_message(self, name:str, column:str="") -> Union[MessageDb, str, int, float]:
+    def get_message(self, name:str, column:str="") -> Union[MessageObj, str, int, float]:
         try:
             if column:
                 return self._message[name][column]
@@ -90,9 +94,9 @@ class db(DataFrame):
         except KeyError:
             raise KeyError(f"No such message; {name} in the list")
 
-    def get_signal(self, name:str, column:str="") -> Union[SignalDb, str, int, float]:
+    def get_signal(self, name:str, column:str="") -> Union[SignalObj, str, int, float]:
         try:
-            sig = SignalDb(self[self["Signal"] == name].iloc[0])
+            sig = SignalObj(self[self["Signal"] == name].iloc[0])
             if column:
                 return sig[column]
             return sig
@@ -114,6 +118,10 @@ class db(DataFrame):
                     empty.append(chn)
                 empty.append(part)
             return "_".join(empty)
+        base["Signal"] = base[["Signal", "SignalRenamed"]].apply(
+            lambda x: x["SignalRenamed"] if x["SignalRenamed"] else x["Signal"],
+            axis=1
+        )
 
         ph = base[base[f"{spec} Channel"] == "P,H"]
         base = base.drop(index=ph.index)
@@ -128,6 +136,7 @@ class db(DataFrame):
         base = pd.concat(objs=[base, ph_p, ph_h], axis=0, ignore_index=True)
         base["Channel"] = base[f"{spec} Channel"]
         base["WakeUp"] = base[f"{spec} WakeUp"]
+
         self.reset(base)
         return
 
@@ -143,9 +152,11 @@ if __name__ == "__main__":
     print(DB.source)
     # print(DB)
     # DB.dev_mode("HEV")
-    # print(DB)
+    # DB.dev_mode("ICE")
+    print(DB)
+    print(DB("CLU_PwrAutoOffResetReq"))
     # print(DB[DB['Send Type'] == 'EC'])
-    print(DB("EMS_06_100ms"))
+    # print(DB("EMS_06_100ms"))
     # print(DB("OBD_EngClntTempVal"))
 
     # print(DB("ABS_ESC_01_10ms"))

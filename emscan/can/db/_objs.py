@@ -1,14 +1,14 @@
 try:
     from ._column import Columns
-    from ._error import SignalError
+    from ...config.error import SignalError
 except ImportError:
     from emscan.can.db._column import Columns
-    from emscan.can.db._error import SignalError
+    from emscan.config.error import SignalError
 from pandas import DataFrame, Series
 from typing import Any, Dict, Union
 
 
-class SignalDb(Series):
+class SignalObj(Series):
     """
     ECU                                                                            EMS
     Message                                                               EMS_06_100ms
@@ -93,7 +93,7 @@ class SignalDb(Series):
                (("alv" in str(self.name).lower() or "alivec" in str(self.name).lower()) and self["StartBit"] <= 16)
 
 
-class MessageDb(Series):
+class MessageObj(Series):
     signals: DataFrame = DataFrame()
 
     def __init__(self, signals:DataFrame=DataFrame()):
@@ -111,17 +111,17 @@ class MessageDb(Series):
 
     def __iter__(self):
         for _, sig in self.signals.iterrows():
-            yield SignalDb(sig)
+            yield SignalObj(sig)
 
     @property
-    def CRC(self) -> Union[Series, SignalDb]:
+    def CRC(self) -> Union[Series, SignalObj]:
         for sig in self:
             if sig.isCrc():
                 return sig
         return Series()
 
     @property
-    def AliveCounter(self) -> Union[Series, SignalDb]:
+    def AliveCounter(self) -> Union[Series, SignalObj]:
         for sig in self:
             if sig.isAliveCounter():
                 return sig

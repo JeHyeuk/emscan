@@ -1,10 +1,10 @@
 try:
     from . import _tags
-    from .._error import AmdFormatError
-    from ...config import PATH
+    from ....config.error import AmdFormatError
+    from ....config import PATH
 except ImportError:
     from emscan.core.ascet.module import _tags
-    from emscan.core.ascet._error import AmdFormatError
+    from emscan.config.error import AmdFormatError
     from emscan.config import PATH
 from xml.etree.ElementTree import ElementTree
 from xml.dom.minidom import parseString
@@ -265,6 +265,7 @@ class specificationBlock(baseAmd):
         if not self.getroot()[1][0].tag.startswith("Block"):
             raise AmdFormatError(f"file: {amd} is not ASCET Block Diagram module specification file.")
         self.__elem__ = []
+        self.__depth__ = ["/"]
         return
 
     def __iter__(self):
@@ -273,33 +274,51 @@ class specificationBlock(baseAmd):
             if elemType == 'Hierarchy' or elemType.endswith('Element'):
                 yield tag
 
-    def __dive__(self, hierarchy=None, collector=None):
+    def __dive__(self, hierarchy=None, collector=None, parent:str=""):
         if not hierarchy:
-            hierarchyName = "Root"
+            hierarchyName = "ROOT"
             hierarchy = self.getroot().findall("Specification/BlockDiagramSpecification/DiagramElements/DiagramElement")
+            path = "/"
         else:
             hierarchyName = hierarchy.attrib["name"]
             hierarchy = hierarchy.findall("Contents/DiagramElement")
+            path = f'{parent}/{hierarchyName}'[1:]
         if not collector:
             collector = []
 
         for tag in hierarchy:
             if tag[0].tag.endswith('Element'):
                 obj = tag[0].attrib.copy()
-                obj["cover"] = hierarchyName
+                obj["Hierarchy"] = hierarchyName
+                obj["Path"] = path
                 if not obj in self.__elem__:
                     self.__elem__.append(obj)
             elif tag[0].tag == "Hierarchy":
-                self.__dive__(tag[0], collector)
+                self.__dive__(tag[0], collector, path)
             else:
                 continue
         return
 
     @property
     def Element(self) -> DataFrame:
+        """
+                        elementName                      elementOID         type               cover ... methodName
+        0          FuCnsd_dvolmlCmp  _040g000032001p870obgnv491hb1u     Variable   ENG_FuelCnsmptVal ...        NaN
+        1              Can_kFuCns_M  _040g030000001oo7086g4qkjs4g2g  CharTable2D   ENG_FuelCnsmptVal ...        NaN
+        2                   Chrg_Ld  _040g030000001oo7086g4qkjs5m2i     Variable   ENG_FuelCnsmptVal ...        NaN
+        3                     Eng_N  _040g030000001oo7086g4qkjs5hii     Variable   ENG_FuelCnsmptVal ...        NaN
+        4             FuCnsd_dvolml  _040g030000001oo7086g4qkjs7jie     Variable   ENG_FuelCnsmptVal ...        NaN
+        ..                      ...                             ...          ...                 ... ...        ...
+        206               CrsC_vDes  _040g030000001oo7086g4qkjs4e2i     Variable    ENG_VehSpdLimVal ...        NaN
+        207                  BAACAN  _040g030000001oo7086g4qkjs77ii        Class               SWOFF  ...       NaN
+        208              Can_stDiTx  _040g030000001oo7086g4qkjs532i        Local               SWOFF ...        NaN
+        209              Can_DiTx_C  _040g030000001oo7086g4qkjs4c2g    Parameter               SWOFF ...        NaN
+        210  ENG_StndTqRatioVal_Ems  _040g030000001oo7086g4qkjs54ig     Variable  ENG_StndTqRatioVal ...        NaN
+        :return:
+        """
         if not self.__elem__:
             self.__dive__()
-        return DataFrame(self.__elem__)
+        return DataFrame(self.__elem__).drop(columns=["graphicOID"])
 
 
 if __name__ == "__main__":
@@ -326,9 +345,11 @@ if __name__ == "__main__":
     # model.change("AAFC_st1DiagMod", {"limitAssignments": "true", "formula":"ident"})
     # print(model.Element)
 
-    model = specificationBlock(r"D:\ETASData\ASCET6.1\Export\CanFDEMSM01\CanFDEMSM01.specification.amd")
-    # model = specificationBlock(r"D:\ETASData\ASCET6.1\Export\KnkDt\KnkDt.specification.amd")
+    # model = specificationBlock(r"D:\ETASData\ASCET6.1\Export\CanFDEMSM01\CanFDEMSM01.specification.amd")
+    model = specificationBlock(r"D:\ETASData\ASCET6.1\Export\KnkDt\KnkDt.specification.amd")
+    model.Element.to_clipboard()
     print(model.Element)
+
 
     # for n, tag in enumerate(model):
     #     print(n+1, tag[0])

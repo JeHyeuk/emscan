@@ -1,7 +1,7 @@
 try:
-    from ._error import ColumnError
+    from ...config.error import ColumnError
 except ImportError:
-    from emscan.can.db._error import ColumnError
+    from emscan.config.error import ColumnError
 from typing import Iterable
 
 
