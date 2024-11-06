@@ -17,7 +17,7 @@ class DBio(DataFrame):
 
     @classmethod
     def sources(cls) -> DataFrame:
-        root = PATH.SVN.CAN.DB
+        root = PATH.SVN.CAN.SPEC
         return DataFrame([{
                 "file": file,
                 "dir": os.path.join(root, file),
@@ -30,7 +30,7 @@ class DBio(DataFrame):
         filename = f"KEFICO-EMS_CANFD_V{datetime.today().strftime('%Y.%m.%d')[2:]}"
         clipboard = [row.split("\t") for row in paste().split("\r\n")]
         source = DataFrame(data=clipboard[1:], columns=autofix(clipboard[0]))
-        source.to_json(os.path.join(PATH.SVN.CAN.DB, rf"{filename}.json"), orient="index")
+        source.to_json(os.path.join(PATH.SVN.CAN.SPEC, rf"{filename}.json"), orient="index")
         super().__init__(self.sources())
         return
 

@@ -162,6 +162,7 @@ class _SVN(Path):
     @memorize
     def CAN(self) -> Path:
         can = self.path(r'dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1')
+        can.DB = can.path(r'11_ProjectManagement\CAN_Database')
         can.SPEC = can.path(r'11_ProjectManagement\CAN_Database\dev')
         can.DBC = can.path(r'11_ProjectManagement\CAN_Database\dbc')
         can.MD = can.path(r'11_ProjectManagement\CAN_Model\_29_CommunicationVehicle')
