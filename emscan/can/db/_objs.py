@@ -109,7 +109,7 @@ class MessageObj(Series):
         self["Version"] = signals["Version"].sort_values(ascending=True).iloc[-1]
         return
 
-    def __iter__(self):
+    def __iter__(self) -> SignalObj:
         for _, sig in self.signals.iterrows():
             yield SignalObj(sig)
 

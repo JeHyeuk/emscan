@@ -6,7 +6,7 @@ from datetime import datetime
 from pandas import DataFrame, Series
 from typing import Union
 import pandas as pd
-import sqlite3
+import sqlite3, subprocess
 
 
 
@@ -42,6 +42,40 @@ class VersionControl(DataFrame):
             return query.iloc[0]
         return query
 
+    @classmethod
+    def _format_log_datetime(cls, x):
+        return x[:x.find('+0900') - 1]
+
+    @classmethod
+    def _format_log_data(cls, x):
+        return x.split('] ')[-1]
+
+
+    @classmethod
+    def log(cls, file:str) -> DataFrame:
+        result = subprocess.run(['svn', 'log', file], capture_output=True, text=True)
+        if result.returncode != 0:
+            raise OSError
+        text = [e for e in result.stdout.split('\n') if e and (not e.endswith('-'))]
+        data = []
+        line = ''
+        for n, part in enumerate(text):
+            if n % 2:
+                line = f'{line} | {part}'.split(' | ')
+                data.append(line)
+                line = ''
+            else:
+                line += part
+        logger = DataFrame(data=data)
+        logger = logger.drop(columns=[1, 3]).rename(columns={0:'revision', 2:'datetime', 4:'log'})
+        logger = logger[logger["log"].str.startswith('[')]
+        logger["datetime"] = logger["datetime"].apply(cls._format_log_datetime)
+        logger["log"] = logger["log"].apply(cls._format_log_data)
+        return logger
+
+
+
+
 
 
 if __name__ == "__main__":
@@ -50,8 +84,10 @@ if __name__ == "__main__":
 
 
     myV = VersionControl(PATH.SVN.CAN.DB.db)
-    print(myV)
-    print(myV.file("자체제어기_KEFICO-EMS_CANFD.xlsx"))
-    print(myV["변경일자"])
+    # print(myV)
+    # print(myV.file("자체제어기_KEFICO-EMS_CANFD.xlsx"))
 
-    # print(datetime.fromtimestamp(1729669741180376/1000000))
+    myLog = myV.log(PATH.SVN.CAN.DB.file("자체제어기_KEFICO-EMS_CANFD.xlsx"))
+    print(myLog)
+    history = myLog["datetime"].astype(str) + ' @' + myLog["revision"] + ' ' + myLog["log"]
+    print('\n'.join(history))
