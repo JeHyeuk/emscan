@@ -12,22 +12,61 @@ except ImportError:
     from emscan.core.testcase.cases import Cases
 
 
-def TestCase_RxDecoding(message:MessageObj, **opt) -> Cases:
-    """
+class testCaseRxDecode:
+    _progress:str = 'ipynb'
+    def __init__(self, *messages:MessageObj, **options):
+        self.messages = messages
+        self.options = options
+        self.testcases = []
+        return
 
-    :param message :
-    :return:
-    """
-    tc = Cases()
-    index = 0
-    for n, sig in enumerate(message):
-        if sig.isCrc() or sig.isAliveCounter():
-            index += 1
-            continue
-        opt.update({"NO": n + 1 - index, "Test Case - ID": f"UNIT-CAN-{n + 1 - index}"})
-        tc.append(unit.RxDecode(sig, **opt))
-    tc.filename = f'{message.name}-TC_Rx-Signal-Decoding'
-    return tc
+    def __iter__(self) -> Cases:
+        for tc in self.testcases:
+            yield tc
+
+    @property
+    def progress(self) -> str:
+        return self._progress
+
+    @progress.setter
+    def progress(self, progress:str):
+        self._progress = progress
+
+    def generate(self):
+        if self.progress.lower().endswith('ipynb'):
+            from tqdm.notebook import tqdm
+        else:
+            from tqdm import tqdm
+
+        messages = tqdm(self.messages)
+        for message in messages:
+            messages.set_description(desc=f'{message.Message} TC 생성')
+            tc = Cases()
+            index = 0
+            for n, sig in enumerate(message):
+                if sig.isCrc() or sig.isAliveCounter():
+                    index += 1
+                    continue
+                self.options.update({
+                    "NO": n + 1 - index,
+                    "Test Case - ID": f"UNIT-CAN-{n + 1 - index}"
+                })
+                tc.append(unit.RxDecode(sig, **self.options))
+                tc.filename = f'{message.name}-TC_Rx-Signal-Decoding'
+            self.testcases.append(tc)
+        return
+
+    def saveToTestCase(self):
+        for tc in self:
+            tc.to_testcase()
+        return
+
+    def saveToTestReport(self):
+        for tc in self:
+            tc.to_report()
+        return
+
+
 
 def TestCase_TxInterface(message:MessageObj, amd:str, **opt) -> Cases:
     """

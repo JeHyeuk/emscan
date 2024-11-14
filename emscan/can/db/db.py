@@ -59,12 +59,14 @@ class db(DataFrame):
             ignore_index=True
         )
 
-    def reset(self, source:Union[str, DataFrame]):
+    def reset(self, source:Union[str, DataFrame]=""):
         if isinstance(source, str):
-            if source.endswith("pkl"):
-                data = pd.read_pickle(source)
-            elif source.endswith("json"):
+            if not source:
+                source = self.source
+            if source.endswith("json"):
                 data = pd.read_json(source, orient="index")
+            elif source.endswith("pkl"):
+                data = pd.read_pickle(source)
             else:
                 raise KeyError(f"CAN DB source file must be .json or .pkl, not '{os.path.basename(source)}'")
         elif isinstance(source, DataFrame):

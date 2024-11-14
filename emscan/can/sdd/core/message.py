@@ -200,7 +200,7 @@ class Message:
                     text.style = self.signalListHeadingStyle
                 else:
                     text = row.cells[m].paragraphs[0]
-                    text.text = str(msg.signals.iloc[n - 1][key])
+                    text.text = str(msg.signals.iloc[n - 1][key]).replace('"', '')
                     text.style = self.signalListStyle
         return
 
@@ -225,7 +225,7 @@ class Message:
                 right = table.rows[n].cells[1]
                 right.width = self.doc.sections[0].page_width
                 text = right.paragraphs[0]
-                text.text = sig[key].replace("/", "\n") if key == "Value Table" else sig[key]
+                text.text = sig[key].replace("/0x", "\n0x") if key == "Value Table" else sig[key]
                 text.style = self.messageOverviewContentStyle
             self.doc.add_paragraph()
         self.doc.add_paragraph("\n")

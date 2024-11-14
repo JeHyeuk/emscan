@@ -1,5 +1,3 @@
-from pandas import Period
-
 try:
     from ...config import PATH
     from ..db.db import db
@@ -13,38 +11,35 @@ except ImportError:
     from emscan.can.sdd.core.section import Section
     from emscan.can.sdd.core.message import Message
 from docx import Document
-from tqdm import tqdm
-import os, time
+import os, time, site
 
 
 
 def init() -> Document:
-    if os.path.isfile(r'C:\Users\Administrator\AppData\Local\Programs\Python\Python310\lib\site-packages\docx\templates\default.docx'):
-        PATH.clear_file(r'C:\Users\Administrator\AppData\Local\Programs\Python\Python310\lib\site-packages\docx\templates\default.docx')
+    lib = site.getsitepackages()[1]
+    if os.path.isfile(os.path.join(lib, r'docx\templates\default.docx')):
+        PATH.clear_file(os.path.join(lib, r'docx\templates\default.docx'))
     time.sleep(0.5)
 
     template = os.path.join(os.path.dirname(__file__), r'archive/default')
-    PATH.copy_file(template, r'C:\Users\Administrator\AppData\Local\Programs\Python\Python310\lib\site-packages\docx\templates')
-    os.rename(
-        r'C:\Users\Administrator\AppData\Local\Programs\Python\Python310\lib\site-packages\docx\templates\default',
-        r'C:\Users\Administrator\AppData\Local\Programs\Python\Python310\lib\site-packages\docx\templates\default.docx'
-    )
+    PATH.copy_file(template, os.path.join(lib, r'docx\templates'))
+    os.rename(os.path.join(lib, r'docx\templates\default'), os.path.join(lib, r'docx\templates\default.docx'))
     time.sleep(0.5)
-    doc = Document()
-    return doc
+
+    return Document()
 
 def escape():
     time.sleep(0.5)
-    PATH.clear_file(r'C:\Users\Administrator\AppData\Local\Programs\Python\Python310\lib\site-packages\docx\templates\default.docx')
+    lib = site.getsitepackages()[1]
+    PATH.clear_file(os.path.join(lib, r'docx\templates\default.docx'))
     return
 
 
-def generateSDD(database:db, file:str=''):
+def generateSDD(database:db, progress:str='ipynb'):
     objs = [(msg, obj) for msg, obj in database.messages]
     objs = sorted(objs, key=lambda x: x[0])
 
     doc = init()
-    # try:
     cover = Cover(doc)
     cover.setTitle()
     cover.setCI()
@@ -58,38 +53,39 @@ def generateSDD(database:db, file:str=''):
     doc.add_section()
     message = Message(doc)
     message.addHeading("EMS TRANSMIT")
-    proc = tqdm(objs)
-    for n, (name, obj) in enumerate(proc):
-        proc.set_description(desc=f'{str(n + 1).zfill(2)}/{len(objs)} ... {name}')
-        if obj.ECU != "EMS":
-            continue
+
+    if progress.lower().endswith("ipynb"):
+        from tqdm.notebook import tqdm
+    else:
+        from tqdm import tqdm
+    transmit = tqdm([obj for _, obj in objs if obj.ECU == "EMS"])
+    for obj in transmit:
+        transmit.set_description(desc=f"{obj.Message} 사양 생성")
         message.addMessageHeading(obj)
         message.addMessageSpec(obj)
         message.addMessageLayout(obj)
         message.addSignalList(obj)
         message.addSignalProperty(obj)
 
-    message.addHeading("EMS RECEIVE")
-    for n, (name, obj) in enumerate(proc):
-        proc.set_description(desc=f'{str(n + 1).zfill(2)}/{len(objs)} ... {name}')
-        if obj.ECU == "EMS":
-            continue
-        message.addMessageHeading(obj)
-        message.addMessageSpec(obj)
-        message.addMessageLayout(obj)
-        message.addSignalList(obj)
-        message.addSignalProperty(obj)
+    # message.addHeading("EMS RECEIVE")
+    # for n, (name, obj) in enumerate(proc):
+    #     proc.set_description(desc=f'{str(n + 1).zfill(2)}/{len(objs)} ... {name}')
+    #     if obj.ECU == "EMS":
+    #         continue
+    #     message.addMessageHeading(obj)
+    #     message.addMessageSpec(obj)
+    #     message.addMessageLayout(obj)
+    #     message.addSignalList(obj)
+    #     message.addSignalProperty(obj)
 
-
-    doc.save(os.path.join(PATH.DOWNLOADS, f'{database.traceability.split("_V")[0]}.docx'))
-    # except:
-    #     pass
+    file = os.path.join(PATH.DOWNLOADS, f'{database.traceability.split("_V")[0]}.docx')
+    doc.save(file)
     escape()
+    print(f"CAN 사양서 생성 완료: {file}")
     return
 
 
 if __name__ == "__main__":
     from emscan.can.db.db import DB
 
-
-    generateSDD(DB)
+    generateSDD(DB, 'py')

@@ -1,9 +1,11 @@
 try:
     from ...core.ascet.module.module import Module
+    from ...config import PATH
     from ..db.db import db
     from .core import ccode, element
     from .core.oid import objectID
 except ImportError:
+    from emscan.config import PATH
     from emscan.core.ascet.module.module import Module
     from emscan.can.db.db import db
     from emscan.can.module.core import ccode, element
@@ -192,7 +194,7 @@ Copyright(c) 2020-{date[:4]} HYUNDAI KEFICO Co.,Ltd, All Rights Reserved. */
         empty = merged[merged["OID"].isna()].index
         if not empty.empty:
             oid = objectID()
-            oid.exclude(merged["OID"].tolist() + self.main.Process["OID"].tolist())
+            oid.exclude(merged["OID"].tolist() + self.main.Process.index.tolist())
             merged.loc[empty, "OID"] = merged.loc[empty, "elementOID"] = oid.sample(len(empty))
         return merged
 
@@ -209,15 +211,7 @@ Copyright(c) 2020-{date[:4]} HYUNDAI KEFICO Co.,Ltd, All Rights Reserved. */
                 raise KeyError(f'삭제 필요 Method: {method}')
         return
 
-    def describe(self):
-        print("* DELETED", "-" * 100)
-        print(self._old[~self._old["name"].isin(self._new["name"])])
-
-        print("* ADDED", "-" * 100)
-        print(self._new[~self._new["name"].isin(self._old["name"])])
-        return
-
-    def write(self):
+    def write(self, summary:bool=True):
         self.main.find("Component/Comment").text = self.comment
         for elem in self.main.Element["name"]:
             self.main.remove(elem)
@@ -237,16 +231,26 @@ Copyright(c) 2020-{date[:4]} HYUNDAI KEFICO Co.,Ltd, All Rights Reserved. */
         self.impl.write()
         self.data.write()
         self.spec.write()
+        if summary:
+            print(f"모델 생성 완료: {os.path.join(PATH.DOWNLOADS, self.name)}")
+            deleted = self._old[~self._old["name"].isin(self._new["name"])].copy()
+            print("삭제된 항목: ", end="")
+            print("없음" if deleted.empty else ", ".join(deleted["name"]))
+
+            appended = self._new[~self._new["name"].isin(self._old["name"])].copy()
+            print("추가된 항목: ", end="")
+            print("없음" if appended.empty else ", ".join(appended["name"]))
         return
 
 
 if __name__ == "__main__":
     from emscan.can.db.db import DB
+    from emscan.config import PATH
     from pandas import set_option
 
     set_option('display.expand_frame_repr', False)
 
-    SPEC = "HEV"
+    SPEC = "ICE"
 
     EXCLUDE = {
         'ICE': ["EMS", "CVVD", "MHSG", "NOx", "BMS", "LDC"],
@@ -256,6 +260,10 @@ if __name__ == "__main__":
     DB.constraint(~DB["ECU"].isin(EXCLUDE[SPEC]))
 
     mname = f"ComDef_HEV" if SPEC == "HEV" else "ComDef"
-    model = ComDef(source=rf"D:\ETASData\ASCET6.1\Export\{mname}\{mname}.main.amd", database=DB)
+    model = ComDef(
+        source=PATH.SVN.CAN.file(f"ComDef{'' if SPEC == 'ICE' else '_HEV'}.zip"),
+        database=DB
+    )
+
     model.write()
-    model.describe()
+

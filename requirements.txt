@@ -17,5 +17,6 @@ python-can
 python-docx
 pywin32
 screeninfo
+tqdm
 uvicorn
 xlsxwriter

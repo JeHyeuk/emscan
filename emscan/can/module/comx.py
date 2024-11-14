@@ -1,10 +1,12 @@
 try:
+    from ...config import PATH
     from ...core.ascet.module.module import Module
     from ..db.db import db
     from ..db._objs import MessageObj
     from .core import ccode, element
     from .core.oid import objectID
 except ImportError:
+    from emscan.config import PATH
     from emscan.core.ascet.module.module import Module
     from emscan.can.db.db import db
     from emscan.can.db._objs import MessageObj
@@ -78,7 +80,7 @@ class ComX(Module):
 
         return
 
-    def write(self):
+    def write(self, summary:bool=True):
         self.main.find("Component/Comment").text = self.comment
 
         for method, context in self.new_ccode.items():
@@ -88,6 +90,8 @@ class ComX(Module):
         self.impl.write()
         self.data.write()
         self.spec.write()
+        if summary:
+            print(f"모델 생성 완료: {os.path.join(PATH.DOWNLOADS, self.name)}")
         return
 
 
