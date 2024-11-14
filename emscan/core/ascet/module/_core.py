@@ -6,10 +6,11 @@ except ImportError:
     from emscan.core.ascet.module import _tags
     from emscan.config.error import AmdFormatError
     from emscan.config import PATH
-from xml.etree.ElementTree import ElementTree
-from xml.dom.minidom import parseString
+from datetime import datetime
 from pandas import DataFrame, Series
 from typing import Union, Iterable
+from xml.etree.ElementTree import ElementTree
+from xml.dom.minidom import parseString
 import io, os
 
 
@@ -53,7 +54,9 @@ class baseAmd(ElementTree):
         return
 
     def write(self, **kwargs):
-        os.makedirs(os.path.join(PATH.DOWNLOADS, self.name), exist_ok=True)
+        path = os.path.join(PATH.DOWNLOADS, self.name)
+        os.makedirs(path, exist_ok=True)
+        os.utime(path, (datetime.now().timestamp(), datetime.now().timestamp()))
         stream = io.StringIO()
         super().write(
             file_or_filename=stream,
