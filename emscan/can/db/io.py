@@ -9,6 +9,7 @@ except ImportError:
 from datetime import datetime
 from pandas import DataFrame, Series
 from pyperclip import paste
+from typing import Any, Union, Type
 import os
 
 
@@ -20,25 +21,20 @@ class DBio:
 
     @classmethod
     def initialize(cls):
-        root = PATH.SVN.CAN.SPEC
-        cls.sources = DataFrame([{
-                "file": file,
-                "dir": os.path.join(root, file),
-                "created": datetime.fromtimestamp(os.path.getctime(os.path.join(root, file))),
-                "modified": datetime.fromtimestamp(os.path.getmtime(os.path.join(root, file))),
-                "size": os.path.getsize(os.path.join(root, file))
-        } for file in os.listdir(root)]).sort_values(by="file")
+        root = PATH.SVN.CAN.DB
+        cls.sources = src = VersionControl(root.db)
+        cls.sources = src[src.상대경로.str.endswith('.json')] \
+                      .sort_values(by="상대경로")
+        cls.sources["dir"] = root + "/" + cls.sources.상대경로
+        return
 
     @classmethod
     def baseline(cls, json_db: str = '') -> DataFrame:
         if json_db and not json_db.endswith('.json'):
             raise TypeError("DB는 *.json 파일만 입력 가능합니다.")
-        print("DB INFO:")
+
         if not json_db:
-            log = VersionControl(PATH.SVN.CAN.DB.db)
-            svn = log[log.상대경로.str.contains(cls[-1]['file'])] \
-                .sort_values(by="상대경로", ascending=True) \
-                .iloc[0]
+            svn:Union[Any, Series, Type[cls]] = cls[-1]
             return DataFrame(
                 data=[{
                     "JSON-DB": svn.상대경로.replace(svn.상위경로, "").replace("/", ""),
@@ -79,9 +75,8 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    # DBio()["dir"].values[-1]
+
     print(DBio[-1])
     print(DBio.sources)
     print(DBio.baseline())
-    # io.clipboard2db()
-    # print(io)
+
