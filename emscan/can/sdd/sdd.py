@@ -35,7 +35,9 @@ def escape():
     return
 
 
-def generateSDD(database:db, progress:str='ipynb'):
+def generateSDD(database:db, filename:str='', progress:str='ipynb'):
+    if filename and (not filename.endswith('.docx')):
+        filename += '.docx'
     objs = [(msg, obj) for msg, obj in database.messages]
     objs = sorted(objs, key=lambda x: x[0])
 
@@ -78,7 +80,9 @@ def generateSDD(database:db, progress:str='ipynb'):
     #     message.addSignalList(obj)
     #     message.addSignalProperty(obj)
 
-    file = os.path.join(PATH.DOWNLOADS, f'{database.traceability.split("_V")[0]}.docx')
+    if not filename:
+        filename = f'{database.traceability.split("_V")[0]}.docx'
+    file = os.path.join(PATH.DOWNLOADS, filename)
     doc.save(file)
     escape()
     print(f"CAN 사양서 생성 완료: {file}")
