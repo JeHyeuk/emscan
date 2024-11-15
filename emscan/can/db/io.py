@@ -1,10 +1,12 @@
 try:
     from ._column import autofix
     from ...config import PATH
+    from ...core.xl.read import readXL
     from ...svn.vcon import VersionControl
 except ImportError:
     from emscan.can.db._column import autofix
     from emscan.config import PATH
+    from emscan.core.xl.read import readXL
     from emscan.svn.vcon import VersionControl
 from datetime import datetime
 from pandas import DataFrame, Series
@@ -30,8 +32,8 @@ class DBio:
 
     @classmethod
     def baseline(cls, json_db: str = '') -> DataFrame:
-        if json_db and not json_db.endswith('.json'):
-            raise TypeError("DB는 *.json 파일만 입력 가능합니다.")
+        if json_db and not (json_db.endswith('.json') or json_db.endswith('.xlsx')):
+            raise TypeError("DB는 *.json 또는 *.xlsx 파일만 입력 가능합니다.")
 
         if not json_db:
             svn:Union[Any, Series, Type[cls]] = cls[-1]
@@ -58,14 +60,22 @@ class DBio:
         )
 
     @classmethod
-    def clipboard2db(cls, filename:str=''):
+    def clipboard2db(cls, filename:str='', save:bool=True) -> DataFrame:
         if not filename:
             filename = f"KEFICO-EMS_CANFD_V{datetime.today().strftime('%Y.%m.%d')[2:]}"
         clipboard = [row.split("\t") for row in paste().split("\r\n")]
         source = DataFrame(data=clipboard[1:], columns=autofix(clipboard[0]))
-        source.to_json(os.path.join(PATH.SVN.CAN.SPEC, rf"{filename}.json"), orient="index")
-        cls.initialize()
-        return
+        if save:
+            source.to_json(os.path.join(PATH.SVN.CAN.SPEC, rf"{filename}.json"), orient="index")
+        return source
+
+    @classmethod
+    def readXL(cls, excel:str='') -> DataFrame:
+        if not excel:
+            excel = PATH.SVN.CAN.DB.file(r"자체제어기_KEFICO-EMS_CANFD.xlsx")
+        readXL(excel)
+        return cls.clipboard2db(save=False)
+
 
 
 DBio.initialize()
@@ -76,7 +86,8 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
 
-    print(DBio[-1])
-    print(DBio.sources)
-    print(DBio.baseline())
-
+    # print(DBio[-1])
+    # print(DBio.sources)
+    # print(DBio.baseline())
+    # DBio.clipboard2db()
+    DBio.readXL(filename="test")

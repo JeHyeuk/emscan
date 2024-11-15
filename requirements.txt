@@ -8,6 +8,7 @@ numpy
 pandas
 pandoc
 plotly
+psutil
 py7zr
 pyautogui
 pygetwindow

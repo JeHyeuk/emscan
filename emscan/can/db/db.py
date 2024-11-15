@@ -65,6 +65,8 @@ class db(DataFrame):
                 source = self.source
             if source.endswith("json"):
                 data = pd.read_json(source, orient="index")
+            elif source.endswith("xlsx"):
+                data = DBio.readXL(source)
             elif source.endswith("pkl"):
                 data = pd.read_pickle(source)
             else:
