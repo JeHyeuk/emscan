@@ -7,20 +7,21 @@ except ImportError:
     from emscan.config import PATH
     from emscan.svn.vcon import VersionControl
 from datetime import datetime
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from pyperclip import paste
 import os
 
 
-class DBio(DataFrame):
-    def __init__(self):
-        super().__init__(self.sources())
-        return
+class DBio:
+    sources:DataFrame = DataFrame()
+
+    def __class_getitem__(cls, item:int) -> Series:
+        return cls.sources.iloc[item]
 
     @classmethod
-    def sources(cls) -> DataFrame:
+    def initialize(cls):
         root = PATH.SVN.CAN.SPEC
-        return DataFrame([{
+        cls.sources = DataFrame([{
                 "file": file,
                 "dir": os.path.join(root, file),
                 "created": datetime.fromtimestamp(os.path.getctime(os.path.join(root, file))),
@@ -35,7 +36,7 @@ class DBio(DataFrame):
         print("DB INFO:")
         if not json_db:
             log = VersionControl(PATH.SVN.CAN.DB.db)
-            svn = log[log.상대경로.str.contains(cls.sources().file.values[-1])] \
+            svn = log[log.상대경로.str.contains(cls[-1]['file'])] \
                 .sort_values(by="상대경로", ascending=True) \
                 .iloc[0]
             return DataFrame(
@@ -60,21 +61,27 @@ class DBio(DataFrame):
             index=["SVN ENGINEERING DB"]
         )
 
-    def clipboard2db(self):
-        filename = f"KEFICO-EMS_CANFD_V{datetime.today().strftime('%Y.%m.%d')[2:]}"
+    @classmethod
+    def clipboard2db(cls, filename:str=''):
+        if not filename:
+            filename = f"KEFICO-EMS_CANFD_V{datetime.today().strftime('%Y.%m.%d')[2:]}"
         clipboard = [row.split("\t") for row in paste().split("\r\n")]
         source = DataFrame(data=clipboard[1:], columns=autofix(clipboard[0]))
         source.to_json(os.path.join(PATH.SVN.CAN.SPEC, rf"{filename}.json"), orient="index")
-        super().__init__(self.sources())
+        cls.initialize()
         return
+
+
+DBio.initialize()
 
 
 if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    io = DBio()
-    print(io.sources())
-    print(io.baseline())
+    # DBio()["dir"].values[-1]
+    print(DBio[-1])
+    print(DBio.sources)
+    print(DBio.baseline())
     # io.clipboard2db()
     # print(io)

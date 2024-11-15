@@ -144,7 +144,8 @@ class db(DataFrame):
 
 
 # ALIAS
-DB = db(DBio()["dir"].values[-1])
+# DB = db(DBio()["dir"].values[-1])
+DB = db(DBio[-1]["dir"])
 
 
 if __name__ == "__main__":
@@ -156,9 +157,8 @@ if __name__ == "__main__":
     # DB.dev_mode("HEV")
     # DB.dev_mode("ICE")
     print(DB)
-    print(DB("CLU_PwrAutoOffResetReq"))
     # print(DB[DB['Send Type'] == 'EC'])
-    # print(DB("EMS_06_100ms"))
+    print(DB("EMS_06_100ms"))
     # print(DB("OBD_EngClntTempVal"))
 
     # print(DB("ABS_ESC_01_10ms"))
