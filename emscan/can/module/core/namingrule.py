@@ -3,6 +3,9 @@ from typing import Dict, Union
 
 
 class naming(object):
+    """
+    CAN DATABASE에 대한 EMS/ASW CAN 사용 변수 작명 규칙 (Naming Rule)
+    """
 
     def __init__(self, message: Union[str, Dict, Series]):
 
@@ -17,16 +20,14 @@ class naming(object):
             self.message = self.message.replace("UpStream", "")
 
         """
-        [Message Name to Element Name : Base]
-        ASCET CAN 모델에 사용하는 Element Naming Rule 정의
-
-        1. ASCET Element(Variable)에 사용하는 Message Name
+        변수 메시지 식별자
+        ASCET Element(Variable)에 사용하는 Message Name
         Rule) split('_') --> capitalize() --> join()
-              * Under-Bar 없는 경우 capitalize()만 수행
+              * Under Score(_)가 없는 경우 capitalize()만 수행
               * CAN-FD의 경우 메시지 주기 정보 제거
               * Local CAN 식별자 L은 항상 대문자
               * HEV 식별자 H는 항상 대문자
-        e.g.)    Original Name   |   Rule Base Name
+        e.g.)    Original Name   |   Rule-Base Name
               ----------------------------------------
                 ABS_ESC_01_10ms  |         AbsEsc01
                     HU_GW_PE_01  |         HuGwPe01
@@ -41,6 +42,22 @@ class naming(object):
         if "Htcu" in base:
             self.base = base = base.replace("Htcu", "HTcu")
 
+
+        """
+        진단 모듈용 송신처 정의
+        (구) 제어기 명, (현) 메시지 이름에 대한 식별자 (소스, 발신처)
+        과거 제어기 이름으로 구분하던 방식이 SDV 도입에 따라 송신처 다변화, 
+        계층화 됨으로 메시지 이름에서 식별자를 구분하여 모듈명, 제어기명 
+        등에 사용됨
+        e.g.)    Message Name  |  ROOT Name
+             -------------------------------
+              ABS_ESC_01_10ms  |        ABS
+                  HU_GW_PE_01  |         HU
+                       FPCM11  |       FPCM
+                 EMS_14_200ms  |        EMS
+                 HTCU_04_10ms  |       HTCU
+               L_HTCU_10_10ms  |       HTCU
+        """
         self.root = root = ''.join([char for char in base if char.isalpha()])
         if "Fd" in root:
             self.root = root = root.replace("Fd", "")
@@ -52,11 +69,9 @@ class naming(object):
                 break
 
         """
-        2. ASECT Hierarchy에 사용하는 Message Name
-        Rule) split('_') --> upper() --> join()
-              * Under-Bar 없는 경우 capitalize()만 수행
-              * CAN-FD의 경우 메시지 주기 정보 제거
-        e.g.)    Original Name   |   Rule Base Name
+        비변수 메시지 식별자
+        Rule) "변수 메시지 식별자"에 대한 대문자화
+        e.g.)    Original Name   |   Rule-Base Name
               ----------------------------------------
                 ABS_ESC_01_10ms  |         ABSESC01
                     HU_GW_PE_01  |         HUGWPE01
@@ -69,7 +84,7 @@ class naming(object):
         self.hierarchy = self.tag = tag = ''.join(splits)
 
         """
-        [Element Names]
+        주요 변수 작명 규칙
         1. Buffer        : Can_{base}Buf_A
         2. DLC           : Can_{base}Size
         3. Counter       : Can_ct{base}
@@ -79,8 +94,6 @@ class naming(object):
         6. Validity      : FD_cVld{base}{Msg or Alv or Crc}
         7. Message Valid : FD_cVld{base}
         8. Status        : Com_st{base}
-
-
         """
         self.buffer = f"Can_{base}Buf_A"
         self.dlc = f"Can_{base}Size"
@@ -110,6 +123,8 @@ class naming(object):
         self.crcDiagnosisReport = f"DEve_FD{base}Crc"
         self.crcDiagnosisTimer = f"CanD_tiFlt{base}Crc"
         self.eep = f"EEP_stFD{tag}"
+        self.eepReader = f"CanD_stRdEep{base}"
+        self.eepIndex = f"EEP_FD{tag}"
         self.eepCounter = f"CanD_ctDet{base}"
         self.eepCountThreshold = f"CanD_ctDet{root}_C"
         self.eepDetectEnable = f"CanD_cEnaDet{base}"
@@ -117,7 +132,7 @@ class naming(object):
         self.diagnosisEnable = f"CanD_cEnaDiag{base}"
 
         """
-        3. Exceptions
+        * Exceptions
           1) DB 개정에 따라 메시지 이름이 변경되었으나 Binding 우려로 인해 기존 Naming을 유지해야 하는 경우
           2) 개발자 실수에 따라 양산 반영된 오기 Naming이 Binding 우려로 인해 기존 Naming을 유지해야 하는 경우
           3) DB 메시지 이름의 오타, 오탈 또는 길이 등의 사유로 인해 임의로 Naming을 변경한 경우

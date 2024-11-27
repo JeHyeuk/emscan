@@ -89,5 +89,5 @@ if __name__ == "__main__":
     # print(DBio[-1])
     # print(DBio.sources)
     # print(DBio.baseline())
-    # DBio.clipboard2db()
-    DBio.readXL(filename="test")
+    DBio.clipboard2db(save=True)
+    # DBio.readXL()

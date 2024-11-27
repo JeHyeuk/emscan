@@ -34,6 +34,20 @@ class Module:
     def __getitem__(self, item):
         return self.main[item]
 
+    def remove(self, *elements):
+        for elem in elements:
+            self.main.remove(elem)
+            self.impl.remove(elem)
+            self.data.remove(elem)
+        return
+
+    def write(self, **kwargs):
+        self.main.write()
+        self.impl.write()
+        self.data.write()
+        self.spec.write()
+        return
+
     @property
     def impl(self) -> implementation:
         if not hasattr(self, "__impl__"):

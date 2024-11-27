@@ -127,6 +127,12 @@ class MessageObj(Series):
                 return sig
         return Series()
 
+    def hasCRC(self) -> bool:
+        return False if self.CRC.empty else True
+
+    def hasAliveCounter(self) -> bool:
+        return False if self.AliveCounter.empty else True
+
 
 class CANmem(object):
 

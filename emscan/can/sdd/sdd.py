@@ -69,16 +69,15 @@ def generateSDD(database:db, filename:str='', progress:str='ipynb'):
         message.addSignalList(obj)
         message.addSignalProperty(obj)
 
-    # message.addHeading("EMS RECEIVE")
-    # for n, (name, obj) in enumerate(proc):
-    #     proc.set_description(desc=f'{str(n + 1).zfill(2)}/{len(objs)} ... {name}')
-    #     if obj.ECU == "EMS":
-    #         continue
-    #     message.addMessageHeading(obj)
-    #     message.addMessageSpec(obj)
-    #     message.addMessageLayout(obj)
-    #     message.addSignalList(obj)
-    #     message.addSignalProperty(obj)
+    message.addHeading("EMS RECEIVE")
+    receive = tqdm([obj for _, obj in objs if obj.ECU != "EMS"])
+    for obj in receive:
+        receive.set_description(desc=f"{obj.Message} 사양 생성")
+        message.addMessageHeading(obj)
+        message.addMessageSpec(obj)
+        message.addMessageLayout(obj)
+        message.addSignalList(obj)
+        message.addSignalProperty(obj)
 
     if not filename:
         filename = f'{database.traceability.split("_V")[0]}.docx'
