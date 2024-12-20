@@ -23,6 +23,20 @@ class Process(_base_):
 
 
 class scalarElement(_base_):
+    """
+    ASCET AMD [%.main.amd]
+    변수 기본 정보 정의 태그
+
+    예시 - Default)
+    <Element name="NewElement" OID="[Autogen]" ignore="false">
+        <Comment></Comment>
+        <ElementAttributes modelType="scalar" basicModelType="udisc" unit="">
+            <ScalarType>
+                <PrimitiveAttributes kind="message" scope="exported" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+            </ScalarType>
+        </ElementAttributes>
+    </Element>
+    """
     _elem_ = {
         "modelType": "scalar",
         "basicModelType": "cont",

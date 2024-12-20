@@ -92,6 +92,14 @@ class SignalObj(Series):
         return ((self["Message"] == "TMU_01_200ms") and (str(self.name) == "VSVI_AlvCntVal")) or \
                (("alv" in str(self.name).lower() or "alivec" in str(self.name).lower()) and self["StartBit"] <= 16)
 
+    @property
+    def implSize(self) -> int:
+        return 8 if self["Length"] <= 8 else 16 if self["Length"] <= 16 else 32
+
+    @property
+    def devName(self) -> str:
+        return self["SignalRenamed"] if self["SignalRenamed"] else self.name
+
 
 class MessageObj(Series):
     signals: DataFrame = DataFrame()
@@ -100,13 +108,26 @@ class MessageObj(Series):
         if signals.empty:
             super().__init__()
             return
-        # base = signals.iloc[0][[c for c, v in Columns.items() if v["property"] in ["common", "message"]]]
         base = signals.iloc[0]
         super().__init__(data=base.values, index=base.index, name=base.Message)
         self.signals = signals.copy()
         self.signals.index = signals["Signal"]
-        self["Ts"] = (10 if not self["Cycle Time"] else self["Cycle Time"]) / 1000
         self["Version"] = signals["Version"].sort_values(ascending=True).iloc[-1]
+        if "E" in self["Send Type"]:
+            self["taskTime"] = 0.04
+        elif not self["Cycle Time"]:
+            self["taskTime"] = 0.01
+        else:
+            self["taskTime"] = self["Cycle Time"] / 1000
+
+        if self["Cycle Time"] <= 50:
+            self["timeoutTime"] = 0.5
+        elif self["Cycle Time"] < 500:
+            self["timeoutTime"] = 1.5
+        else:
+            self["timeoutTime"] = 5.0
+        # self.Ts = (10 if not self["Cycle Time"] else self["Cycle Time"]) / 1000
+        # self.taskTime = 0.04 if "E" in self["Send Type"] else self.Ts
         return
 
     def __iter__(self) -> SignalObj:
@@ -166,10 +187,10 @@ class CANmem(object):
         return item in self.__mem__
 
     def keys(self):
-        return self.__mem__.keys()
+        return list(self.__mem__.keys())
 
     def values(self):
-        return self.__mem__.values()
+        return list(self.__mem__.values())
 
     def items(self):
         return self.__mem__.items()

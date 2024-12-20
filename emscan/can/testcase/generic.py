@@ -1,13 +1,13 @@
 try:
     from . import unit
     from ..linker import Linker
-    from ..db._objs import MessageObj
+    from ..db.objs import MessageObj
     from ...config.error import TestCaseError
     from ...core.testcase.cases import Cases
 except ImportError:
     from emscan.can.testcase import unit
     from emscan.can.linker import Linker
-    from emscan.can.db._objs import MessageObj
+    from emscan.can.db.objs import MessageObj
     from emscan.config.error import TestCaseError
     from emscan.core.testcase.cases import Cases
 

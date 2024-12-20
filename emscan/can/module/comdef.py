@@ -250,7 +250,7 @@ if __name__ == "__main__":
 
     set_option('display.expand_frame_repr', False)
 
-    SPEC = "ICE"
+    SPEC = "HEV"
 
     EXCLUDE = {
         'ICE': ["EMS", "CVVD", "MHSG", "NOx", "BMS", "LDC"],
@@ -261,7 +261,8 @@ if __name__ == "__main__":
 
     mname = f"ComDef_HEV" if SPEC == "HEV" else "ComDef"
     model = ComDef(
-        source=PATH.SVN.CAN.file(f"ComDef{'' if SPEC == 'ICE' else '_HEV'}.zip"),
+        # source=PATH.SVN.CAN.file(f"ComDef{'' if SPEC == 'ICE' else '_HEV'}.zip"),
+        source=PATH.ASCET.EXPORT.file(f"ComDef{'' if SPEC == 'ICE' else '_HEV'}.main.amd"),
         database=DB
     )
 

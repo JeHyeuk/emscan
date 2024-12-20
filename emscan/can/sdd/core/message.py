@@ -1,7 +1,7 @@
 try:
-    from ...db._objs import MessageObj
+    from ...db.objs import MessageObj
 except ImportError:
-    from emscan.can.db._objs import MessageObj
+    from emscan.can.db.objs import MessageObj
 from docx import Document
 from docx.parts.styles import Styles
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT

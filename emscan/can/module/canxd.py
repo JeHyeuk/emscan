@@ -44,6 +44,7 @@ class CanXD(Module):
         missing = [e for e in self._req if e not in elements["name"].values]
         dummies = elements[~elements["name"].isin(self._req)]
         print(missing)
+        print(dummies)
         # for dummy in dummies.name:
         #     self.remove(dummy)
         # self.write()
@@ -56,7 +57,7 @@ class CanXD(Module):
             self._req += [
                 rule.eepDetectEnable,
                 rule.eepReader,
-                rule.messageValid,
+                rule.messageCountValid,
                 rule.eepCounter,
                 rule.eep,
                 rule.eepIndex,

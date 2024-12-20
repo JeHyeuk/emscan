@@ -2,14 +2,14 @@ try:
     from ...config import PATH
     from ...core.ascet.module.module import Module
     from ..db.db import db
-    from ..db._objs import MessageObj
+    from ..db.objs import MessageObj
     from .core import ccode, element
     from .core.oid import objectID
 except ImportError:
     from emscan.config import PATH
     from emscan.core.ascet.module.module import Module
     from emscan.can.db.db import db
-    from emscan.can.db._objs import MessageObj
+    from emscan.can.db.objs import MessageObj
     from emscan.can.module.core import ccode, element
     from emscan.can.module.core.oid import objectID
 from datetime import datetime
@@ -110,9 +110,9 @@ if __name__ == "__main__":
     DB.dev_mode(SPEC)
     DB.constraint(~DB["ECU"].isin(EXCLUDE[SPEC]))
 
-    mname = f"ComRx_HEV" if SPEC == "HEV" else "ComRx"
     ComRx = ComX(
-        source=rf"D:\ETASData\ASCET6.1\Export\{mname}\{mname}.main.amd",
+        # source=PATH.SVN.CAN.file(f"ComRx{'' if SPEC == 'ICE' else '_HEV'}.zip"),
+        source=PATH.ASCET.EXPORT.file(f"ComRx{'' if SPEC == 'ICE' else '_HEV'}.main.amd"),
         database=DB
     )
     ComRx.write()

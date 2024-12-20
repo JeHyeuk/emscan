@@ -1,6 +1,8 @@
 from pandas import Series
 from typing import Dict, Union
 
+from emscan.can.db.objs import MessageObj
+
 
 class naming(object):
     """
@@ -8,7 +10,7 @@ class naming(object):
     """
 
     def __init__(self, message: Union[str, Dict, Series]):
-
+        self.arg = message
         if isinstance(message, Series) or isinstance(message, Dict):
             self.message = message["Message"]
         elif isinstance(message, str):
@@ -142,3 +144,23 @@ class naming(object):
 
     def __str__(self) -> str:
         return self.message
+
+    @property
+    def crc(self) -> str:
+        if not isinstance(self.arg, MessageObj):
+            raise TypeError('Cannot specify CRC')
+        return f'{self.arg.CRC.name}_Can'
+
+    @property
+    def crcCalc(self) -> str:
+        return self.crc.replace("_Can", "Calc")
+
+    @property
+    def aliveCounter(self) -> str:
+        if not isinstance(self.arg, MessageObj):
+            raise TypeError('Cannot specify Alive Counter')
+        return f'{self.arg.AliveCounter.name}_Can'
+
+    @property
+    def aliveCounterCalc(self) -> str:
+        return self.aliveCounter.replace("_Can", "Calc")

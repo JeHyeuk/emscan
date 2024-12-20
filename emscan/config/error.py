@@ -18,3 +18,6 @@ class TestCaseError(AttributeError):
 
 class MdaNotFound(OSError):
     pass
+
+class BaselineError(OSError):
+    pass

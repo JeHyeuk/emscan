@@ -1,11 +1,11 @@
 try:
     from .io import DBio
     from ._column import Columns
-    from ._objs import CANmem, MessageObj, SignalObj
+    from .objs import CANmem, MessageObj, SignalObj
 except ImportError:
     from emscan.can.db.io import DBio
     from emscan.can.db._column import Columns
-    from emscan.can.db._objs import CANmem, MessageObj, SignalObj
+    from emscan.can.db.objs import CANmem, MessageObj, SignalObj
 from pandas import DataFrame
 from typing import Union
 import pandas as pd
@@ -154,18 +154,51 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    print(DB.source)
-    # print(DB)
+    # print(DB.source)
+    print(DB)
     # DB.dev_mode("HEV")
     # DB.dev_mode("ICE")
-    print(DB)
+    # print(DB)
     # print(DB[DB['Send Type'] == 'EC'])
-    print(DB("EMS_06_100ms"))
+    # print(DB("EMS_06_100ms"))
     # print(DB("OBD_EngClntTempVal"))
 
     # print(DB("ABS_ESC_01_10ms"))
-    # print(DB("ABS_ESC_01_10ms", "Specification"))
-    # print(DB("Main_Status_Rear"))
-    # for m in DB.messages:
-    #     print(m.signals)
-    # print(DB("ABS_ActvSta"))
+    # print(DB("ABS_ESC_01_10ms", "Signal"))
+
+    myMsg = DB("BDC_FD_06_200ms")
+    # print(myMsg.aligned)
+    # for bit in myMsg.aligned:
+    #     print(bit)
+
+    # res = []
+    # tank = []
+    # prev = myMsg.aligned[0]
+    # cnt = 1 if prev == "Reserved" else 0
+    # for bit in myMsg.aligned:
+    #     if bit == "Reserved":
+    #         if prev != bit:
+    #             cnt += 1
+    #         tank.append(bit)
+    #         if len(tank) > 8:
+    #             tank = [f"Reserved_{cnt}"]
+    #             cnt += 1
+    #         res.append(f"Reserved_{cnt}")
+    #     else:
+    #         tank = []
+    #         res.append(bit)
+    #     prev = bit
+    #
+    # # for bit in res:
+    # #     print(bit)
+    res = myMsg.aligned
+    count, name = 0, res[0]
+    for n, sig in enumerate(res):
+        if sig == name:
+            count += 1
+            if n == 8 * myMsg.DLC - 1:
+                print(f"uint32 {name} : {count};")
+            continue
+
+        print(f"uint32 {name} : {count};")
+        count, name = 1, sig

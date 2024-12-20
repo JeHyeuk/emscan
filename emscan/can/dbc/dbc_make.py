@@ -7,7 +7,7 @@ import re
 set_option('display.expand_frame_repr', False)
 
 # JSON 파일에서 DataFrame 생성
-data = pd.read_json(r"D:\KEFICO-EMS_CANFD_V24.11.25.json", orient="index")
+data = pd.read_json(r"D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dev\KEFICO-EMS_CANFD_V24.12.18.json", orient="index")
 
 # 마지막 행 삭제
 data = data.iloc[:-1]  # 마지막 행을 제외한 나머지 행을 선택
@@ -398,5 +398,5 @@ def edit_dbc_file(dbc_file_path, df, canstd_filters, vvd_filters):
 
 
 # 사용 예시
-dbc_file_path = r'D:\DBC_Make1.dbc'
-edit_dbc_file(dbc_file_path, data, canstd_filters=[0], vvd_filters=[0])
+dbc_file_path = r'D:\DBC_Make2.dbc'
+edit_dbc_file(dbc_file_path, data, canstd_filters=[2], vvd_filters=[0])
