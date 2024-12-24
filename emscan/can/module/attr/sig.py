@@ -23,13 +23,15 @@ class signalAttribute(DataFrame):
         # 수신 신호 인식자 : *_Can
         # 송신 신호 인식자 : *_Ems
         if signal.ECU == "EMS":
-            attr["name"] = f"{signal.Signal}_Ems"
+            attr["name"] = attr['elementName'] = f"{signal.Signal}_Ems"
         else:
-            attr["name"] = f"{signal.Signal}_Can"
+            attr["name"] = attr['elementName'] = f"{signal.Signal}_Can"
 
         # 공통 정의 항목
         # 변수 크기에 따른 Implementation 크기 적용
+        attr["unit"] = signal.Unit
         attr["Comment"] = signal.Definition
+        attr["formula"] = signal.Formula
         attr["implType"] = f"uint{signal.implSize}"
         attr["implMin"] = 0
         attr["implMax"] = 2 ** signal.implSize - 1
@@ -59,13 +61,18 @@ class signalAttribute(DataFrame):
 
         data = [attr]
         if signal.isAliveCounter() or signal.isCrc():
+            key = "CRC" if signal.isCrc() else "Alive Counter"
             calc = attr.copy()
-            calc["name"] = calc["name"].replace("_Can", "Calc")
-            calc["Comment"] += " Calculated"
+            calc["name"] = calc["elementName"] = calc["name"].replace("_Can", "Calc")
+            calc["Comment"] = f"{signal.Message}({signal.ID}) {key} Calculated"
             calc["kind"] = "variable"
             calc["scope"] = "local"
-            data.append(calc)
 
+            # 예외 항목
+            if signal.name == "ESC_Crc1Val":
+                calc["kind"] = "message"
+                calc["scope"] = "exported"
+            data.append(calc)
         super().__init__(data=data, dtype=str)
         return
 

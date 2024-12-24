@@ -60,6 +60,9 @@ class amdParser:
         self.spec = self._tree(".specification.amd")
         return
 
+    def __getitem__(self, item):
+        return self.main.find('Component').attrib[item]
+
     def _tree(self, extension:str) -> ElementTree:
         file = os.path.join(self.root, f'{self.name}{extension}')
         if not os.path.isfile(file):
@@ -68,6 +71,7 @@ class amdParser:
         tree = ElementTree(file=file)
         tree.__setattr__("path", file)
         return tree
+
 
 
 class AMD(amdParser):
@@ -140,10 +144,12 @@ class AMD(amdParser):
     def EntireElements(self) -> DataFrame:
         element = self.Element.copy()
         implementationEntry = self.ImplementationEntry.copy()
-        implementationEntry.drop(columns=[col for col in implementationEntry if col in element], inplace=True)
         dataEntry = self.DataEntry.copy()
-        dataEntry.drop(columns=[col for col in dataEntry if col in element], inplace=True)
-        return concat([element, implementationEntry, dataEntry], axis=1)
+
+        implementationEntry.drop(columns=[col for col in implementationEntry if col in element], inplace=True)
+        entire = element.join(implementationEntry)
+        dataEntry.drop(columns=[col for col in dataEntry if col in entire], inplace=True)
+        return entire.join(dataEntry)
 
 
 
@@ -158,10 +164,11 @@ if __name__ == "__main__":
     # print(module.MethodSignatures)
     # print(module.ImplementationEntry)
     # print(module.DataEntry)
-    module.append(Tag('Element', name="Tester", OID="_00000"), 1)
-    print(module.Element)
-    module.remove('Tester')
-    print(module.Element)
+    print(module.EntireElements.columns)
+    # module.append(Tag('Element', name="Tester", OID="_00000"), 1)
+    # print(module.Element)
+    # module.remove('Tester')
+    # print(module.Element)
 
 
     # main = mainAmd(r"D:\ETASData\ASCET6.1\Export\ComDef\ComDef.main.amd")

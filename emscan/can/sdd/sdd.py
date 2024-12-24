@@ -91,4 +91,6 @@ def generateSDD(database:db, filename:str='', progress:str='ipynb'):
 if __name__ == "__main__":
     from emscan.can.db.db import DB
 
-    generateSDD(DB, 'py')
+    spec = "HEV"
+    DB.reset(DB[DB[f'{spec} Channel'] != ""])
+    generateSDD(DB, progress='py')

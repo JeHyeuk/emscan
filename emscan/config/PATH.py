@@ -121,6 +121,9 @@ class Path(str):
             return self.__dict__[item]
         return str.__getattribute__(self, item)
 
+    def items(self):
+        return os.listdir(self)
+
     def path(self, _path:str):
         if "/" in _path:
             _path = _path.replace("/", "\\")
@@ -131,7 +134,7 @@ class Path(str):
                 return Path(os.path.join(_root, _path))
         raise PathNotFoundError(f"Unable to find: {_path} in root directory: {self._root}")
 
-    def file(self, *files) -> Union[List[str], str]:
+    def file(self, *files) -> Union[List[str], str, bytes]:
         """
 
         :param files: 확장자까지 입력 필요
@@ -170,6 +173,16 @@ class _SVN(Path):
         return can
 
     @memorize
+    def CONF(self) -> Path:
+        conf = self.path(r'GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename')
+        return conf
+
+    @memorize
+    def POLY(self) -> Path:
+        poly = self.path(r'Autron_CoWork\사이버보안\Module_Test_Results')
+        return poly
+
+    @memorize
     def MD(self) -> Path:
         md = self.path(r'model\ascet\trunk')
         md.LIB = md.path(r'HMC_ECU_Library')
@@ -198,6 +211,7 @@ ROOT      = os.path.dirname(os.path.dirname(__file__))
 DESKTOP   = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
 DOWNLOADS = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Downloads')
 PICTURES  = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Pictures')
+SDD       = Path(r"D:\SDD\Notes\Files")
 SVN       = _SVN(r"D:\svn")
 ASCET     = _ASCET(r"D:\ETASData\ASCET6.1")
 

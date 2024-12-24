@@ -14,11 +14,13 @@ class messageAttribute(DataFrame):
     def __init__(self, message:MessageObj):
         xcp = naming(message)
 
-
         timerFormula = f"Ti_q{message.astype(str).taskTime}_s" \
                        .replace(".", "p") \
                        .replace('p0_s', '_s')
-        timeoutTime = message.taskTime * (message.timeoutTime // message.taskTime + 1)
+        if message.timeoutTime % message.taskTime:
+            timeoutTime = message.taskTime * (message.timeoutTime // message.taskTime + 1)
+        else:
+            timeoutTime = message.taskTime * (message.timeoutTime // message.taskTime)
         identifier = f"{message['Message']}({message['ID']})"
 
         objs = [
@@ -38,7 +40,8 @@ class messageAttribute(DataFrame):
                 type="buffer",
                 name=xcp.buffer,
                 Comment=f"{identifier} Buffer",
-                maxSizeX=f'{message["DLC"]}'
+                maxSizeX=f'{message["DLC"]}',
+                value=f'{[0] * message["DLC"]}'
             ),
             ascetAttribute.unsigned(
                 type="dlc",
@@ -53,6 +56,8 @@ class messageAttribute(DataFrame):
                 Comment=f"{identifier} Timeout Threshold",
                 unit="s",
                 kind="parameter",
+                volatile="false",
+                write="false",
                 formula=timerFormula,
                 physMax=message['taskTime'] * 255,
                 value=timeoutTime,
@@ -63,6 +68,7 @@ class messageAttribute(DataFrame):
                 Comment=f"{identifier} Counter Timeout Timer",
                 unit="s",
                 kind="variable",
+                scope="local",
                 formula=timerFormula,
                 physMax=message['taskTime'] * 255,
             ),
@@ -72,6 +78,7 @@ class messageAttribute(DataFrame):
                 Comment=f"{identifier} CRC Timeout Timer",
                 unit="s",
                 kind="variable",
+                scope="local",
                 formula=timerFormula,
                 physMax=message['taskTime'] * 255,
             ),
@@ -81,6 +88,7 @@ class messageAttribute(DataFrame):
                 Comment=f"{identifier} Alive Counter Timeout Timer",
                 unit="s",
                 kind="variable",
+                scope="local",
                 formula=timerFormula,
                 physMax=message['taskTime'] * 255,
             ),

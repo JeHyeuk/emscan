@@ -35,9 +35,14 @@ class Tag(Element):
     def data(self) -> Series:
         objs = {}
         for tag in self.iter():
+            attr = tag.attrib.copy()
             if tag.text and not tag.text.startswith('\n'):
                 objs[tag.tag] = tag.text
-            objs.update(tag.attrib)
+            if "min" in attr and "max" in attr:
+                attr[f"{tag.tag[:4].lower()}Min"] = attr["min"]
+                attr[f"{tag.tag[:4].lower()}Max"] = attr["max"]
+                del attr["min"], attr["max"]
+            objs.update(attr)
         if "currentSizeX" in objs:
             objs["value"] = f'[{", ".join([tag.attrib["value"] for tag in self.iter("Numeric")])}]'
         return Series(objs, name=objs["OID" if "OID" in objs else "elementOID"])

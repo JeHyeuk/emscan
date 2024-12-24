@@ -19,6 +19,7 @@ class Attributes(DataFrame):
             self.drop(index=self[self["type"].astype(str).str.startswith("crc")].index, inplace=True)
         if not message.hasAliveCounter():
             self.drop(index=self[self["type"].astype(str).str.startswith("aliveCount")].index, inplace=True)
+        self.drop(columns=["type"], inplace=True)
         return
 
     def setOID(self, ):
