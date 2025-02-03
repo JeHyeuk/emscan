@@ -25,6 +25,6 @@ def Compare(prev:str, curr:str):
 
 if __name__ == "__main__":
     model = "LogIf_HEV"
-    asis = rf"D:\Archive\00_개발업무\통신개발-\2024\DS1216 LCRPT240913001-1 원격시동 신호 추가\모델\Prev\{model}.main.amd"
-    tobe = rf"D:\Archive\00_개발업무\통신개발-\2024\DS1216 LCRPT240913001-1 원격시동 신호 추가\모델\Curr\{model}.main.amd"
+    asis = rf"D:\Archive\00_개발업무\통신개발-\2025\DS0117 LCR_EHRS히터폐회로_LIN\모델\Prev\LinM_HEV.main.amd"
+    tobe = rf"D:\Archive\00_개발업무\통신개발-\2025\DS0117 LCR_EHRS히터폐회로_LIN\모델\Curr\LinM_HEV.main.amd"
     Compare(asis, tobe)

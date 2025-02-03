@@ -1,61 +1,105 @@
+from dataclasses import dataclass
 from pandas import DataFrame
-from xml.etree.ElementTree import parse
-import os
+from typing import Dict, List, Union
+from xml.etree.ElementTree import parse, Element, ElementTree
 
 
-def structConf(confdata:str):
-    """
-    confdata 구조 파악 함수
-    :param confdata: [str] confdata 전체 경로
-    :return:
-    """
-    def _recursive_search(tag, tab_count:int=0):
-        print("\t" * tab_count, tag.tag, tag.text, tag.attrib)
-        if len(tag):
-            tab_count += 1
-            for inner_tag in tag:
-                _recursive_search(inner_tag, tab_count)
+@dataclass
+class TAGS:
 
-    tree = parse(confdata)
-    root = tree.getroot()
-    _recursive_search(root)
-    return
+    ADMIN:str = 'ADMIN-DATA/COMPANY-DOC-INFOS/COMPANY-DOC-INFO/SDGS/SDG/SD'
+    MNAME:str = 'SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-SOURCE/SW-FEATURE-REF'
+    ITEMS:str = 'SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-ITEM/CONF-ITEMS/CONF-ITEM'
 
-def gatherConf(path:str, debug:bool=True) -> list:
-    """
-    confdata 파일 리스트
-    :param path  : [str]  confdata 수록 경로
-    :param debug : [bool] 디버깅 출력 여부
-    :return:
-    """
-    import os
-    gather = [os.path.join(path, file) for file in os.listdir(path)]
-    if debug:
-        for file in gather:
-            print(file)
-    return gather
 
-def conf2dataframe(confdata:str) -> DataFrame:
+class DemConf(DataFrame):
     """
-    confdata를 pandas DataFrame으로 변환하여 반환
-    :param confdata: [str] confdata 전체 경로
-    :return:
+    EMS/ASW CONFDATA READER
+    * AUTHOR   : JEHYEUK.LEE / KYUNA.CHO
+    * DIVISION : VEHICLE CONTORL SOLUTION TEAM, HYUNDAI KEFICO Co.,LTD.
+    * UPDATED  : 24th, Jan, 2025.
     """
-    path = "SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-ITEM/CONF-ITEMS/CONF-ITEM"
-    tree = parse(confdata)
-    root = tree.getroot()
+    _root:Element = None
+    def __init__(self, confdata:str):
+        self.parse(confdata)
+        _admin = self.getAdmin()
+        _mname = self.getModuleName()
 
-    for tag in root.findall(path):
-        item = tag.find("SHORT-NAME").text
-        if tag.find("SW-SYSCOND") != None:
-            syscond = tag.find("SW-SYSCOND").text
+        data = []
+        for dem in self.findall(TAGS.ITEMS):
+            row = {}
+            row.update(_mname)
+            row.update(self.getDem(dem))
+            row.update(_admin)
+            data.append(row)
+        super().__init__(data=data)
+        return
+
+    @classmethod
+    def find(cls, tag: str) -> Element:
+        return cls._root.find(tag)
+
+    @classmethod
+    def findall(cls, tag: str) -> List[Element]:
+        return cls._root.findall(tag)
+
+    @classmethod
+    def getAdmin(cls) -> Dict[str, str]:
+        return {tag.attrib["GID"]: cls.text(tag) for tag in cls.findall(TAGS.ADMIN)}
+
+    @classmethod
+    def getModuleName(cls) -> Dict[str, str]:
+        return {'MODULE_NAME': cls.text(TAGS.MNAME)}
+
+    @classmethod
+    def getDem(cls, dem: Element) -> Dict[str, str]:
+        spec = {'DEM_TYPE': cls.text(dem.find('SHORT-NAME')),}
+        if dem.find('SW-SYSCOND') is not None:
+            spec['SYSCOND'] = cls.text(dem.find('SW-SYSCOND'))
+        for item in dem.findall('CONF-ITEMS/CONF-ITEM'):
+            cls.getDemItem(item, spec)
+        return spec
+
+    @classmethod
+    def getDemItem(cls, item:Element, spec:Dict = None, parent:str = '') -> Dict[str, str]:
+        if not spec:
+            spec = {}
+        name = cls.text(item.find('SHORT-NAME'))
+        if parent:
+            name = f'{parent}/{name}'
+        if item.find('SW-SYSCOND') is not None:
+            spec.update({f'{name}/SYSCOND': cls.text(item.find('SW-SYSCOND'))})
+        if item.find('VF') is not None:
+            spec.update({name: cls.text(item.find('VF'))})
+            return spec
+        for subItem in item.findall('CONF-ITEMS/CONF-ITEM'):
+            cls.getDemItem(subItem, spec, name)
+        return spec
+
+    @classmethod
+    def parse(cls, xml:str):
+        cls._root = parse(xml).getroot()
+        return
+
+    @classmethod
+    def text(cls, path_or_tag:Union[str, Element]) -> str:
+        if isinstance(path_or_tag, str):
+            text = cls._root.find(path_or_tag).text if "/" in path_or_tag else path_or_tag
+        elif isinstance(path_or_tag, Element):
+            text = path_or_tag.text
         else:
-            syscond = ""
-        print(item, syscond)
-        # TODO
+            raise TypeError()
+        return text.replace("\t", "") if text else ""
+
 
 
 if __name__ == "__main__":
-    structConf(r"D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\ambt_confdata.xml")
-    # gatherConf(r"D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename")
-    # conf2dataframe(r"D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\ambt_confdata.xml")
+    from pandas import set_option
+    set_option('display.expand_frame_repr', False)
+
+
+    conf = DemConf(
+        # r'./template.xml'
+        r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\airtd_confdata.xml'
+    )
+    print(conf)

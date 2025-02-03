@@ -66,7 +66,7 @@ class amdParser:
     def _tree(self, extension:str) -> ElementTree:
         file = os.path.join(self.root, f'{self.name}{extension}')
         if not os.path.isfile(file):
-            warnings.warn(f"AMD NOT FOUND: 경로 {root} 내 {file}이 없습니다.")
+            warnings.warn(f"AMD NOT FOUND: 경로 {self.root} 내 {file}이 없습니다.")
             return ElementTree()
         tree = ElementTree(file=file)
         tree.__setattr__("path", file)
@@ -141,6 +141,35 @@ class AMD(amdParser):
                .drop(columns=["name"])
 
     @property
+    def DiagramElement(self) -> DataFrame:
+        elements = []
+        def _dive(hierarchy=None, parent:str="/"):
+            if not hierarchy:
+                hierarchyName = "root"
+                hierarchy = self.spec.findall("Specification/BlockDiagramSpecification/DiagramElements/DiagramElement")
+                path = "/"
+            else:
+                hierarchyName = hierarchy.attrib["name"]
+                hierarchy = hierarchy.findall("Contents/DiagramElement")
+                path = f'{parent}/{hierarchyName}'[1:]
+
+            for tag in hierarchy:
+                if tag[0].tag.endswith('Element'):
+                    obj = tag[0].attrib.copy()
+                    obj["Hierarchy"] = hierarchyName
+                    obj["Path"] = path
+                    elements.append(obj)
+                elif tag[0].tag == "Hierarchy":
+                    _dive(tag[0], path)
+                else:
+                    continue
+            return
+        _dive()
+        return DataFrame(elements) \
+               .drop(columns=["graphicOID"]) \
+               .drop_duplicates(subset=['elementName', 'Hierarchy'])
+
+    @property
     def EntireElements(self) -> DataFrame:
         element = self.Element.copy()
         implementationEntry = self.ImplementationEntry.copy()
@@ -152,23 +181,26 @@ class AMD(amdParser):
         return entire.join(dataEntry)
 
 
-
-
 if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    module = AMD(r"D:\ETASData\ASCET6.1\Export\ComDef\ComDef.main.amd")
+    module = AMD(
+        # r"D:\ETASData\ASCET6.1\Export\ComDef\ComDef.main.amd"
+        r"D:\ETASData\ASCET6.1\Export\CanFDEMSM07_HEV\CanFDEMSM07_HEV.specification.amd"
+    )
+
     # print(module)
-    print(module.Element)
+    # print(module.Element)
     # print(module.MethodSignatures)
     # print(module.ImplementationEntry)
     # print(module.DataEntry)
-    print(module.EntireElements.columns)
+    # print(module.EntireElements.columns)
     # module.append(Tag('Element', name="Tester", OID="_00000"), 1)
     # print(module.Element)
     # module.remove('Tester')
     # print(module.Element)
+    print(module.DiagramElement)
 
 
     # main = mainAmd(r"D:\ETASData\ASCET6.1\Export\ComDef\ComDef.main.amd")

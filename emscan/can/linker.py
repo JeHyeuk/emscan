@@ -1,43 +1,56 @@
 try:
-    from .db.db import db
+    from .db.db import DB
     from .db.io import DBio
-    from ..core.ascet.module.module import Module
+    from ..core.ascet.module.amd import AMD
 except ImportError:
-    from emscan.can.db.db import db
+    from emscan.can.db.db import DB
     from emscan.can.db.io import DBio
-    from emscan.core.ascet.module.module import Module
+    from emscan.core.ascet.module.amd import AMD
 from pandas import DataFrame
 import pandas as pd
 import numpy as np
 
 
 class Linker:
+
     def __init__(self, amd:str):
-        self.db = db(DBio()["dir"].values[-1])
-        self.md = Module(amd)
-        self.db.dev_mode("HEV" if self.md.name.endswith("_HEV") else "ICE")
+        self.amd = amd = AMD(amd)
+        DB.dev_mode("HEV" if amd['name'].endswith("_HEV") else "ICE")
         return
 
-    def find_signal_variables(self) -> DataFrame:
-        signals = self.db["Signal"].to_list()
-        elem = self.md.Elements.copy()
-        elem['Signal'] = elem['name'].apply(lambda name: "_".join(name.split("_")[:-1]))
-        return elem[elem['Signal'].isin(signals)] \
+    @property
+    def signalVariable(self) -> DataFrame:
+        signals = list(set(DB.elements["Signal"].to_list() + DB.elements["SignalRenamed"].to_list()))
+        element = self.amd.Element.copy()
+        element["Signal"] = element["name"].apply(lambda name: "_".join(name.split("_")[:-1]))
+        return element[element["Signal"].isin(signals)] \
                .drop_duplicates(subset=["Signal"], keep="last") \
                .set_index(keys="Signal")
 
+    @property
+    def hierarchyIO(self) -> DataFrame:
+        elem = self.amd.Element.copy()
+        objs = []
+        for (_,), elements in self.amd.DiagramElement.groupby(by=["Hierarchy"]):
+            elements = elements \
+                       .set_index(keys="elementOID") \
+                       .drop(columns=[col for col in elements if col in elem.columns]) \
+                       .join(elem)
+            objs.append(elements)
+        return pd.concat(objs=objs)
+
     def link_io_by_db(self) -> DataFrame:
-        sv = self.find_signal_variables()
+        sv = self.signalVariable
         sg = sv["name"].to_list()
         objs = []
-        for (_, ), elements in self.md.IO.groupby(by=["Hierarchy"]):
+        for (_, ), elements in self.hierarchyIO.groupby(by=["Hierarchy"]):
             elements = elements[
                 (~elements["kind"].isin(["sysconstant", "constant"])) & \
                 (elements["basicModelType"] != "implementationCast")
             ] \
             .copy() \
             .drop_duplicates(subset=["name"], keep="first")
-            elements["module"] = self.md.name
+            elements["module"] = self.amd.name
             elements["dir"] = np.nan
 
             signal = ""
@@ -72,16 +85,16 @@ class Linker:
         return pd.concat(objs=objs)
 
     def link_variables_by_db(self) -> DataFrame:
-        _db = self.db.elements
+        _db = DB.elements
         _db = _db.set_index(keys="Signal")
-        _md = self.find_signal_variables()
+        _md = self.signalVariable
         _md = _md.drop(columns=[col for col in _md.columns if col in _db.columns])
         res = _db.join(_md)
-        return res[res["module"] == self.md.name]
+        return res[res["module"] == self.amd.name]
 
     def link_db_by_variables(self) -> DataFrame:
-        _md = self.find_signal_variables()
-        _db = self.db.elements
+        _md = self.signalVariable
+        _db = DB.elements
         _db = _db.set_index(keys="Signal")
         _db = _db.drop(columns=[col for col in _db.columns if col in _md.columns])
         res = _md.join(_db)
@@ -94,9 +107,10 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    model = Linker(r"D:\ETASData\ASCET6.1\Export\CanFDEMSM01\CanFDEMSM01.main.amd")
-    # print(model.find_signal_variables())
+    model = Linker(r"D:\ETASData\ASCET6.1\Export\CanFDEMSM07_HEV\CanFDEMSM07_HEV.main.amd")
+    # print(model.signalVariable)
+    print(model.hierarchyIO)
     # print(model.link_variables_by_db())
     # print(model.link_db_by_variables())
     # print(model.link_io_by_db())
-    model.link_io_by_db().to_clipboard()
+    # model.link_io_by_db().to_clipboard()
