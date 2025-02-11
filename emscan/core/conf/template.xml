@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>																
+<!DOCTYPE MSRSW PUBLIC "-//MSR//DTD MSR SOFTWARE DTD:V2.2.2:HMC:LAI:IAI:XML:MSRSW.DTD//EN" "msrsw_v222_hmc.xml.dtd">																
+<!-- File Format is generated for DEM_ASW_Conf_Tool version 1.1 by I.S.Park at 21:14:14, 01 Feb 2014 -->																
+<MSRSW>																
+	<CATEGORY>ConfData</CATEGORY>															
+	<ADMIN-DATA>															
+		<LANGUAGE>en</LANGUAGE>														
+		<USED-LANGUAGES>														
+			<L-10 L="en">en</L-10>													
+			<L-10 L="kr">kr</L-10>													
+		</USED-LANGUAGES>														
+		<COMPANY-DOC-INFOS>														
+			<COMPANY-DOC-INFO>													
+				<COMPANY-REF>HKMC</COMPANY-REF>												
+				<SDGS>												
+					<SDG GID="HKMCHead-eASEE-Keywords">											
+						<SD GID="Filename">	FileName	</SD>								
+						<SD GID="Author"></SD>										
+						<SD GID="Function">This version is created by migration tool</SD>										
+						<SD GID="Domain">SDOM</SD>										
+						<SD GID="User">	User	</SD>								
+						<SD GID="Date">	2014.02.01	</SD>								
+						<SD GID="Class">DEM_CONFDATA</SD>										
+						<SD GID="Name">	Name	</SD>								
+						<SD GID="Variant">	ModuleVer	</SD>								
+						<SD GID="Revision">	ModuleRev	</SD>								
+						<SD GID="Type">XML</SD>										
+						<SD GID="State">AVAILABLE</SD>										
+						<SD GID="UniqueName"></SD>										
+						<SD GID="Component"></SD>										
+						<SD GID="Generated"></SD>										
+						<SD GID="History">	History	</SD>								
+					</SDG>											
+				</SDGS>												
+			</COMPANY-DOC-INFO>													
+		</COMPANY-DOC-INFOS>														
+	</ADMIN-DATA>															
+	<SW-SYSTEMS>															
+		<SW-SYSTEM>														
+			<LONG-NAME>													
+				<L-4 L="for-all">HNB</L-4>												
+			</LONG-NAME>													
+			<SHORT-NAME>HNB</SHORT-NAME>													
+			<CONF-SPEC>													
+				<CONF-ITEMS>												
+					<CONF-SOURCE>											
+						<SW-FEATURE-REF>	ModuleName	</SW-FEATURE-REF>								
+					</CONF-SOURCE>											
+					<CONF-ITEM>											
+						<SHORT-NAME>DEM</SHORT-NAME>										
+						<CONF-ITEMS>										
+							<CONF-ITEM>									
+								<SHORT-NAME>DEM_PATH</SHORT-NAME>								
+								<SW-SYSCOND>	ElementSY	</SW-SYSCOND>						
+								<CONF-ITEMS>								
+									<CONF-ITEM>							
+										<SHORT-NAME>ELEMENT_NAME</SHORT-NAME>						
+										<VF>	ElementName	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DESC</SHORT-NAME>						
+										<VF>	DescEng	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DESC_KR</SHORT-NAME>						
+										<VF>	DescKor	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>FAULT_MAX</SHORT-NAME>						
+										<VF>	PathMax	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>FAULT_MIN</SHORT-NAME>						
+										<VF>	PathMin	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>FAULT_SIG</SHORT-NAME>						
+										<VF>	PathSig	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>FAULT_NPL</SHORT-NAME>						
+										<VF>	PathNpl	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>MDL_INHIBIT</SHORT-NAME>						
+										<VF>	ElementMdu	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>REQ_FID</SHORT-NAME>						
+										<VF>	ElementFid	</VF>				
+									</CONF-ITEM>							
+								</CONF-ITEMS>								
+							</CONF-ITEM>									
+							<CONF-ITEM>									
+								<SHORT-NAME>DEM_EVENT</SHORT-NAME>								
+								<SW-SYSCOND>	ElementSY	</SW-SYSCOND>						
+								<CONF-ITEMS>								
+									<CONF-ITEM>							
+										<SHORT-NAME>ELEMENT_NAME</SHORT-NAME>						
+										<VF>	ElementName	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DESC</SHORT-NAME>						
+										<VF>	DescEng	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DESC_KR</SHORT-NAME>						
+										<VF>	DescKor	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DEB_METHOD</SHORT-NAME>						
+										<VF>	EveDeb	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DEB_PARAM</SHORT-NAME>						
+										<VF>	EvePar	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>ELEMENT_COUNT</SHORT-NAME>						
+										<VF>	ElementCnt	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>MDL_INHIBIT</SHORT-NAME>						
+										<VF>	ElementMdu	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>REQ_FID</SHORT-NAME>						
+										<VF>	ElementFid	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>SIMILAR_COND</SHORT-NAME>						
+										<VF>	EveCond	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>MIL</SHORT-NAME>						
+										<VF>	EveMil	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DCY_TEST</SHORT-NAME>						
+										<VF>	EveDcy	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>SHUT_OFF</SHORT-NAME>						
+										<VF>	EveRec	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>RESET_INIT</SHORT-NAME>						
+										<VF>	EveIni	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>RESET_POSTCANCEL</SHORT-NAME>						
+										<VF>	EvePst	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>IUMPR_GRP</SHORT-NAME>						
+										<VF>	EveIumpr	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>READY_GRP</SHORT-NAME>						
+										<VF>	EveRdy	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>GRP_RPT</SHORT-NAME>						
+										<VF>	EveGrp	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DTC_2B</SHORT-NAME>						
+										<VF>	EveDtc2B	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DTC_EX</SHORT-NAME>						
+										<VF>	EveDtcEx	</VF>				
+									</CONF-ITEM>							
+								</CONF-ITEMS>								
+							</CONF-ITEM>									
+							<CONF-ITEM>									
+								<SHORT-NAME>FIM</SHORT-NAME>								
+								<SW-SYSCOND>	ElementSY	</SW-SYSCOND>						
+								<CONF-ITEMS>								
+									<CONF-ITEM>							
+										<SHORT-NAME>ELEMENT_NAME</SHORT-NAME>						
+										<VF>	ElementName	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DESC</SHORT-NAME>						
+										<VF>	DescEng	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DESC_KR</SHORT-NAME>						
+										<VF>	DescKor	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>PROVIDING_EVENT</SHORT-NAME>						
+										<VF>	ElementMdu	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>PROVIDING_SIGNAL</SHORT-NAME>						
+										<VF>	ElementFid	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>IUMPR</SHORT-NAME>						
+										<SW-SYSCOND>	FimIumpr_SY	</SW-SYSCOND>				
+										<CONF-ITEMS>						
+											<CONF-ITEM>					
+												<SHORT-NAME>DENOM_PHYRLS</SHORT-NAME>				
+												<VF>	FimDenRls	</VF>		
+											</CONF-ITEM>					
+											<CONF-ITEM>					
+												<SHORT-NAME>NUM_RLS</SHORT-NAME>				
+												<VF>	FimNumRls	</VF>		
+											</CONF-ITEM>					
+											<CONF-ITEM>					
+												<SHORT-NAME>FID_GROUP</SHORT-NAME>				
+												<VF>	FimIumpr	</VF>		
+											</CONF-ITEM>					
+										</CONF-ITEMS>						
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>SCHED_MODE</SHORT-NAME>						
+										<VF>	FimScd	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>SCHED</SHORT-NAME>						
+										<CONF-ITEMS>						
+											<CONF-ITEM>					
+												<SHORT-NAME>LOCKED</SHORT-NAME>				
+												<VF>	FimLck	</VF>		
+											</CONF-ITEM>					
+											<CONF-ITEM>					
+												<SHORT-NAME>ENG_MODE</SHORT-NAME>				
+												<VF>	FimEng	</VF>		
+											</CONF-ITEM>					
+											<CONF-ITEM>					
+												<SHORT-NAME>SHORT_TEST</SHORT-NAME>				
+												<VF>	FimTst	</VF>		
+											</CONF-ITEM>					
+											<CONF-ITEM>					
+												<SHORT-NAME>EXCLUSIVE</SHORT-NAME>				
+												<SW-SYSCOND>	FimExc_SY	</SW-SYSCOND>		
+												<CONF-ITEMS>				
+													<CONF-ITEM>			
+														<SHORT-NAME>EXCLUSION</SHORT-NAME>		
+														<VF>	FimExc	</VF>
+													</CONF-ITEM>			
+													<CONF-ITEM>			
+														<SHORT-NAME>EXCLU_PRIO</SHORT-NAME>		
+														<VF>	FimPrio	</VF>
+													</CONF-ITEM>			
+												</CONF-ITEMS>
+											</CONF-ITEM>					
+										</CONF-ITEMS>						
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>						
+										<SW-SYSCOND>	FimEve_SY	</SW-SYSCOND>				
+										<VF>	FimEve	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>INHIBITED_SUM_EVENT</SHORT-NAME>						
+										<SW-SYSCOND>	FimSumEve_SY	</SW-SYSCOND>				
+										<VF>	FimSumEve	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>INHIBITED_SIG</SHORT-NAME>						
+										<SW-SYSCOND>	FimSig_SY	</SW-SYSCOND>				
+										<VF>	FimSig	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>PROVIDED</SHORT-NAME>						
+										<SW-SYSCOND>	FimPrvd_SY	</SW-SYSCOND>				
+										<VF>	FimPrvd	</VF>				
+									</CONF-ITEM>							
+								</CONF-ITEMS>								
+							</CONF-ITEM>									
+							<CONF-ITEM>									
+								<SHORT-NAME>DEM_DTR</SHORT-NAME>								
+								<SW-SYSCOND>	ElementSY	</SW-SYSCOND>						
+								<CONF-ITEMS>								
+									<CONF-ITEM>							
+										<SHORT-NAME>ELEMENT_NAME</SHORT-NAME>						
+										<VF>	ElementName	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DESC</SHORT-NAME>						
+										<VF>	DescEng	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DESC_KR</SHORT-NAME>						
+										<VF>	DescKor	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>EVENT</SHORT-NAME>						
+										<VF>	DtrEve	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>ELEMENT_COUNT</SHORT-NAME>						
+										<VF>	ElementCnt	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>UASID</SHORT-NAME>						
+										<VF>	DtrUasid	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>OBDMID</SHORT-NAME>						
+										<VF>	DtrMid	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>TID</SHORT-NAME>						
+										<VF>	DtrTid	</VF>				
+									</CONF-ITEM>							
+								</CONF-ITEMS>								
+							</CONF-ITEM>									
+							<CONF-ITEM>									
+								<SHORT-NAME>DEM_SIG</SHORT-NAME>								
+								<SW-SYSCOND>	ElementSY	</SW-SYSCOND>						
+								<CONF-ITEMS>								
+									<CONF-ITEM>							
+										<SHORT-NAME>ELEMENT_NAME</SHORT-NAME>						
+										<VF>	ElementName	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DESC</SHORT-NAME>						
+										<VF>	DescEng	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>DESC_KR</SHORT-NAME>						
+										<VF>	DescKor	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>ELEMENT_COUNT</SHORT-NAME>						
+										<VF>	ElementCnt	</VF>				
+									</CONF-ITEM>							
+									<CONF-ITEM>							
+										<SHORT-NAME>MDL_INHIBIT</SHORT-NAME>						
+										<VF>	ElementMdu	</VF>				
+									</CONF-ITEM>							
+								</CONF-ITEMS>								
+							</CONF-ITEM>									
+						</CONF-ITEMS>										
+					</CONF-ITEM>											
+				</CONF-ITEMS>												
+			</CONF-SPEC>													
+		</SW-SYSTEM>														
+	</SW-SYSTEMS>															
+	<MATCHING-DCIS>															
+		<MATCHING-DCI>														
+			<SHORT-LABEL>ConfData</SHORT-LABEL>													
+			<URL></URL>													
+		</MATCHING-DCI>														
+	</MATCHING-DCIS>															
+</MSRSW>																

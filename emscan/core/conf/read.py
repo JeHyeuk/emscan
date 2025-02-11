@@ -1,95 +1,152 @@
-from dataclasses import dataclass
-from pandas import DataFrame
-from typing import Dict, List, Union
+from pandas import DataFrame, Series
+from typing import Dict, List, Union, Tuple
 from xml.etree.ElementTree import parse, Element, ElementTree
 
 
-@dataclass
-class TAGS:
+T_ADMIN: str = 'ADMIN-DATA/COMPANY-DOC-INFOS/COMPANY-DOC-INFO/SDGS/SDG/SD'
+T_MODEL: str = 'SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-SOURCE/SW-FEATURE-REF'
+T_ITEMS: str = 'SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-ITEM/CONF-ITEMS/CONF-ITEM'
 
-    ADMIN:str = 'ADMIN-DATA/COMPANY-DOC-INFOS/COMPANY-DOC-INFO/SDGS/SDG/SD'
-    MNAME:str = 'SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-SOURCE/SW-FEATURE-REF'
-    ITEMS:str = 'SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-ITEM/CONF-ITEMS/CONF-ITEM'
-
-
-class DemConf(DataFrame):
+class confReader(ElementTree):
     """
     EMS/ASW CONFDATA READER
     * AUTHOR   : JEHYEUK.LEE / KYUNA.CHO
     * DIVISION : VEHICLE CONTORL SOLUTION TEAM, HYUNDAI KEFICO Co.,LTD.
-    * UPDATED  : 24th, Jan, 2025.
+    * UPDATED  : 11th, Feb, 2025
+    * HISTORY  :
+    ----------------------------------------------------------------------------------------------------
+    |  version  |      updated     |    author   |  description
+    ----------------------------------------------------------------------------------------------------
+    |   V00.1   | 24th, Jan, 2025  | JEHYEUK LEE |  Initial Release
+    |   V00.2   | 11th, Feb, 2025  | JEHYEUK LEE |  Inheritance Type Changed: DataFrame -> ElementTree
+    ----------------------------------------------------------------------------------------------------
     """
-    _root:Element = None
-    def __init__(self, confdata:str):
-        self.parse(confdata)
-        _admin = self.getAdmin()
-        _mname = self.getModuleName()
+    def __call__(self, dem:Element) -> Dict[str, str]:
+        """
+        PARSE DEM ELEMENT
+        DEM TAG IS UNDER {T_ITEMS} or 'SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-ITEM/CONF-ITEMS/CONF-ITEM'
+        :param dem: [Element] Tag of Dem
+        :return:
 
-        data = []
-        for dem in self.findall(TAGS.ITEMS):
-            row = {}
-            row.update(_mname)
-            row.update(self.getDem(dem))
-            row.update(_admin)
-            data.append(row)
-        super().__init__(data=data)
-        return
+        @example
+        {'Model': 'AirTD', 'Filename': 'airtd_confdata.xml', 'Author': None,
+         'Function': 'This version is created by migration tool', 'Domain': 'SDOM',
+         'User': 'Choi KwangSeok', 'Date': '2019.3.6', 'Class': 'DEM_CONFDATA',
+         'Name': 'Summary', 'Variant': '1.0.2', 'Revision': '0', 'Type': 'XML',
+         'State': 'AVAILABLE', 'UniqueName': None, 'Component': None, 'Generated': None,
+         'History': '\n1.0.4; 0     2019.03.04 ...  Initial Release\n',
+         'DEM_TYPE': 'DEM_PATH', 'ELEMENT_NAME': 'AirTSumFlt',
+         'DESC': 'Intake air temperature: sum fault path ', 'FAULT_MAX': 'AirTSumFlt'}
+        """
+        def _items(tag:Element, container:Dict, parent:str=''):
+            """
+            RECURSIVE FUNCTION TO PARSE DEM SUB-ELEMENTS
+            :param tag       : [Element] Tag Element :: {dem}/CONF-TIEMS/CONF-ITEM
+            :param container : [Dict] Data Container
+            :param parent    : [str] TAG PATH
+            :return: None
+            """
+            name = tag.find('SHORT-NAME').text
+            if parent:
+                name = f'{parent}/{name}'
+            if tag.find('SW-SYSCOND') is not None:
+                container.update({f'{name}/SYSCOND': tag.find('SW-SYSCOND').text})
+            if tag.find('VF') is not None:
+                container.update({name: tag.find('VF').text})
+                return
+            for _sub_tag in tag.findall('CONF-ITEMS/CONF-ITEM'):
+                _items(_sub_tag, container, name)
 
-    @classmethod
-    def find(cls, tag: str) -> Element:
-        return cls._root.find(tag)
-
-    @classmethod
-    def findall(cls, tag: str) -> List[Element]:
-        return cls._root.findall(tag)
-
-    @classmethod
-    def getAdmin(cls) -> Dict[str, str]:
-        return {tag.attrib["GID"]: cls.text(tag) for tag in cls.findall(TAGS.ADMIN)}
-
-    @classmethod
-    def getModuleName(cls) -> Dict[str, str]:
-        return {'MODULE_NAME': cls.text(TAGS.MNAME)}
-
-    @classmethod
-    def getDem(cls, dem: Element) -> Dict[str, str]:
-        spec = {'DEM_TYPE': cls.text(dem.find('SHORT-NAME')),}
+        spec = self._admin.copy() if self.include_admin else {}
+        spec.update({'DEM_TYPE': dem.find('SHORT-NAME').text})
         if dem.find('SW-SYSCOND') is not None:
-            spec['SYSCOND'] = cls.text(dem.find('SW-SYSCOND'))
+            spec.update({'SYSCOND': dem.find('SW-SYSCOND').text})
         for item in dem.findall('CONF-ITEMS/CONF-ITEM'):
-            cls.getDemItem(item, spec)
+            _items(item, spec)
         return spec
 
-    @classmethod
-    def getDemItem(cls, item:Element, spec:Dict = None, parent:str = '') -> Dict[str, str]:
-        if not spec:
-            spec = {}
-        name = cls.text(item.find('SHORT-NAME'))
-        if parent:
-            name = f'{parent}/{name}'
-        if item.find('SW-SYSCOND') is not None:
-            spec.update({f'{name}/SYSCOND': cls.text(item.find('SW-SYSCOND'))})
-        if item.find('VF') is not None:
-            spec.update({name: cls.text(item.find('VF'))})
-            return spec
-        for subItem in item.findall('CONF-ITEMS/CONF-ITEM'):
-            cls.getDemItem(subItem, spec, name)
-        return spec
+    def __getitem__(self, item:Union[str, Tuple[str, str]]) -> Union[DataFrame, Series]:
+        df = self.df.copy()
+        if isinstance(item, str):
+            return df[item]
+        if isinstance(item, Tuple):
+            if len(item) % 2:
+                raise KeyError('Tuple key requires even numbers of argument: [column, value]')
+        for n in range(len(item)):
+            if not n % 2:
+                df = df[df[item[n]] == item[n + 1]]
+        return df.drop(columns=self.admin.index).dropna(axis=1, how='all')
 
-    @classmethod
-    def parse(cls, xml:str):
-        cls._root = parse(xml).getroot()
+    def __init__(self, conf:str):
+        super().__init__(file=conf)
+        self._admin = {"Model": self.find(T_MODEL).text}
+        self._admin.update({tag.attrib["GID"]: tag.text for tag in self.findall(T_ADMIN)})
+        self.include_admin = True
         return
 
-    @classmethod
-    def text(cls, path_or_tag:Union[str, Element]) -> str:
-        if isinstance(path_or_tag, str):
-            text = cls._root.find(path_or_tag).text if "/" in path_or_tag else path_or_tag
-        elif isinstance(path_or_tag, Element):
-            text = path_or_tag.text
-        else:
-            raise TypeError()
-        return text.replace("\t", "") if text else ""
+    def __repr__(self) -> repr:
+        """
+        IF YOU WOULD LIKE TO SEE THE WHOLE DATAFRAME, USE THE FOLLOWING SYNTAX
+        ```
+        from pandas import set_option
+        set_option('display.expand_frame_repr', False)
+        ```
+        :return:
+        """
+        return repr(self.df)
+
+    def __setitem__(self, key, value):
+        # TODO
+        return
+
+    @property
+    def admin(self) -> Series:
+        """
+        :return:
+
+        @example
+        Model                                             AirTD
+        Filename                             airtd_confdata.xml
+        Author                                             None
+        Function      This version is created by migration tool
+        Domain                                             SDOM
+        User                                                ***
+        Date                                           2019.3.6
+        Class                                      DEM_CONFDATA
+        Name                                            Summary
+        Variant                                           1.0.2
+        Revision                                              0
+        Type                                                XML
+        State                                         AVAILABLE
+        UniqueName                                         None
+        Component                                          None
+        Generated                                          None
+        dtype: object
+        """
+        return Series(self._admin).drop(labels=["History"])
+
+    @property
+    def df(self) -> DataFrame:
+        """
+        :return:
+
+        @example
+            Model            Filename  ... INHIBITED_EVENT INHIBITED_EVENT/SYSCOND
+        0   AirTD  airtd_confdata.xml  ...             NaN                     NaN
+        1   AirTD  airtd_confdata.xml  ...             NaN                     NaN
+        2   AirTD  airtd_confdata.xml  ...             NaN                     NaN
+        ..    ...                 ...  ...             ...                     ...
+        13  AirTD  airtd_confdata.xml  ...             NaN                     NaN
+        14  AirTD  airtd_confdata.xml  ...       VehVStuck                     NaN
+        15  AirTD  airtd_confdata.xml  ...     EgrTElecNpl            LPEGR_SC > 0
+        """
+        return DataFrame([self(dem) for dem in self.findall(T_ITEMS)])
+
+    @property
+    def history(self) -> str:
+        return self._admin["History"]
+
+
 
 
 
@@ -97,9 +154,12 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-
-    conf = DemConf(
+    conf = confReader(
         # r'./template.xml'
         r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\airtd_confdata.xml'
     )
     print(conf)
+    # print(conf.df)
+    print(conf.admin)
+    print(conf["ELEMENT_NAME", "AirTSumFlt"])
+    print(conf.history)

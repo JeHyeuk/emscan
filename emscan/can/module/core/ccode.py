@@ -1,15 +1,17 @@
 try:
     from .namingrule import naming
 except ImportError:
-    from pyems.apps.model.core.namingrule import naming
+    from emscan.can.module.core.namingrule import naming
 from pandas import DataFrame, Series
 from typing import Tuple
 
-sendType = lambda x: "Periodic" if x == "P" else \
-                     "Periodic On Event" if x == "PE" else \
-                     "Event On Change" if x == "EC" else \
-                     "Event On Write" if x == "EW" else \
-                     "Periodic"
+
+SEND_TYPE = {
+    "P": "Periodic",
+    "PE": "Periodic On Event",
+    "EC": "Event On Change",
+    "EW": "Event On Write",
+}
 
 summaryHeader = lambda message: f"""
 /* ------------------------------------------------------------------------------
@@ -24,7 +26,7 @@ summaryCode = lambda message: f"""
  MESSAGE\t\t\t: {message["Message"]}
  MESSAGE ID\t\t: {message["ID"]}
  MESSAGE DLC\t: {message["DLC"]}
- SEND TYPE\t\t: {sendType(message["Send Type"])}
+ SEND TYPE\t\t: {SEND_TYPE[message["Send Type"]]}
  VERSION\t\t\t: {message["Version"]}
 -------------------------------------------------------------------------------- */"""
 
@@ -33,9 +35,38 @@ summaryRecv = lambda message: f"""
  MESSAGE\t\t\t: {message["Message"]}
  MESSAGE ID\t\t: {message["ID"]}
  MESSAGE DLC\t: {message["DLC"]}
- SEND TYPE\t\t: {sendType(message["Send Type"])}
+ SEND TYPE\t\t: {SEND_TYPE[message["Send Type"]]}
  CHANNEL\t\t\t: {message["Channel"]}-CAN
 -------------------------------------------------- */"""
+
+def messageAlign(message:DataFrame) -> list:
+    dlc = message.iloc[0]["DLC"]
+    buffer = [f"Reserved_{n // 8}" for n in range(8 * dlc)]
+    for _, sig in message.iterrows():
+        index = sig["StartBit"]
+        while index < (sig["StartBit"] + sig["Length"]):
+            buffer[index] = sig["SignalRenamed"] if sig["SignalRenamed"] else sig["Signal"]
+            index += 1
+
+    aligned = []
+    count, name = 0, buffer[0]
+    for n, sig in enumerate(buffer):
+        if sig == name:
+            count += 1
+            if n == 8 * dlc - 1:
+                aligned.append(f"uint32 {name} : {count};")
+        else:
+            aligned.append(f"uint32 {name} : {count};")
+            count, name = 1, sig
+
+    eigen = []
+    aligned_copy = aligned.copy()
+    for n, struct in enumerate(aligned):
+        label = struct.split(" : ")[0].replace("uint32 ", "")
+        if label in eigen:
+            aligned_copy[n] = aligned_copy[n].replace(label, f'{label}_{eigen.count(label)}')
+        eigen.append(label)
+    return aligned_copy
 
 def messageDefine(message:Series) -> str:
     chn = "PL2" if message["Channel"] == "H" else "PL1" if message["Channel"] == "L" else "P"
@@ -52,37 +83,60 @@ def messageDefine(message:Series) -> str:
     return f"#define {asw}\t{bsw}\n"
 
 def messageStructure(message:DataFrame) -> str:
-    def _reserved(_text: str, bit_space: int, reserve_cnt: int) -> Tuple[str, int]:
-        quotient, remainder = bit_space // 8, bit_space % 8
-        for dummy in range(quotient):
-            _text += f"\t\tuint32 Reserved_{reserve_cnt} : 8;\n"
-            reserve_cnt += 1
-        if remainder:
-            _text += f"\t\tuint32 Reserved_{reserve_cnt} : {remainder};\n"
-            reserve_cnt += 1
-        return _text, reserve_cnt
-
-    last = message.iloc[-1]
-    text, pAddr, pSize, nCnt = "", 0, 0, 1
-    for _, sig in message.iterrows():
-        name = sig['SignalRenamed'] if sig['SignalRenamed'] else sig.name
-        text, nCnt = _reserved(text, sig["StartBit"] - (pAddr + pSize), nCnt)
-        if sig["Message"] == "L_BMS_22_100ms" and sig["Length"] == 32:
-            for n in range(4):
-                text += f"\t\tuint32 {name}_{n + 1}: 8;\n"
-        else:
-            text += f"\t\tuint32 {name}: {sig.Length};\n"
-        pAddr, pSize = sig["StartBit"], sig.Length
-    residue = 8 * last["DLC"] - (last["Length"] + last["StartBit"])
-    text, nCnt = _reserved(text, residue, nCnt)
-    o, c = "{", "}"
+    _msg, _id, _dlc, _stype = message.iloc[0][["Message", "ID", "DLC", "Send Type"]]
     return f"""
-typedef union {o}
-    uint8 Data[{last["DLC"]}];
-    struct {o}
-{text}\t{c} B;
-{c} CanFrm_{naming(last["Message"]).tag};
+/* ------------------------------------------------------------------------------
+ MESSAGE\t\t\t: {_msg}
+ MESSAGE ID\t\t: {_id}
+ MESSAGE DLC\t: {_dlc}
+ SEND TYPE\t\t: {_stype}
+-------------------------------------------------------------------------------- */
+typedef union &lb;
+    uint8 Data[{_dlc}];
+    struct &lb;
+        {
+            "&lf;&tb;&tb;".join(messageAlign(message))
+        }
+    &rb; B;
+&rb; CanFrm_{naming(_msg).tag};
+""" \
+.replace("&lb;", "{") \
+.replace("&rb;", "}") \
+.replace("&lf;", "\n") \
+.replace("&tb;", "\t")[1:]
 """
+
+#     def _reserved(_text: str, bit_space: int, reserve_cnt: int) -> Tuple[str, int]:
+#         quotient, remainder = bit_space // 8, bit_space % 8
+#         for dummy in range(quotient):
+#             _text += f"\t\tuint32 Reserved_{reserve_cnt} : 8;\n"
+#             reserve_cnt += 1
+#         if remainder:
+#             _text += f"\t\tuint32 Reserved_{reserve_cnt} : {remainder};\n"
+#             reserve_cnt += 1
+#         return _text, reserve_cnt
+#
+#     last = message.iloc[-1]
+#     text, pAddr, pSize, nCnt = "", 0, 0, 1
+#     for _, sig in message.iterrows():
+#         name = sig['SignalRenamed'] if sig['SignalRenamed'] else sig.name
+#         text, nCnt = _reserved(text, sig["StartBit"] - (pAddr + pSize), nCnt)
+#         if sig["Message"] == "L_BMS_22_100ms" and sig["Length"] == 32:
+#             for n in range(4):
+#                 text += f"\t\tuint32 {name}_{n + 1}: 8;\n"
+#         else:
+#             text += f"\t\tuint32 {name}: {sig.Length};\n"
+#         pAddr, pSize = sig["StartBit"], sig.Length
+#     residue = 8 * last["DLC"] - (last["Length"] + last["StartBit"])
+#     text, nCnt = _reserved(text, residue, nCnt)
+#     o, c = "{", "}"
+#     return f"""
+# typedef union {o}
+#     uint8 Data[{last["DLC"]}];
+#     struct {o}
+# {text}\t{c} B;
+# {c} CanFrm_{naming(last["Message"]).tag};
+# """
 
 def messageCanFrmRecv(message:Series, crc:Series, aliveCounter:Series, block:DataFrame) -> str:
     o, c = "{", "}"

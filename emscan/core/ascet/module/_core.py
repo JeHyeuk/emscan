@@ -286,8 +286,6 @@ class specificationBlock(baseAmd):
             hierarchyName = hierarchy.attrib["name"]
             hierarchy = hierarchy.findall("Contents/DiagramElement")
             path = f'{parent}/{hierarchyName}'[1:]
-        if not collector:
-            collector = []
 
         for tag in hierarchy:
             if tag[0].tag.endswith('Element'):

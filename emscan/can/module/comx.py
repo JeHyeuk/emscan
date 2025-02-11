@@ -4,14 +4,12 @@ try:
     from ..db.db import db
     from ..db.objs import MessageObj
     from .core import ccode, element
-    from .core.oid import objectID
 except ImportError:
     from emscan.config import PATH
     from emscan.core.ascet.module.module import Module
     from emscan.can.db.db import db
     from emscan.can.db.objs import MessageObj
     from emscan.can.module.core import ccode, element
-    from emscan.can.module.core.oid import objectID
 from datetime import datetime
 import os
 

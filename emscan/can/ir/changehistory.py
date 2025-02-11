@@ -1,13 +1,13 @@
 try:
-    from ...core.ascet.module.amd import AMD
+    from ...core.ascet.module.module import Module
 except ImportError:
-    from emscan.core.ascet.module.amd import AMD
+    from emscan.core.ascet.module.module import Module
 
 
 
 def Compare(prev:str, curr:str):
-    prev = AMD(prev).Element
-    curr = AMD(curr).Element
+    prev = Module(prev).Elements
+    curr = Module(curr).Elements
     deleted = prev[~prev['name'].isin(curr['name'])]
     if deleted.empty:
         print("삭제된 요소: 없음")

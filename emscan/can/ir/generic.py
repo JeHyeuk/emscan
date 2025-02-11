@@ -1,14 +1,14 @@
 try:
     from ...config import PATH
-    from ...core.ascet.module.amd import AMD
+    from ...core.ascet.module.module import Module
     from ...svn.scon import SourceControl
     from ...svn.vcon import VersionControl
 except ImportError:
     from emscan.config import PATH
-    from emscan.core.ascet.module.amd import AMD
+    from emscan.core.ascet.module.module import Module
     from emscan.svn.scon import SourceControl
     from emscan.svn.vcon import VersionControl
-from pandas import DataFrame
+from pandas import DataFrame, Series
 import pypandoc, warnings
 
 
@@ -42,10 +42,10 @@ class IntegrationRequest(DataFrame):
         PATH.SVN.BUILD.SDD,
         PATH.SVN.POLY
     )
-    _mdb: DataFrame = VersionControl(PATH.SVN.MD.db)
-    _cdb: DataFrame = VersionControl(PATH.SVN.CONF.db)
-    _sdb: DataFrame = VersionControl(PATH.SVN.BUILD.SDD.db)
-    _pdb: DataFrame = VersionControl(PATH.SVN.POLY.db)
+    _mdb: VersionControl = VersionControl(PATH.SVN.MD.db)
+    _cdb: VersionControl = VersionControl(PATH.SVN.CONF.db)
+    _sdb: VersionControl = VersionControl(PATH.SVN.BUILD.SDD.db)
+    _pdb: VersionControl = VersionControl(PATH.SVN.POLY.db)
 
     def __init__(self, *models, **kwargs):
         super().__init__(columns=self._column, index=[n for n in range(len(models))])
@@ -57,21 +57,20 @@ class IntegrationRequest(DataFrame):
         return
 
     def Unit(self, index:int, amd:str):
-        model = AMD(amd)
+        model = Module(amd)
         self._update_func(index, model)
         self._update_conf(index, model)
         self._update_sdd(index, model)
         self._update_poly(index, model)
         return
 
-
-    def _update_func(self, index:int, model:AMD):
+    def _update_func(self, index:int, model:Module):
         self.loc[index, "FunctionName"] = name = model['name']
         self.loc[index, "SCMName"] = "\\".join(model["nameSpace"][1:].split("/") + [name])
         self.loc[index, "SCMRev"] = self._mdb.file(f"{name}.zip")["Revision"]
         return
 
-    def _update_conf(self, index:int, model:AMD):
+    def _update_conf(self, index:int, model:Module):
         conf = f'{model["name"].lower()}_confdata.xml'
         svn = self._cdb.file(conf)
         if svn.empty:
@@ -80,7 +79,7 @@ class IntegrationRequest(DataFrame):
         self.loc[index, "DSMRev"] = svn["Revision"]
         return
 
-    def _update_sdd(self, index:int, model:AMD):
+    def _update_sdd(self, index:int, model:Module):
         self.loc[index, "SDDName"] = sdd = f'{model["OID"][1:]}.zip'
         if not sdd in PATH.SVN.BUILD.SDD.items():
             self.loc[index, "FunctionVersion"] = '00.00.001 (신규 생성)'
@@ -95,15 +94,17 @@ class IntegrationRequest(DataFrame):
         except OSError:
             pypandoc.pandoc_download.download_pandoc()
             text = pypandoc.convert_file(note, 'plain')
+        svn = self._sdb.file(sdd)
         self.loc[index, "FunctionVersion"] = "".join([c for c in text.split("\n")[0] if c.isdigit() or c == "."])
-        self.loc[index, "SDDRev"] = self._sdb.file(sdd)["Revision"]
+        self.loc[index, "SDDRev"] = svn["Revision"]
         return
 
-    def _update_poly(self, index:int, model:AMD):
-        self.loc[index, "PolyspaceName"] = poly = f"BF_Result_{model.name}.7z"
+    def _update_poly(self, index:int, model:Module):
+        self.loc[index, "PolyspaceName"] = poly = f"BF_Result_{model['name']}.7z"
         svn = self._pdb.file(poly)
-        if not svn.empty:
-            self.loc[index, "PolyspaceRev"] = svn["Revision"]
+        if svn.empty:
+            return
+        self.loc[index, "PolyspaceRev"] = svn["Revision"]
         return
 
 
@@ -114,15 +115,10 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     ir = IntegrationRequest(
-        "ComDef_HEV",
-        "ComRx_HEV",
-        'CanFDBDCM_HEV',
-        'CanFDSMKM_HEV',
-        'CanFDSMKD_HEV',
-        'LogIf_HEV',
-        ChangeHistoryName='8210_CAN_원격시동시_저온유동정지_확대_적용_통신.pptx',
-        ChangeHistoryRev=35186,
-        Comment="LCRPT240913001-1 원격 시동 시 저온 유동정지 확대 적용 인터페이스 개발",
+        "CanEMSM", "CanFDEMSM03",
+        ChangeHistoryName='8251_토크제한송출신호_SYSCON처리_CanEMSM_CanFDEMSM03.pptx',
+        ChangeHistoryRev=35613,
+        Comment="빌드 오류 개선: ENG_TqRatRamp 참조 시 SYSCON 조건 추가",
         User="이제혁",
         Date=datetime.now().strftime("%Y-%m-%d")
     )

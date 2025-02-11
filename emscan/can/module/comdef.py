@@ -1,15 +1,17 @@
 try:
     from ...core.ascet.module.module import Module
     from ...config import PATH
+    from ...config.error import ObjectIDError
     from ..db.db import db
     from .core import ccode, element
-    from .core.oid import objectID
+    from .oid import oidGenerator
 except ImportError:
     from emscan.config import PATH
+    from emscan.config.error import ObjectIDError
     from emscan.core.ascet.module.module import Module
     from emscan.can.db.db import db
     from emscan.can.module.core import ccode, element
-    from emscan.can.module.core.oid import objectID
+    from emscan.can.module.oid import oidGenerator
 from datetime import datetime
 from pandas import DataFrame
 import pandas as pd
@@ -35,7 +37,7 @@ class ComDef(Module):
         self.new_header = self._gen_header(database)
         self.new_ccode = self._gen_process(database)
         self.new_elements = self._alloc_element()
-        if not self.name.endswith("_HEV"):
+        if not self['name'].endswith("_HEV"):
             self.new_header = self.new_header.replace(
                 "CAN_MSGNAME_IMU_01_10ms_P",
                 "CAN_MSGNAME_YRS_01_10ms_P"
@@ -85,7 +87,7 @@ class ComDef(Module):
             define += ccode.messageDefine(message)
         struct = ""
         for name, message in database.messages.items():
-            struct += ccode.summaryHeader(message)
+            # struct += ccode.summaryHeader(message)
             struct += ccode.messageStructure(message.signals)
 
         syntax = f"""/* ================================================
@@ -187,15 +189,19 @@ Copyright(c) 2020-{date[:4]} HYUNDAI KEFICO Co.,Ltd, All Rights Reserved. */
     def _alloc_element(self):
         old_elements = self.main.Element.copy()
         new_elements = self.def_elements
+
         merged = pd.merge(new_elements, old_elements[["name", "OID"]], on='name', how='left')
         merged["OID_x"] = merged["elementOID"] = merged["OID_y"]
         merged.drop(columns=["OID_y"], inplace=True)
         merged.rename(columns={"OID_x": "OID"}, inplace=True)
-        empty = merged[merged["OID"].isna()].index
-        if not empty.empty:
-            oid = objectID()
-            oid.exclude(merged["OID"].tolist() + self.main.Process.index.tolist())
-            merged.loc[empty, "OID"] = merged.loc[empty, "elementOID"] = oid.sample(len(empty))
+
+        indexer = merged["OID"].isna()
+        if merged[indexer].empty:
+            return merged
+
+        merged.loc[indexer, 'OID'] = merged.loc[indexer, 'elementOID'] = oidGenerator(len(merged[indexer]))
+        if not merged[merged['OID'].duplicated()].empty:
+            raise ObjectIDError('OID 중복 발생: 코드 수정 필요')
         return merged
 
     def _method_validate(self, database:db):
@@ -211,28 +217,21 @@ Copyright(c) 2020-{date[:4]} HYUNDAI KEFICO Co.,Ltd, All Rights Reserved. */
                 raise KeyError(f'삭제 필요 Method: {method}')
         return
 
-    def write(self, summary:bool=True):
+    def generate(self, summary:bool=True):
         self.main.find("Component/Comment").text = self.comment
-        for elem in self.main.Element["name"]:
-            self.main.remove(elem)
-            self.impl.remove(elem)
-            self.data.remove(elem)
+        super().remove(*self.Elements["name"])
 
         for _, kwargs in self.new_elements.iterrows():
-            self.main.append(**kwargs.to_dict())
-            self.impl.append(**kwargs.to_dict())
-            self.data.append(**kwargs.to_dict())
+            self.append(**kwargs.to_dict())
 
         self.spec.change("Header", self.new_header)
         for method, context in self.new_ccode.items():
             self.spec.change(method, context)
 
-        self.main.write()
-        self.impl.write()
-        self.data.write()
-        self.spec.write()
+        super().write()
+        print(f"모델 생성 완료: {os.path.join(PATH.DOWNLOADS, self['name'])}")
+
         if summary:
-            print(f"모델 생성 완료: {os.path.join(PATH.DOWNLOADS, self.name)}")
             deleted = self._old[~self._old["name"].isin(self._new["name"])].copy()
             print("삭제된 항목: ", end="")
             print("없음" if deleted.empty else ", ".join(deleted["name"]))
@@ -243,9 +242,9 @@ Copyright(c) 2020-{date[:4]} HYUNDAI KEFICO Co.,Ltd, All Rights Reserved. */
         return
 
 
+
 if __name__ == "__main__":
     from emscan.can.db.db import DB
-    from emscan.config import PATH
     from pandas import set_option
 
     set_option('display.expand_frame_repr', False)
@@ -258,6 +257,7 @@ if __name__ == "__main__":
     }
     DB.dev_mode(SPEC)
     DB.constraint(~DB["ECU"].isin(EXCLUDE[SPEC]))
+    DB.constraint(DB["Message"] != "MCU_03_100ms")
 
     mname = f"ComDef_HEV" if SPEC == "HEV" else "ComDef"
     model = ComDef(
@@ -265,6 +265,5 @@ if __name__ == "__main__":
         source=PATH.ASCET.EXPORT.file(f"ComDef{'' if SPEC == 'ICE' else '_HEV'}.main.amd"),
         database=DB
     )
-
-    model.write()
+    model.generate()
 

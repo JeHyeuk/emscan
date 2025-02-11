@@ -1,11 +1,23 @@
 try:
     from ....config import PATH
     from ....config.error import AmdFormatError
-    from ._core import main, implementation, data, specificationCode, specificationBlock
+    from ._core import (
+        main,
+        implementation,
+        data,
+        specificationCode,
+        specificationBlock
+    )
 except ImportError:
     from emscan.config import PATH
     from emscan.config.error import AmdFormatError
-    from emscan.core.ascet.module._core import main, implementation, data, specificationCode, specificationBlock
+    from emscan.core.ascet.module._core import (
+        main,
+        implementation,
+        data,
+        specificationCode,
+        specificationBlock
+    )
 from pandas import DataFrame
 from typing import Union
 import pandas as pd
@@ -20,56 +32,45 @@ class Module:
             amd = os.path.join(PATH.ASCET.BIN, os.path.basename(amd).replace(".zip", ".main.amd"))
         if not amd.endswith(".amd"):
             raise AmdFormatError(f"file: {amd} is not ASCET amd file")
-        self.file = amd
+        self.file = file = amd
         self.main = main(amd)
-        self.name = self.main["name"]
+        self.impl = implementation(file.replace(".main.", ".implementation."))
+        self.data = data(file.replace(".main.", ".data."))
+        if self.main["specificationType"] == 'CCode':
+            self.spec = specificationCode(file.replace(".main.", ".specification."))
+        elif self.main["specificationType"] == 'BlockDiagram':
+            self.spec = specificationBlock(file.replace(".main.", ".specification."))
+        else:
+            raise TypeError()
         return
 
     def __repr__(self) -> repr:
         return repr(self.main)
 
     def __str__(self) -> str:
-        return str(self.name)
+        return str(self['name'])
 
     def __getitem__(self, item):
         return self.main[item]
 
-    def remove(self, *elements):
-        for elem in elements:
-            self.main.remove(elem)
-            self.impl.remove(elem)
-            self.data.remove(elem)
+    def append(self, **kwargs):
+        self.main.append(**kwargs)
+        self.impl.append(**kwargs)
+        self.data.append(**kwargs)
         return
 
-    def write(self, **kwargs):
+    def remove(self, *elements):
+        self.main.remove(elements)
+        self.impl.remove(elements)
+        self.data.remove(elements)
+        return
+
+    def write(self):
         self.main.write()
         self.impl.write()
         self.data.write()
         self.spec.write()
         return
-
-    @property
-    def impl(self) -> implementation:
-        if not hasattr(self, "__impl__"):
-            self.__setattr__("__impl__", implementation(self.file.replace(".main.", ".implementation.")))
-        return self.__getattribute__("__impl__")
-
-    @property
-    def data(self) -> data:
-        if not hasattr(self, "__data__"):
-            self.__setattr__("__data__", data(self.file.replace(".main.", ".data.")))
-        return self.__getattribute__("__data__")
-
-    @property
-    def spec(self) -> Union[specificationBlock, specificationCode]:
-        if not hasattr(self, "__spec__"):
-            if self.main["specificationType"] == "CCode":
-                self.__setattr__("__spec__", specificationCode(self.file.replace(".main.", ".specification.")))
-            elif self.main["specificationType"] == "BlockDiagram":
-                self.__setattr__("__spec__", specificationBlock(self.file.replace(".main.", ".specification.")))
-            else:
-                pass
-        return self.__getattribute__("__spec__")
 
     @property
     def Elements(self) -> DataFrame:
@@ -96,7 +97,7 @@ class Module:
 
             elem_d = self.data.Element.set_index(keys="elementOID")
             elem = elem.join(elem_d.drop(columns=[c for c in elem_d.columns if c in elem.columns.values]))
-            elem["module"] = self.name
+            elem["module"] = self['name']
             self.__setattr__("__elem__", elem)
         return self.__getattribute__("__elem__")
 
@@ -113,7 +114,7 @@ class Module:
         return self.main.Process
 
     @property
-    def IO(self) -> DataFrame:
+    def hierarchyIO(self) -> DataFrame:
         """
         @Columns
         Index(['Hierarchy', 'flexibleCreated', 'hidePinNames', 'hideName',
@@ -165,5 +166,5 @@ if __name__ == "__main__":
 
     model = Module(r"D:\ETASData\ASCET6.1\Export\CanFDEMSM01\CanFDEMSM01.main.amd")
     # print(model.spec.Element)
-    print(model.IO)
-    model.IO.to_clipboard()
+    print(model.hierarchyIO)
+    model.hierarchyIO.to_clipboard()

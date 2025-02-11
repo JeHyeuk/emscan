@@ -36,11 +36,11 @@ class VersionControl(DataFrame):
         )
         return
 
-    def file(self, file:str) -> Union[DataFrame, Series]:
+    def file(self, file:str) -> Series:
         query = self[self["상대경로"].str.endswith(file)]
-        if len(query) == 1:
-            return query.iloc[0]
-        return query
+        if query.empty:
+            return Series()
+        return query.iloc[0]
 
     @classmethod
     def _format_log_datetime(cls, x):
