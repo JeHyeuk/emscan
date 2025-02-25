@@ -47,6 +47,198 @@ class ComDef(Module):
         self._new = self.new_elements.copy()
         return
 
+    def _gen_header(self, database:db) -> str:
+        return f"""/* ================================================
+* COMPANY\t: HYUNDAI KEFICO Co.,Ltd
+* DIVISION\t: WG2, Vehicle Control Solution Team 1
+* UPDATED\t: {datetime.today().strftime("%Y-%m-%d")}
+* DB VER.\t\t: HYUNDAI-KEFICO EMS CAN DB
+
+  Copyright(c) 2020-{datetime.today().year} HYUNDAI KEFICO Co.,Ltd, All Rights Reserved.
+================================================== */
+
+#include <Bsw/Include/Bsw.h>
+
+#ifdef SRV_HMCEMS
+    {"&lf;&tb;".join([
+        f"#define COMPILE_UNUSED__{self['name'].upper()}_IMPL__{name}" 
+        for name, _ in database.messages.items()]
+    )}
+#endif
+
+{"&lf;".join([ccode.messageDefine(meta) for name, meta in database.messages.items()])}
+
+{"&lf;".join([ccode.messageStructure(meta.signals) for name, meta in database.messages.items()])}
+
+/* ----------------------------------------------------------------------------------------------------
+    Inline Function : Memory Copy
+---------------------------------------------------------------------------------------------------- */
+inline void __memcpy(void *dst, const void *src, size_t len) {{
+    size_t i;
+    char *d = dst;
+    const char *s = src;
+    for (i = 0; i < len; i++)
+        d[i] = s[i];
+}}
+
+/* ----------------------------------------------------------------------------------------------------
+    Inline Function : Message Counter Check
+---------------------------------------------------------------------------------------------------- */
+inline void cntvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {{
+    if ( recv == calc ) {{
+        *timer += 1;
+        if ( *timer >= thres ) {{
+            *timer = thres;
+            *vld = 0;
+        }}
+    }}
+    else {{
+        *timer = 0;
+        *vld = 1;
+    }}
+}}
+
+/* ----------------------------------------------------------------------------------------------------
+    Inline Function : CRC Check
+---------------------------------------------------------------------------------------------------- */
+inline void crcvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {{
+    if ( recv == calc ) {{
+        *timer = 0;
+        *vld = 1;
+    }}
+    else {{
+        *timer += 1;
+        if ( *timer >= thres ) {{
+            *timer = thres;
+            *vld = 0;
+        }}
+    }}
+}}
+
+/* ----------------------------------------------------------------------------------------------------
+    Inline Function : Alive Counter Check
+---------------------------------------------------------------------------------------------------- */
+inline void alvvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {{
+    if ( ( recv == calc ) || ( (recv - calc) > 10 ) ) {{
+        *timer += 1;
+        if ( *timer >= thres ) {{
+            *timer = thres;
+            *vld = 0;
+        }}
+    }}
+    else {{
+        *timer = 0;
+        *vld = 1;
+    }}
+}}
+""" \
+    .replace("&tb;", "\t") \
+    .replace("&lf;", "\n")
+
+#         date = datetime.today().strftime("%Y-%m-%d")
+#         define = f""""""
+#         for name, message in database.messages.items():
+#             define += ccode.messageDefine(message)
+#         struct = ""
+#         for name, message in database.messages.items():
+#             # struct += ccode.summaryHeader(message)
+#             struct += ccode.messageStructure(message.signals)
+#
+#         syntax = f"""/* ================================================
+# * COMPANY\t: HYUNDAI KEFICO Co.,Ltd
+# * DIVISION\t: WG2, Vehicle Control Solution Team 1
+# * UPDATED\t: {date}
+# * DB VER.\t\t: HYUNDAI-KEFICO EMS CAN DB
+#
+#   Copyright(c) 2020-{date[:4]} HYUNDAI KEFICO Co.,Ltd, All Rights Reserved.
+# ================================================== */
+#
+# #include <Bsw/Include/Bsw.h>
+#
+# {define}
+# {struct}
+#         """
+#         syntax += """
+# /* ----------------------------------------------------------------------------------------------------
+#     Inline Function : Memory Copy
+# ---------------------------------------------------------------------------------------------------- */
+# inline void __memcpy(void *dst, const void *src, size_t len) {
+#     size_t i;
+#     char *d = dst;
+#     const char *s = src;
+#     for (i = 0; i < len; i++)
+#         d[i] = s[i];
+# }
+#
+# /* ----------------------------------------------------------------------------------------------------
+#     Inline Function : Message Counter Check
+# ---------------------------------------------------------------------------------------------------- */
+# inline void cntvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {
+#     if ( recv == calc ) {
+#         *timer += 1;
+#         if ( *timer >= thres ) {
+#             *timer = thres;
+#             *vld = 0;
+#         }
+#     }
+#     else {
+#         *timer = 0;
+#         *vld = 1;
+#     }
+# }
+#
+# /* ----------------------------------------------------------------------------------------------------
+#     Inline Function : CRC Check
+# ---------------------------------------------------------------------------------------------------- */
+# inline void crcvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {
+#     if ( recv == calc ) {
+#         *timer = 0;
+#         *vld = 1;
+#     }
+#     else {
+#         *timer += 1;
+#         if ( *timer >= thres ) {
+#             *timer = thres;
+#             *vld = 0;
+#         }
+#     }
+# }
+#
+# /* ----------------------------------------------------------------------------------------------------
+#     Inline Function : Alive Counter Check
+# ---------------------------------------------------------------------------------------------------- */
+# inline void alvvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {
+#     if ( ( recv == calc ) || ( (recv - calc) > 10 ) ) {
+#         *timer += 1;
+#         if ( *timer >= thres ) {
+#             *timer = thres;
+#             *vld = 0;
+#         }
+#     }
+#     else {
+#         *timer = 0;
+#         *vld = 1;
+#     }
+# }
+#         """
+#         return syntax
+
+    @staticmethod
+    def _gen_process(database:db):
+        objs = {}
+        for name, message in database.messages.items():
+            code = ccode.messageCanFrmRecv(message, message.CRC, message.AliveCounter, message.signals)
+            objs[f"_{name}"] = f"""/* ================================================
+* SUPPLIER\t\t\t: HYUNDAI KEFICO Co.,Ltd
+* DIVISION\t\t\t: WG2, Vehicle Control Solution Team 1
+* SPECIFICATION\t: HYUNDAI-KEFICO EMS CAN DB
+* REFERENCE 1\t\t: AUTOSAR E2E PROFILE-5, 11
+* REFERENCE 2\t\t: HMG STANDARD ES95480-02K
+==================================================
+Copyright(c) 2020-{datetime.today().year} HYUNDAI KEFICO Co.,Ltd, All Rights Reserved. */
+{ccode.summaryCode(message)}{code}"""
+        return objs
+
     @staticmethod
     def _gen_element(database:db):
         data = []
@@ -78,113 +270,6 @@ class ComDef(Module):
             elements[elements["modelType"] == "complex"].sort_values(by="name")
         ], axis=0, ignore_index=True)
         return elements.drop_duplicates(subset=["name", "OID"], keep="first")
-
-    @staticmethod
-    def _gen_header(database:db):
-        date = datetime.today().strftime("%Y-%m-%d")
-        define = ""
-        for name, message in database.messages.items():
-            define += ccode.messageDefine(message)
-        struct = ""
-        for name, message in database.messages.items():
-            # struct += ccode.summaryHeader(message)
-            struct += ccode.messageStructure(message.signals)
-
-        syntax = f"""/* ================================================
-* COMPANY\t: HYUNDAI KEFICO Co.,Ltd
-* DIVISION\t: WG2, Vehicle Control Solution Team 1
-* UPDATED\t: {date}
-* DB VER.\t\t: HYUNDAI-KEFICO EMS CAN DB
-
-  Copyright(c) 2020-{date[:4]} HYUNDAI KEFICO Co.,Ltd, All Rights Reserved.
-================================================== */
-
-#include <Bsw/Include/Bsw.h>
-
-{define}
-{struct}
-        """
-        syntax += """
-/* ----------------------------------------------------------------------------------------------------
-    Inline Function : Memory Copy
----------------------------------------------------------------------------------------------------- */
-inline void __memcpy(void *dst, const void *src, size_t len) {
-    size_t i;
-    char *d = dst;
-    const char *s = src;
-    for (i = 0; i < len; i++)
-        d[i] = s[i];
-}
-
-/* ----------------------------------------------------------------------------------------------------
-    Inline Function : Message Counter Check
----------------------------------------------------------------------------------------------------- */
-inline void cntvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {
-    if ( recv == calc ) {
-        *timer += 1;
-        if ( *timer >= thres ) {
-            *timer = thres;
-            *vld = 0; 
-        }
-    }
-    else {
-        *timer = 0;
-        *vld = 1;
-    }
-}
-
-/* ----------------------------------------------------------------------------------------------------
-    Inline Function : CRC Check
----------------------------------------------------------------------------------------------------- */
-inline void crcvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {
-    if ( recv == calc ) {
-        *timer = 0;
-        *vld = 1;
-    }
-    else {
-        *timer += 1;
-        if ( *timer >= thres ) {
-            *timer = thres;
-            *vld = 0;
-        }
-    }
-}
-
-/* ----------------------------------------------------------------------------------------------------
-    Inline Function : Alive Counter Check
----------------------------------------------------------------------------------------------------- */
-inline void alvvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {
-    if ( ( recv == calc ) || ( (recv - calc) > 10 ) ) {
-        *timer += 1;
-        if ( *timer >= thres ) {
-            *timer = thres;
-            *vld = 0; 
-        }
-    }
-    else {
-        *timer = 0;
-        *vld = 1;
-    }
-}
-        """
-        return syntax
-
-    @staticmethod
-    def _gen_process(database:db):
-        date = datetime.today().strftime("%Y-%m-%d")
-        objs = {}
-        for name, message in database.messages.items():
-            code = ccode.messageCanFrmRecv(message, message.CRC, message.AliveCounter, message.signals)
-            objs[f"_{name}"] = f"""/* ================================================
-* SUPPLIER\t\t\t: HYUNDAI KEFICO Co.,Ltd
-* DIVISION\t\t\t: WG2, Vehicle Control Solution Team 1
-* SPECIFICATION\t: HYUNDAI-KEFICO EMS CAN DB
-* REFERENCE 1\t\t: AUTOSAR E2E PROFILE-5, 11
-* REFERENCE 2\t\t: HMG STANDARD ES95480-02K
-==================================================
-Copyright(c) 2020-{date[:4]} HYUNDAI KEFICO Co.,Ltd, All Rights Reserved. */
-{ccode.summaryCode(message)}{code}"""
-        return objs
 
     def _alloc_element(self):
         old_elements = self.main.Element.copy()
@@ -257,7 +342,8 @@ if __name__ == "__main__":
     }
     DB.dev_mode(SPEC)
     DB.constraint(~DB["ECU"].isin(EXCLUDE[SPEC]))
-    DB.constraint(DB["Message"] != "MCU_03_100ms")
+    # DB.constraint(~DB["Message"].isin(["MCU_03_100ms"]))
+    # DB.constraint(~DB["Message"].isin(["PDC_FD_15_300ms", "CLU_CNTL_01_00ms"]))
 
     mname = f"ComDef_HEV" if SPEC == "HEV" else "ComDef"
     model = ComDef(

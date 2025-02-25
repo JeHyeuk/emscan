@@ -44,7 +44,7 @@ class ComX(Module):
         return normal, wakeup
 
     def _gen_process(self, database:db):
-        model = "ComDef_HEV" if self.name.endswith("_HEV") else "ComDef"
+        model = "ComDef_HEV" if self['name'].endswith("_HEV") else "ComDef"
         objs = {method: "" for method in self.main.Process["name"]}
         for name, message in database.messages.items():
             normal, wakeup = self._alloc_method(message)
@@ -89,7 +89,7 @@ class ComX(Module):
         self.data.write()
         self.spec.write()
         if summary:
-            print(f"모델 생성 완료: {os.path.join(PATH.DOWNLOADS, self.name)}")
+            print(f"모델 생성 완료: {os.path.join(PATH.DOWNLOADS, self['name'])}")
         return
 
 

@@ -149,7 +149,6 @@ class db(DataFrame):
 # DB = db(DBio()["dir"].values[-1])
 DB = db(DBio[-1]["dir"])
 
-
 if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
@@ -161,44 +160,10 @@ if __name__ == "__main__":
     # print(DB)
     # print(DB[DB['Send Type'] == 'EC'])
     # print(DB("EMS_06_100ms"))
-    # print(DB("OBD_EngClntTempVal"))
+    print(DB("DATC_OutTempSnsrVal"))
 
     # print(DB("ABS_ESC_01_10ms"))
     # print(DB("ABS_ESC_01_10ms", "Signal"))
 
-    myMsg = DB("BDC_FD_06_200ms")
-    # print(myMsg.aligned)
-    # for bit in myMsg.aligned:
-    #     print(bit)
-
-    # res = []
-    # tank = []
-    # prev = myMsg.aligned[0]
-    # cnt = 1 if prev == "Reserved" else 0
-    # for bit in myMsg.aligned:
-    #     if bit == "Reserved":
-    #         if prev != bit:
-    #             cnt += 1
-    #         tank.append(bit)
-    #         if len(tank) > 8:
-    #             tank = [f"Reserved_{cnt}"]
-    #             cnt += 1
-    #         res.append(f"Reserved_{cnt}")
-    #     else:
-    #         tank = []
-    #         res.append(bit)
-    #     prev = bit
-    #
-    # # for bit in res:
-    # #     print(bit)
-    res = myMsg.aligned
-    count, name = 0, res[0]
-    for n, sig in enumerate(res):
-        if sig == name:
-            count += 1
-            if n == 8 * myMsg.DLC - 1:
-                print(f"uint32 {name} : {count};")
-            continue
-
-        print(f"uint32 {name} : {count};")
-        count, name = 1, sig
+    # myMsg = DB("TCU_01_10ms")
+    # print(myMsg.signals)

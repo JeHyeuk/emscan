@@ -48,6 +48,15 @@ def messageAlign(message:DataFrame) -> list:
             buffer[index] = sig["SignalRenamed"] if sig["SignalRenamed"] else sig["Signal"]
             index += 1
 
+    # Exception
+    cnt = {}
+    for n, sig in enumerate(buffer.copy()):
+        if sig.startswith('xEV_Tot'):
+            if not sig in cnt:
+                cnt[sig] = 0
+            buffer[n] = f'{buffer[n]}_{(cnt[sig] // 8) + 1}'
+            cnt[sig] += 1
+
     aligned = []
     count, name = 0, buffer[0]
     for n, sig in enumerate(buffer):
@@ -80,7 +89,7 @@ def messageDefine(message:Series) -> str:
     if message["Message"] == "HCU_11_H_00ms":
         bsw = "CAN_MSGNAME_HCU_11_00ms_PL2"
     asw = f'MSGNAME_{naming(message["Message"]).tag}'
-    return f"#define {asw}\t{bsw}\n"
+    return f"#define {asw}\t{bsw}"
 
 def messageStructure(message:DataFrame) -> str:
     _msg, _id, _dlc, _stype = message.iloc[0][["Message", "ID", "DLC", "Send Type"]]
@@ -91,17 +100,15 @@ def messageStructure(message:DataFrame) -> str:
  MESSAGE DLC\t: {_dlc}
  SEND TYPE\t\t: {_stype}
 -------------------------------------------------------------------------------- */
-typedef union &lb;
+typedef union {{
     uint8 Data[{_dlc}];
-    struct &lb;
+    struct {{
         {
             "&lf;&tb;&tb;".join(messageAlign(message))
         }
-    &rb; B;
-&rb; CanFrm_{naming(_msg).tag};
+    }} B;
+}} CanFrm_{naming(_msg).tag};
 """ \
-.replace("&lb;", "{") \
-.replace("&rb;", "}") \
 .replace("&lf;", "\n") \
 .replace("&tb;", "\t")[1:]
 """
@@ -115,7 +122,7 @@ typedef union &lb;
 #             _text += f"\t\tuint32 Reserved_{reserve_cnt} : {remainder};\n"
 #             reserve_cnt += 1
 #         return _text, reserve_cnt
-#
+# 
 #     last = message.iloc[-1]
 #     text, pAddr, pSize, nCnt = "", 0, 0, 1
 #     for _, sig in message.iterrows():
@@ -139,7 +146,6 @@ typedef union &lb;
 # """
 
 def messageCanFrmRecv(message:Series, crc:Series, aliveCounter:Series, block:DataFrame) -> str:
-    o, c = "{", "}"
     nm = naming(message["Message"])
     def _sig(sig:Series) -> str:
         if not sig["Value Type"].lower() in ["unsigned", "signed"]:
@@ -170,9 +176,13 @@ def messageCanFrmRecv(message:Series, crc:Series, aliveCounter:Series, block:Dat
             msb = f"( {buff} >> {sig.Length - 1} ) && 1"
             neg = f"(sint{size})( (~{buff} + 1) | {hex(2 ** size - 2 ** (sig.Length - 1)).upper().replace('X', 'x')} )"
             pos = f"(sint{size}){buff}"
-            nzr = hex(2 ** (sig.Length - 1)).upper().replace("X", "x")
-            return f"\t{elem} = {msb} ? {neg} : {pos};\n" \
-                   f"\tif ( {buff} == {nzr} ) {o} {elem} = 0x0; {c}\n"
+
+            syn = f"\t{elem} = {msb} ? {neg} : {pos};\n"
+            rtz = f"\tif ( {buff} == {hex(2 ** (sig.Length - 1)).upper().replace('X', 'x')} ) {{ {elem} = 0x0; }}\n"
+
+            if sig.name in ["TCU_TqRdctnVal", "TCU_EngTqLimVal", "L_TCU_TqRdctnVal", "L_TCU_EngTqLimVal"]:
+                syn += rtz
+            return syn
 
     __crc__ = "" if crc.empty else f"""
     {crc["Signal"]}_Can = (uint{crc["Length"]}){nm.tag}.B.{crc["Signal"]};
@@ -199,15 +209,15 @@ def messageCanFrmRecv(message:Series, crc:Series, aliveCounter:Series, block:Dat
                                              f"{nm.thresholdTime} );\n"
     __alvc__ = "" if aliveCounter.empty else f"{aliveCounter.Signal}Calc = {aliveCounter.Signal}_Can;"
     return f"""
-if ( CanFrm_Recv( MSGNAME_{nm.tag}, {nm.buffer}, &{nm.dlc} ) == CAN_RX_UPDATED ) {o}
+if ( CanFrm_Recv( MSGNAME_{nm.tag}, {nm.buffer}, &{nm.dlc} ) == CAN_RX_UPDATED ) {{
 
-    CanFrm_{nm.tag} {nm.tag} = {o}0, {c};
+    CanFrm_{nm.tag} {nm.tag} = {{0, }};
     __memcpy( {nm.tag}.Data, {nm.buffer}, {nm.dlc} );
 {__crc__}{__alv__}
 
 {__sig__}
     {nm.counter}++;
-{c}
+}}
 
 cntvld( &{nm.messageCountValid}, &{nm.messageCountTimer}, {nm.counter}, {nm.counterCalc}, {nm.thresholdTime} );
 {__crcv__}{__alvv__}

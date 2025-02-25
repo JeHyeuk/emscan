@@ -115,12 +115,14 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     ir = IntegrationRequest(
-        "CanEMSM", "CanFDEMSM03",
-        ChangeHistoryName='8251_토크제한송출신호_SYSCON처리_CanEMSM_CanFDEMSM03.pptx',
-        ChangeHistoryRev=35613,
-        Comment="빌드 오류 개선: ENG_TqRatRamp 참조 시 SYSCON 조건 추가",
+        "ComDef", "ComDef_HEV", "ComRx", "ComRx_HEV",
+        ChangeHistoryName='8272_CAN수신_인터페이스_개발.pptx',
+        ChangeHistoryRev=35800,
+        Comment="[CANRPA] 메시지/신호 추가 DB r.21400",
         User="이제혁",
         Date=datetime.now().strftime("%Y-%m-%d")
     )
     print(ir)
     ir.to_clipboard(index=False)
+
+

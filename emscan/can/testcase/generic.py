@@ -10,14 +10,17 @@ except ImportError:
     from emscan.can.db.objs import MessageObj
     from emscan.config.error import TestCaseError
     from emscan.core.testcase.cases import Cases
+from typing import List
 
 
 class testCaseRxDecode:
     _progress:str = 'ipynb'
+    if __file__.endswith('.py'):
+        _progress = 'py'
     def __init__(self, *messages:MessageObj, **options):
         self.messages = messages
         self.options = options
-        self.testcases = []
+        self.testcases:List[Cases] = []
         return
 
     def __iter__(self) -> Cases:
@@ -112,25 +115,27 @@ if __name__ == "__main__":
     import os
     option = {
         "Requirement - Traceability": ".".join(os.path.basename(DB.source).split(".")[:-1]),
-        "Test SW": "TX4T9MTN9L1N@C20",
-        "Test HW": "Kappa 1.5 TGDI",
-        "Test Vehicle / Engine / HIL": "SP3i PROTO(BS6)",
-        "Test Environment": "Dynamic(Chamber)",
+        "Test SW": "TX4T9MTNDLGN@D20 TSW",
+        "Test HW": "G4III TGDI HEV OTA",
+        "Test Vehicle / Engine / HIL": "BENCH",
+        "Test Environment": "Static",
         "Remark / Comment": f"AUTOMATIC TEST CASE V{datetime.today().strftime('%Y-%m-%d')}",
         "Measure / Log File (.dat)": "",
         "MDA Configuration File (.xda)": "",
         "Experiment File (.exp)": "",
     }
-    # myTC = TestCase_RxDecoding(DB("ABS_ESC_01_10ms"), **option)
-    # print(myTC)
+    myTC = testCaseRxDecode(DB("CLU_CNTL_01_00ms"), **option)
+    myTC.generate()
+    myTC.saveToTestReport()
+
 
     # mname = "EMS_01_10ms"
-    for mname in ["EMS_01_10ms", "EMS_02_10ms", "EMS_03_10ms", "EMS_05_100ms", "EMS_06_100ms"]:
-        print(f"... {mname}")
-        fname = f"CanFDEMSM{naming(mname).number}.zip"
-        model = PATH.SVN.MODEL.CAN.file(fname)
-        myTC = TestCase_TxInterface(DB(mname), model, **option)
-        myTC.to_testcase(rf"TESTCASE-{mname}-Signal Interface @CanFDEMSM{naming(mname).number}")
-        myTC.to_report(rf"TESTREPORT-{mname}-Signal Interface @CanFDEMSM{naming(mname).number}")
+    # for mname in ["EMS_01_10ms", "EMS_02_10ms", "EMS_03_10ms", "EMS_05_100ms", "EMS_06_100ms"]:
+    #     print(f"... {mname}")
+    #     fname = f"CanFDEMSM{naming(mname).number}.zip"
+    #     model = PATH.SVN.MODEL.CAN.file(fname)
+    #     myTC = TestCase_TxInterface(DB(mname), model, **option)
+    #     myTC.to_testcase(rf"TESTCASE-{mname}-Signal Interface @CanFDEMSM{naming(mname).number}")
+    #     myTC.to_report(rf"TESTREPORT-{mname}-Signal Interface @CanFDEMSM{naming(mname).number}")
     # print(myTC)
     # myTC.to_clipboard()

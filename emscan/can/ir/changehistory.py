@@ -8,23 +8,39 @@ except ImportError:
 def Compare(prev:str, curr:str):
     prev = Module(prev).Elements
     curr = Module(curr).Elements
-    deleted = prev[~prev['name'].isin(curr['name'])]
+    deleted = prev[~prev['name'].isin(curr['name'])].drop_duplicates(subset=['name'])
     if deleted.empty:
         print("삭제된 요소: 없음")
     else:
         print(f"삭제된 요소: {len(deleted)}건")
         print(", ".join(deleted["name"]))
 
-    added = curr[~curr['name'].isin(prev['name'])]
+    added = curr[~curr['name'].isin(prev['name'])].drop_duplicates(subset=["name"])
     if added.empty:
         print("추가된 요소: 없음")
     else:
         print(f"추가된 요소: {len(added)}건")
         print(", ".join(added["name"]))
 
+    cal = added[added["kind"] == "parameter"]
+    cal.index = [""] * len(cal)
+    if cal.empty:
+        print("추가된 Cal Parameter: 없음")
+    else:
+        desc = cal[["name", "Comment", "module", "value"]]
+        print(f"추가된 Cal Parameter: {len(cal)}건")
+        print(desc)
+        desc.to_clipboard(index=False)
+        print("Copied!")
+
+
 
 if __name__ == "__main__":
+    from pandas import set_option
+    set_option('display.expand_frame_repr', False)
+
     model = "LogIf_HEV"
-    asis = rf"D:\Archive\00_개발업무\통신개발-\2025\DS0117 LCR_EHRS히터폐회로_LIN\모델\Prev\LinM_HEV.main.amd"
-    tobe = rf"D:\Archive\00_개발업무\통신개발-\2025\DS0117 LCR_EHRS히터폐회로_LIN\모델\Curr\LinM_HEV.main.amd"
+    asis = rf"D:\Archive\00_프로젝트\2017 통신개발-\2025\DS0217 자동화모델개발\모델\Prev\ComDef.main.amd"
+    tobe = rf"D:\Archive\00_프로젝트\2017 통신개발-\2025\DS0217 자동화모델개발\모델\Curr\ComDef.main.amd"
     Compare(asis, tobe)
+

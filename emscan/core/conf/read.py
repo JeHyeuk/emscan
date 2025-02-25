@@ -75,7 +75,7 @@ class confReader(ElementTree):
         for n in range(len(item)):
             if not n % 2:
                 df = df[df[item[n]] == item[n + 1]]
-        return df.drop(columns=self.admin.index).dropna(axis=1, how='all')
+        return df.drop(columns=self._admin.keys()).dropna(axis=1, how='all')
 
     def __init__(self, conf:str):
         super().__init__(file=conf)
@@ -160,6 +160,6 @@ if __name__ == "__main__":
     )
     print(conf)
     # print(conf.df)
-    print(conf.admin)
-    print(conf["ELEMENT_NAME", "AirTSumFlt"])
-    print(conf.history)
+    # print(conf.admin)
+    # print(conf["ELEMENT_NAME", "AirTSumFlt"])
+    # print(conf.history)

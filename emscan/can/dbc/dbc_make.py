@@ -7,37 +7,49 @@ import re
 set_option('display.expand_frame_repr', False)
 
 # JSON 파일에서 DataFrame 생성
-data = pd.read_json(r"D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dev\KEFICO-EMS_CANFD_V24.12.18.json", orient="index")
+data = pd.read_json(r"D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dev\KEFICO-EMS_CANFD_V25.02.17.json", orient="index")
 
 # 마지막 행 삭제
 data = data.iloc[:-1]  # 마지막 행을 제외한 나머지 행을 선택
 #data = data.iloc[:3]  # 마지막 행을 제외한 나머지 행을 선택
 print(data)
 
+#----------------------------------------------------------------------------------------------------------------------
 
 # DBC 파일 생성 함수
-def edit_dbc_file(dbc_file_path, df, canstd_filters, vvd_filters):
+def edit_dbc_file(dbc_file_path, df, CanSTDDB_filters, Cvvd_filters, MeptSys_filters):
     try:
         # 입력 숫자에 따라 Codeword 조건 생성
-        def check_codeword(codeword, canstd_filters, vvd_filters):
+        def check_codeword(codeword, CanSTDDB_filters, Cvvd_filters, MeptSys_filters):
             if pd.isna(codeword) or not codeword.strip():
                 # Codeword가 비어 있으면 필터 통과
                 return True
             # Cfg_CanSTDDB_C 필터링
             if "Cfg_CanSTDDB_C" in codeword:
-                for filter_value in canstd_filters:
+                for filter_value in CanSTDDB_filters:
                     if eval(codeword.replace("Cfg_CanSTDDB_C", str(filter_value))):
                         return True
             # Cfg_Vvd_C 필터링
             elif "Cfg_Vvd_C" in codeword:
-                for filter_value in vvd_filters:
+                for filter_value in Cvvd_filters:
                     if eval(codeword.replace("Cfg_Vvd_C", str(filter_value))):
                         return True
-            # Cfg_CanSTDDB_C나 Cfg_Vvd_C가 없다면 필터 통과
+            # Cfg_MeptSys_C 필터링
+            elif "Cfg_MeptSys_C" in codeword:
+                for filter_value in MeptSys_filters:
+                    if eval(codeword.replace("Cfg_MeptSys_C", str(filter_value))):
+                        return True
+            # Cfg_CanSTDDB_C나 Cfg_Vvd_C, Cfg_MeptSys_C가 없다면 필터 통과
             return False
 
-        # Codeword 필터링
-        filtered_df = df[df["Codeword"].apply(lambda x: check_codeword(x, canstd_filters, vvd_filters))]
+        # Codeword 컬럼이 있는지 확인
+        if "Codeword" in df.columns:
+            # Codeword 필터링
+            filtered_df = df[df["Codeword"].apply(lambda x: check_codeword(x, CanSTDDB_filters, Cvvd_filters, MeptSys_filters))]
+        else:
+            print("Warning: 'Codeword' 컬럼이 없습니다. 모든 데이터가 필터링 없이 통과됩니다.")
+            filtered_df = df  # Codeword 컬럼이 없으면 필터링 생략
+
 
         with open(dbc_file_path, 'w') as f:
             # DBC 파일 기본 헤더 작성
@@ -117,8 +129,13 @@ def edit_dbc_file(dbc_file_path, df, canstd_filters, vvd_filters):
                         Length = int(Length)
                         Factor = float(row.get("Factor", 1))  # Factor는 float으로 처리
                         Offset = float(row.get("Offset", 0))
-                        Min = float(row.get("Min", 0))
-                        Max = float(row.get("Max", 0))
+
+                        # Min과 Max 값이 비어 있을 경우 기본값 0 설정
+                        Min = float(row.get("Min", 0) or 0)
+                        Max = float(row.get("Max", 0) or 0)
+
+                        Unit = row.get("Unit", None)  # Unit 값을 가져옴
+
                     except ValueError:
                         Factor = 1.0
                         Offset = 0.0
@@ -140,8 +157,7 @@ def edit_dbc_file(dbc_file_path, df, canstd_filters, vvd_filters):
                     Sig_Receivers = "".join(Sig_Receivers.split()) if Sig_Receivers and str(
                         Sig_Receivers).strip() else "Temp"
 
-                    f.write(f" SG_ {Signal_Name} : {StartBit}|{Length}@{Endian}{code} "
-                            f"({Factor},{Offset}) [{Min}|{Max}] \"\"  {Sig_Receivers}\n")
+                    f.write(f' SG_ {Signal_Name} : {StartBit}|{Length}@{Endian}{code} ({Factor},{Offset}) [{Min}|{Max}] "{Unit}"  {Sig_Receivers}\n')
 
                 else:
                     print(f"Warning: Row {index}에 'Signal' 값이 없습니다.")
@@ -214,13 +230,9 @@ def edit_dbc_file(dbc_file_path, df, canstd_filters, vvd_filters):
             # ------------------------------------------------------------------------------------
 
             f.write(
-                "BA_DEF_ BO_  \"VFrameFormat\" ENUM  \"StandardCAN\",\"ExtendedCAN\",\"reserved\","
-                "\"reserved\",\"reserved\",\"reserved\",\"reserved\",\"reserved\",\"reserved\","
-                "\"reserved\",\"reserved\",\"reserved\",\"reserved\",\"reserved\",\"StandardCAN_FD\",\"ExtendedCAN_FD\";\n"
-            )
-
-            f.write(
-                "BA_DEF_ BO_  \"GenMsgSendType\" ENUM  \"Cyclic\",\"NoMsgSendType\";\n"
+                'BA_DEF_ BO_  "VFrameFormat" ENUM  "StandardCAN","ExtendedCAN","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","StandardCAN_FD","ExtendedCAN_FD";\n'
+                'BA_DEF_ BO_  "GenMsgSendType" ENUM  "Cyclic","NoMsgSendType";\n'
+                'BA_DEF_ BO_  "GenMsgCycleTime" INT 0 2000;\n'
             )
             f.write("\n")
             # ------------------------------------------------------------------------------------
@@ -232,22 +244,26 @@ def edit_dbc_file(dbc_file_path, df, canstd_filters, vvd_filters):
             )
             f.write("\n")
             # ------------------------------------------------------------------------------------
-
+            #DBC 내 Networks 컬럼 생성
             f.write(
-                "BA_DEF_  \"DBName\" STRING;\n"
-                "BA_DEF_  \"BusType\" STRING;\n"
-                "BA_DEF_  \"Baudrate\" INT 50000 1000000;\n"
+                'BA_DEF_  "DBName" STRING ;\n'
+                'BA_DEF_  "BusType" STRING ;\n'
+                'BA_DEF_  "Baudrate" INT 50000 1000000;\n'
+                'BA_DEF_  "Manufacturer" STRING ;\n'
             )
             f.write("\n")
             # ------------------------------------------------------------------------------------
-
+            # DBC 내 Networks에 생성된 컬럼의 값 삽입
             # BA_DEF_DEF_ 블록 작성
             f.write(
+                'BA_DEF_DEF_  "Manufacturer" "(c)HYUNDAI KEFICO CAN그룹";\n'
                 'BA_DEF_DEF_  "DBName" "CANFD_V01";\n'
                 'BA_DEF_DEF_  "BusType" "CAN FD";\n'
                 'BA_DEF_DEF_  "Baudrate" 500000;\n'
                 'BA_DEF_DEF_  "GenSigStartValue" 0;\n'
                 'BA_DEF_DEF_  "GenMsgSendType" "NoMsgSendType";\n'
+                'BA_DEF_DEF_  "UserSigValidity" "IG";\n'
+                'BA_DEF_DEF_  "GenMsgCycleTime" 200;\n'
             )
             f.write("\n")
             # ------------------------------------------------------------------------------------
@@ -280,7 +296,7 @@ def edit_dbc_file(dbc_file_path, df, canstd_filters, vvd_filters):
 
                     f.write(
                         f'BA_ "GenMsgSendType" BO_ {Message_id} {send_type_value};\n'
-                        #f'BA_ "GenMsgCycleTime" BO_ {Message_id} {cycle_time};\n'
+                        f'BA_ "GenMsgCycleTime" BO_ {Message_id} {cycle_time};\n'
                         #f'BA_ "GenMsgILSupport" BO_ {Message_id} 0;\n'
                         #f'BA_ "TpMessage" BO_ {Message_id} 1;\n'
                         #f'BA_ "GenMsgDelayTime" BO_ {Message_id} 0;\n'
@@ -299,6 +315,7 @@ def edit_dbc_file(dbc_file_path, df, canstd_filters, vvd_filters):
                 Message_id = row.get("ID", None)
                 Signal_Name = row.get("Signal", None)
                 GenSigStartValue = row.get("GenSigStartValue", None)
+                UserSigValidity = row.get("UserSigValidity", None)
 
                 if Message_id is not None:
                     try:
@@ -310,6 +327,20 @@ def edit_dbc_file(dbc_file_path, df, canstd_filters, vvd_filters):
                         Message_id = None
                         GenSigStartValue = None
 
+                # UserSigValidity 값을 변환
+                user_sig_validity_map = {
+                    "B+": 0,
+                    "ACC": 1,
+                    "IG": 2,
+                    "IG1": 3,
+                    "IG2": 4,
+                    "IG3": 5,
+                    "IG1 or IG2": 6,
+                    "IG1 or IG3": 7,
+                    "Undef": 8
+                }
+                UserSigValidity = user_sig_validity_map.get(UserSigValidity, 8)  # 기본값은 8로 설정
+
                 # 파일에 작성
                 if Message_id is not None:
                     send_type_value = 0 if Send_Type in ["P", "PE"] else 1
@@ -317,7 +348,7 @@ def edit_dbc_file(dbc_file_path, df, canstd_filters, vvd_filters):
                     f.write(
                         #f'BA_ "GenSigSendType" SG_ {Message_id} {Signal_Name} {};\n'
                         f'BA_ "GenSigStartValue" SG_ {Message_id} {Signal_Name} {GenSigStartValue};\n'
-                        #f'BA_ "UserSigValidity" SG_ {Message_id} {Signal_Name} {};\n'
+                        f'BA_ "UserSigValidity" SG_ {Message_id} {Signal_Name} {UserSigValidity};\n'
                     )
 
             f.write("\n")
@@ -350,35 +381,48 @@ def edit_dbc_file(dbc_file_path, df, canstd_filters, vvd_filters):
 
                     converted_value_table = []
                     for item in items:
-                        # 0x0~0xFFFF:CRCValue 형식 처리
-                        match = re.match(r"(0x[0-9A-F]+)~(0x[0-9A-F]+):(.+)", item.strip())
+                        # B0:Description 형식 처리 (비트 자리 값)
+                        match = re.match(r"B(\d+):(.+)", item.strip())
                         if match:
-                            start_hex = match.group(1)
-                            end_hex = match.group(2)
-                            description = match.group(3).strip()
+                            bit_position = int(match.group(1))  # 비트 자리수
+                            description = match.group(2).strip()
 
-                            # 16진수 값을 10진수로 변환
-                            start_dec = int(start_hex, 16)
-                            end_dec = int(end_hex, 16)
+                            # 2의 비트 자리수 승 계산
+                            bit_value = 2 ** bit_position
 
                             # 변환된 값과 설명을 리스트에 추가
-                            converted_value_table.append(
-                                f'{start_dec} "{start_hex}~{end_hex}:{description}" {end_dec} "{start_hex}~{end_hex}:{description}"')
+                            converted_value_table.append(f'{bit_value} "{description}"')
+
                         else:
-                            # 0x0:Description 형식 처리 (범위가 없을 경우)
-                            match = re.match(r"(0x[0-9A-F]+):(.+)", item.strip())
+                            # 기존 처리: 0x0~0xFFFF:CRCValue 또는 0x0:Description 형식 처리
+                            match = re.match(r"(0x[0-9A-F]+)~(0x[0-9A-F]+):(.+)", item.strip())
                             if match:
-                                hex_value = match.group(1)
-                                description = match.group(2).strip()
+                                start_hex = match.group(1)
+                                end_hex = match.group(2)
+                                description = match.group(3).strip()
 
                                 # 16진수 값을 10진수로 변환
-                                try:
-                                    decimal_value = int(hex_value, 16)
-                                    # 변환된 값과 설명을 리스트에 추가
-                                    converted_value_table.append(f'{decimal_value} "{description}"')
-                                except ValueError:
-                                    print(f"Warning: {hex_value} 변환 실패")
-                                    continue  # 변환 실패 시 해당 항목은 건너뜀
+                                start_dec = int(start_hex, 16)
+                                end_dec = int(end_hex, 16)
+
+                                # 변환된 값과 설명을 리스트에 추가
+                                converted_value_table.append(
+                                    f'{start_dec} "{start_hex}~{end_hex}:{description}" {end_dec} "{start_hex}~{end_hex}:{description}"')
+                            else:
+                                # 0x0:Description 형식 처리 (범위가 없을 경우)
+                                match = re.match(r"(0x[0-9A-F]+):(.+)", item.strip())
+                                if match:
+                                    hex_value = match.group(1)
+                                    description = match.group(2).strip()
+
+                                    # 16진수 값을 10진수로 변환
+                                    try:
+                                        decimal_value = int(hex_value, 16)
+                                        # 변환된 값과 설명을 리스트에 추가
+                                        converted_value_table.append(f'{decimal_value} "{description}"')
+                                    except ValueError:
+                                        print(f"Warning: {hex_value} 변환 실패")
+                                        continue  # 변환 실패 시 해당 항목은 건너뜀
 
                     # 변환된 값들이 하나도 없으면 해당 행은 표출하지 않음
                     if converted_value_table:
@@ -390,13 +434,22 @@ def edit_dbc_file(dbc_file_path, df, canstd_filters, vvd_filters):
                 if Message_id is not None and Signal_Name and value_table_str:
                     f.write(f'VAL_ {Message_id} {Signal_Name} {value_table_str} ;\n')
 
-            f.write("\n")
 
+            f.write("\n")
 
     except FileNotFoundError:
         print(f"Error: {dbc_file_path} 파일을 찾을 수 없습니다.")
 
 
 # 사용 예시
-dbc_file_path = r'D:\DBC_Make2.dbc'
-edit_dbc_file(dbc_file_path, data, canstd_filters=[2], vvd_filters=[0])
+dbc_file_path = r'D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dbc\DBC_Make2.dbc'
+edit_dbc_file(dbc_file_path, data, CanSTDDB_filters=[2], Cvvd_filters=[0], MeptSys_filters=[1])
+
+
+
+#BCM_02_200ms  0x3E0                           Cfg_CanSTDDB_C == 0
+#CVVD1  0x300                                      Cfg_Vvd_C > 0
+#HU_OTA_01_500ms  0x3B9                        Cfg_CanSTDDB_C == 2
+#HU_OTA_PE_00  0x3B9                             Cfg_CanSTDDB_C == 0
+#PDC_FD_01_200ms  0x3E0                         Cfg_CanSTDDB_C == 2
+#EMS_15_00ms  0x300

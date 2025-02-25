@@ -77,7 +77,6 @@ class DBio:
         return cls.clipboard2db(save=False)
 
 
-
 DBio.initialize()
 
 
@@ -86,7 +85,7 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
 
-    # print(DBio[-1])
+    print(DBio[-1])
     # print(DBio.sources)
     # print(DBio.baseline())
     DBio.clipboard2db(save=True)
