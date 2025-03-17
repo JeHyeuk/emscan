@@ -19,7 +19,11 @@ import os, uvicorn
 app = FastAPI()
 app.mount("/src", StaticFiles(directory="src"), name="src")
 app.mount("/conf", StaticFiles(directory="conf"), name="conf")
-SVN = VersionControl(PATH.SVN.CONF.db)
+try:
+    SVN = VersionControl(PATH.SVN.CONF.db)
+except FileNotFoundError:
+    SVN = VersionControl()
+    SVN = SVN[SVN["상대경로"].str.endswith("_confdata.xml")]
 
 @app.get("/")
 def read_root():

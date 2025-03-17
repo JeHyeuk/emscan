@@ -150,7 +150,6 @@ class Path(str):
             return found[0]
         if not found:
             raise FileNotFoundError
-        return found
 
 
 class _SVN(Path):
@@ -215,19 +214,19 @@ SDD       = Path(r"D:\SDD\Notes\Files")
 SVN       = _SVN(r"D:\svn")
 ASCET     = _ASCET(r"D:\ETASData\ASCET6.1")
 
-# In case for individual path
-# if os.getlogin() == '22011148':
-#     SVN = _SVN(r"D:\svn")
+# IN CASE FOR INDIVIDUAL EXCEPTIONS
+if os.getlogin() == '22403041':
+    SVN = _SVN(r"E:\svn")
 
 
 
 if __name__ == "__main__":
-    # print(ROOT)
-    print(SVN.BUILD)
-    print(SVN.BUILD.IR)
-    print(SVN.BUILD.IR.db)
-    print(SVN.BUILD.SDD.db)
-    print(SVN.BUILD.CONF.db)
+    print(ROOT)
+    # print(SVN.BUILD)
+    # print(SVN.BUILD.IR)
+    # print(SVN.BUILD.IR.db)
+    # print(SVN.BUILD.SDD.db)
+    # print(SVN.BUILD.CONF.db)
 
     # print(SVN.BUILD)
     # print(SVN.CAN)
@@ -241,3 +240,5 @@ if __name__ == "__main__":
     # print(SVN.CAN)
     # print(SVN.file('8075_MPI_FFV_CAN_EMS_HICM송출_모델_분기.pptx'))
     # print(SVN.RELEASE.file('8075_MPI_FFV_CAN_EMS_HICM송출_모델_분기.pptx'))
+
+

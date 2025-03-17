@@ -4,9 +4,8 @@ except ImportError:
     from emscan.config import PATH
 from datetime import datetime
 from pandas import DataFrame, Series
-from typing import Union
 import pandas as pd
-import sqlite3, subprocess
+import sqlite3, subprocess, os
 
 
 
@@ -21,18 +20,21 @@ class VersionControl(DataFrame):
         'changed_author': '사용자',
     }
     _time_format = "%Y-%m-%d %H:%M:%S"
-    def __init__(self, db:str):
-        if not db.endswith('.db'):
-            raise KeyError('SVN .db파일이 아닙니다.')
-
-        super().__init__(pd.read_sql(
-            "SELECT * FROM NODES",
-            sqlite3.connect(db)
-        ))
+    def __init__(self, db:str=''):
+        if not db:
+            dbs = []
+            for _root, _dir, _files in os.walk(PATH.SVN):
+                if '.svn' in _dir:
+                    _db = os.path.join(_root, r'.svn/wc.db')
+                    dbs.append(_db)
+            objs = [pd.read_sql("SELECT * FROM NODES", sqlite3.connect(db)) for db in dbs]
+            super().__init__(pd.concat(objs=objs, axis=0))
+        else:
+            super().__init__(pd.read_sql("SELECT * FROM NODES", sqlite3.connect(db)))
         self.drop(inplace=True, columns=[col for col in self if not col in self._columns])
         self.rename(inplace=True, columns=self._columns)
         self["변경일자"] = self["변경일자"].apply(
-            lambda x: datetime.fromtimestamp(x / 1000000).strftime(self._time_format)
+            lambda x: x if pd.isna(x) else datetime.fromtimestamp(x / 1000000).strftime(self._time_format)
         )
         return
 
@@ -83,10 +85,12 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
 
-    myV = VersionControl(PATH.SVN.CONF.db)
-    print(myV)
-    f = myV.file('canfdhcud_hev_confdata.xml')
-    print(f)
+    # myV = VersionControl(PATH.SVN.CONF.db)
+    # myV = VersionControl()
+    # print(myV)
+
+    # f = myV.file('canfdhcud_hev_confdata.xml')
+    # print(f)
     # print(myV.file("자체제어기_KEFICO-EMS_CANFD.xlsx"))
 
     # myLog = myV.log(PATH.SVN.CAN.DB.file("자체제어기_KEFICO-EMS_CANFD.xlsx"))
