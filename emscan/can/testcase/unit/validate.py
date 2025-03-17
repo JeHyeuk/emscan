@@ -1,17 +1,19 @@
 try:
     from ....core.testcase.case import Case
     from ...rule import naming
+    from ...db.objs import MessageObj
 except ImportError:
     from emscan.core.testcase.case import Case
     from emscan.can.rule import naming
+    from emscan.can.db.objs import MessageObj
 from pandas import Series
 
 
-class RxDecode(Case):
+class Validate(Case):
 
-    def __init__(self, sig:Series, **override):
-        nm = naming(sig)
-        sg = sig.SignalRenamed if sig.SignalRenamed else sig.name
+    def __init__(self, message:MessageObj, **override):
+        nm = naming(message)
+
         var = f"{sg}_Can"
         unit = '-' if not sig.Unit else sig.Unit
         index = self._index(sig)

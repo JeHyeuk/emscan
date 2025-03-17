@@ -23,27 +23,27 @@ class RxDecode(Case):
             "Group": "CAN",
             "Test Case Name": "Signal Decoding Test",
             "Test Purpose, Description": f"{sg} @{nm}({sig.ID}) Decoding Test",
-            "Test Execution (TE) - Description": f"CAN 신호: {sg} @{nm} 송출\n"
-                                                 f"- 차량 검증 시: 차량 사양에 따름\n"
-                                                 f"- 정적 검증 시: 포괄 범위 동적 신호 송출",
+            "Test Execution (TE) - Description": f"CAN Signal: Transmit {sg} @{nm}\n"
+                                                 f"- ON Vehicle: Followed by the specification\n"
+                                                 f"- ON T-Bench: Comprehensive range transmission",
             "TE-Variable": f"{nm.counter}\n"
                            f"{buff}",
             "TE-Compare": "'=",
             "TE-Value": f"△1\n"
                         f"{vals}",
-            "Expected Results (ER) - Description": f"신호 수신 시\n"
+            "Expected Results (ER) - Description": f"ON Receiving\n"
                                                    f"- Message Counter = △1\n"
                                                    f"- Signal Variable = Buffer[{expr}]\n"
-                                                   f"신호 속성 DB 값과 일치",
+                                                   f"Compatible Signal Quality with DB",
             "ER-Variable": f"{var}",
             "ER-Compare": "'=",
             "ER-Value": f"{nm.buffer}_[{expr}]",
-            "Test Result Description": f"신호 수신 시\n"
+            "Test Result Description": f"ON Receiving\n"
                                        f"- {nm.counter} = △1\n"
                                        f"- {var} = {nm.buffer}_[{expr}]\n"
                                        f"  * Length(Bit): {sig.Length}\n"
                                        f"  * Start Bit:  {sig.StartBit}\n\n"
-                                       f"신호 속성\n"
+                                       f"Compatible Signal Quality with DB\n"
                                        f"- Factor: {sig.Factor}\n"
                                        f"- Offset: {sig.Offset}\n"
                                        f"- Min: {sig.Offset} [{unit}]\n"

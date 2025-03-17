@@ -1,0 +1,355 @@
+/*--------------------------------------------------------------
+  Viewport
+  --------------------------------------------------------------
+  |  MOBILE  |  320px <= width < 768px
+  |  TABLET  |  768px <= width < 1024px
+  |    PC    | 1024px <= width
+--------------------------------------------------------------*/
+/* LAPTOP CASES */
+@media screen and (max-width: 1443px) {
+
+}
+
+/* TABLET CASES */
+@media screen and (max-width: 1023px) {
+
+}
+
+/* MOBILE CASES */
+@media screen and (max-width: 767px) {
+
+}
+
+/*--------------------------------------------------------------
+# General
+--------------------------------------------------------------*/
+* {
+  box-sizing: border-box;
+}
+
+.no-select {
+  -webkit-user-select: none; /* Chrome, Safari */
+  -moz-user-select: none;    /* Firefox */
+  user-select: none;         /* 표준 */
+}
+
+
+:root {
+    scroll-behavior: smooth;
+}
+
+html, body {
+	width: 100%;
+	max-width: 100%;
+    font-family: "현대산스 Text", "현대산스Text", "Open Sans", sans-serif;
+    color: #444444;
+    margin: 0;
+    padding: 0;
+	overflow-x: hidden;
+	/*background: rgba(242, 244, 249, 0.9);*/
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content:space-between;
+}
+
+main {
+    flex: 1 0 auto;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+	max-width: 100%;
+	min-height: calc(100vh - 60px - 120px);
+	overflow: hidden;
+}
+
+section {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+a {
+    color: #4154f1;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #717ff5;
+    text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "현대산스 Text", "현대산스Text", "Open Sans", sans-serif;
+}
+
+table {
+    border-collapse: collapse;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+input {
+	font-family: "현대산스 Text", "현대산스Text", "Open Sans", sans-serif;
+}
+
+textarea {
+	width: 100%;
+	height: auto;
+	font-family: "현대산스 Text", "현대산스Text", "Open Sans", sans-serif;
+	resize: none;
+}
+
+/*--------------------------------------------------------------
+# Header
+--------------------------------------------------------------*/
+.header {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+	max-width: 100%;
+    width: 100%;
+    height: 60px;
+    padding: 10px 190px;
+
+    background-color:white;
+    border-bottom: 1px solid #ccc;
+}
+
+.header .logo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    line-height: 0;
+    text-decoration: none;
+}
+
+.header .logo img {
+    max-height: 40px;
+}
+
+.navbar {
+    flex-grow: 1;
+    text-align: right;
+}
+
+.navbar ul {
+    display: inline-flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    gap: 15px;
+}
+
+.navbar li {
+    position: relative;
+}
+
+.navbar a, .navbar a:focus {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    color: #000;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: 0.3s;
+}
+
+.navbar a i, .navbar a:focus i {
+    font-size: 12px;
+    line-height: 0;
+    margin-left: 5px;
+}
+
+.navbar a:hover, .navbar li:hover > a {
+    color: #888;
+}
+
+.navbar-button {
+    color: #000;
+    font-size: 28px;
+    cursor: pointer;
+    display: none;
+    line-height: 0;
+    transition: 0.5s;
+}
+
+/*--------------------------------------------------------------
+# Main
+--------------------------------------------------------------*/
+#main {
+
+}
+
+.container {
+    margin: 0 180px;
+    background: white;
+}
+
+.config {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: stretch;
+    padding: 30px 0 0 0;
+    gap: 4px;
+}
+
+.config .confdata-list {
+    flex: 1 0 auto;
+    width: 240px;
+    max-width: 600px;
+
+}
+
+.config .exes {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 4px;
+}
+
+.config .exes .exe {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+    height: 28px;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #444;
+}
+
+.config .exes .exe:hover {
+	color: #ccc;
+}
+
+.confdata {
+    display: flex;
+    flex-direction:column;
+    align-items: stretch;
+    padding-top: 10px;
+}
+
+.confdata .tab {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-start;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+.confdata .tab .tablinks {
+    font-weight: 600;
+}
+
+.confdata .tab button {
+    background-color: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.confdata .tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.confdata .tab button.active {
+    background-color: #ccc;
+}
+
+.confdata .table-container {
+	flex: 1 0 auto;
+	width: 100%;
+	overflow-x:auto;
+}
+
+.confdata .tabcontent {
+	flex: 1 0 auto;
+    display: none;
+    position: relative;
+}
+
+.confdata .tabcontent .key {
+    text-align: center;
+    font-weight: 500;
+    width: 240px;
+}
+
+.confdata .tabcontent .conf-action {
+    text-align: center;
+}
+
+.confdata .tabcontent .conf-action .fa {
+    cursor:pointer;
+}
+
+.confdata .tabcontent .dem-value {
+	font-size: 12px;
+}
+
+.confdata #Summary {
+    display: table;
+}
+
+
+
+/*--------------------------------------------------------------
+# Header
+--------------------------------------------------------------*/
+.footer {
+    flex: 0 0 auto;
+	max-width: 100%;
+	width: 100%;
+	overflow: hidden;
+    margin: 40px 0 0 0;
+    padding: 0;
+    font-size: 14px;
+    border-top: 1px solid #ccc;
+}
+
+.footer .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 100%;
+}
+
+.footer .footer-bottom .copyright {
+    padding: 10px 0;
+    text-align: center;
+    color: #000;
+}
+
+.footer .footer-bottom .credits {
+    text-align: center;
+    font-size: 13px;
+    color: #000;
+    margin-bottom: 10px;
+}

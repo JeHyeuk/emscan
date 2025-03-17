@@ -7,7 +7,7 @@ import re
 set_option('display.expand_frame_repr', False)
 
 # JSON 파일에서 DataFrame 생성
-data = pd.read_json(r"D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dev\KEFICO-EMS_CANFD_V25.02.17.json", orient="index")
+data = pd.read_json(r"D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dev\KEFICO-EMS_CANFD_V25.03.04.json", orient="index")
 
 # 마지막 행 삭제
 data = data.iloc[:-1]  # 마지막 행을 제외한 나머지 행을 선택
@@ -442,8 +442,8 @@ def edit_dbc_file(dbc_file_path, df, CanSTDDB_filters, Cvvd_filters, MeptSys_fil
 
 
 # 사용 예시
-dbc_file_path = r'D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dbc\DBC_Make2.dbc'
-edit_dbc_file(dbc_file_path, data, CanSTDDB_filters=[2], Cvvd_filters=[0], MeptSys_filters=[1])
+dbc_file_path = r'D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dbc\HEV_CAN-FD_P_STDDB1p0.dbc'
+edit_dbc_file(dbc_file_path, data, CanSTDDB_filters=[0], Cvvd_filters=[0], MeptSys_filters=[0])
 
 
 

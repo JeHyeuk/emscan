@@ -16,6 +16,7 @@ pypandoc
 pyperclip
 python-can
 python-docx
+python-multipart
 pywin32
 screeninfo
 tqdm

@@ -115,8 +115,9 @@ if __name__ == "__main__":
     import os
     option = {
         "Requirement - Traceability": ".".join(os.path.basename(DB.source).split(".")[:-1]),
-        "Test SW": "TX4T9MTNDLGN@D20 TSW",
-        "Test HW": "G4III TGDI HEV OTA",
+        "Test Conductor": "{member name} @KVHS",
+        "Test SW": "MG6JQESW9L0N@0A0 TSW",
+        "Test HW": "G4III MPI OTA",
         "Test Vehicle / Engine / HIL": "BENCH",
         "Test Environment": "Static",
         "Remark / Comment": f"AUTOMATIC TEST CASE V{datetime.today().strftime('%Y-%m-%d')}",
@@ -124,7 +125,7 @@ if __name__ == "__main__":
         "MDA Configuration File (.xda)": "",
         "Experiment File (.exp)": "",
     }
-    myTC = testCaseRxDecode(DB("CLU_CNTL_01_00ms"), **option)
+    myTC = testCaseRxDecode(DB("TCU_01_10ms"), **option)
     myTC.generate()
     myTC.saveToTestReport()
 

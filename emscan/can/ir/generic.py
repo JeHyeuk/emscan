@@ -50,7 +50,9 @@ class IntegrationRequest(DataFrame):
     def __init__(self, *models, **kwargs):
         super().__init__(columns=self._column, index=[n for n in range(len(models))])
         for n, model in enumerate(models):
+            print(model)
             self.Unit(n, PATH.SVN.MD.CAN.file(f"{model}.zip"))
+
         for key, value in kwargs.items():
             if key in self._column:
                 self[key] = value
@@ -60,7 +62,7 @@ class IntegrationRequest(DataFrame):
         model = Module(amd)
         self._update_func(index, model)
         self._update_conf(index, model)
-        self._update_sdd(index, model)
+        # self._update_sdd(index, model)
         self._update_poly(index, model)
         return
 
@@ -115,10 +117,10 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     ir = IntegrationRequest(
-        "ComDef", "ComDef_HEV", "ComRx", "ComRx_HEV",
-        ChangeHistoryName='8272_CAN수신_인터페이스_개발.pptx',
-        ChangeHistoryRev=35800,
-        Comment="[CANRPA] 메시지/신호 추가 DB r.21400",
+        "CanFDEPB",
+        ChangeHistoryName='8296_MPI_EPB_BOS신호개발_구사양대응.pptx',
+        ChangeHistoryRev=35929,
+        Comment="[LCRPT240710001-1] BOS 신호 추가 (구모델 대응)",
         User="이제혁",
         Date=datetime.now().strftime("%Y-%m-%d")
     )

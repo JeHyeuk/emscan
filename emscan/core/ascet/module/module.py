@@ -34,14 +34,29 @@ class Module:
             raise AmdFormatError(f"file: {amd} is not ASCET amd file")
         self.file = file = amd
         self.main = main(amd)
-        self.impl = implementation(file.replace(".main.", ".implementation."))
-        self.data = data(file.replace(".main.", ".data."))
-        if self.main["specificationType"] == 'CCode':
+        try:
+            self.impl = implementation(file.replace(".main.", ".implementation."))
+        except FileNotFoundError:
+            self.impl = None
+
+        try:
+            self.data = data(file.replace(".main.", ".data."))
+        except FileNotFoundError:
+            self.data = None
+
+        try:
+            specType = self.main['specificationType']
+        except KeyError:
+            self.spec = None
+            return
+
+        if specType == 'CCode':
             self.spec = specificationCode(file.replace(".main.", ".specification."))
-        elif self.main["specificationType"] == 'BlockDiagram':
+        elif specType == 'BlockDiagram':
             self.spec = specificationBlock(file.replace(".main.", ".specification."))
         else:
-            raise TypeError()
+            self.spec = None
+            # raise TypeError()
         return
 
     def __repr__(self) -> repr:

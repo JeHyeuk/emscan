@@ -101,7 +101,9 @@ class Cases:
     def to_report(self, filename: Union[str, Hashable] = ""):
         if filename:
             self.filename = filename
-        file = f"{self.directory.replace('TestCase', 'TestReport').replace('TC', 'TR')}.xlsx"
+        file = f"{self.directory.replace('TestCase', 'TestReport')}.xlsx"
+        if not "TCU" in file and "TC" in file:
+            file = file.replace("TC", "TR")
 
         tc = xlsx.Workbook(filename=file)
         ws = tc.add_worksheet(name="Test Report MLT")

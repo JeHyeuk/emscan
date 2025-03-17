@@ -242,7 +242,19 @@ def messageRecv(model:str, message:Series) -> str:
 
 
 if __name__ == "__main__":
-    from pandas import Series
+    # from pandas import Series
+    #
+    #
+    # print(summaryHeader(Series({"Message": "1", "ID": "0x111", "DLC":"8", "Send Type": "P"})))
+
+    from emscan.can.db.db import DB
+    from pandas import set_option
+
+    set_option('display.expand_frame_repr', False)
 
 
-    print(summaryHeader(Series({"Message": "1", "ID": "0x111", "DLC":"8", "Send Type": "P"})))
+    message = DB("EPB_01_50ms")
+    # print(message.signals)
+
+    struct = messageStructure(message.signals)
+    print(struct)

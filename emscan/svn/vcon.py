@@ -83,11 +83,13 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
 
-    myV = VersionControl(PATH.SVN.CAN.DB.db)
-    # print(myV)
+    myV = VersionControl(PATH.SVN.CONF.db)
+    print(myV)
+    f = myV.file('canfdhcud_hev_confdata.xml')
+    print(f)
     # print(myV.file("자체제어기_KEFICO-EMS_CANFD.xlsx"))
 
-    myLog = myV.log(PATH.SVN.CAN.DB.file("자체제어기_KEFICO-EMS_CANFD.xlsx"))
-    print(myLog)
-    history = myLog["datetime"].astype(str) + ' @' + myLog["revision"] + ' ' + myLog["log"]
-    print('\n'.join(history))
+    # myLog = myV.log(PATH.SVN.CAN.DB.file("자체제어기_KEFICO-EMS_CANFD.xlsx"))
+    # print(myLog)
+    # history = myLog["datetime"].astype(str) + ' @' + myLog["revision"] + ' ' + myLog["log"]
+    # print('\n'.join(history))
