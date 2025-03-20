@@ -211,13 +211,14 @@ DESKTOP   = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
 DOWNLOADS = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Downloads')
 PICTURES  = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Pictures')
 SDD       = Path(r"D:\SDD\Notes\Files")
-SVN       = _SVN(r"D:\svn")
+
 ASCET     = _ASCET(r"D:\ETASData\ASCET6.1")
 
 # IN CASE FOR INDIVIDUAL EXCEPTIONS
 if os.getlogin() == '22403041':
     SVN = _SVN(r"E:\svn")
-
+elif os.getlogin() == '22011148':
+    SVN = _SVN(r"D:\svn")
 
 
 if __name__ == "__main__":

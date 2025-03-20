@@ -62,5 +62,5 @@ def read_conf(conf:str=Form(...)):
 
 if __name__ == "__main__":
 
-    uvicorn.run(app, host="10.224.53.89", port=8000)
+    uvicorn.run(app, host="10.224.53.132", port=8000)
 
