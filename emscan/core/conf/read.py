@@ -18,11 +18,11 @@ C_EVENT: Dict[str, Dict] ={
     },
     "DESC_KR": {
         "text": "진단 Event 설명(한글)",
-        "color": "rgb(183,222,232)"
+        "color": "rgb(177,160,199)"
     },
     "SYSCON": {
         "text": "System Constant 조건",
-        "color": "rgb(146, 208, 80)"
+        "color": "rgb(183,222,232)"
     },
     "DEB_METHOD": {
         "text": "Debouncing 방식",
@@ -54,7 +54,7 @@ C_EVENT: Dict[str, Dict] ={
     },
     "DCY_TEST": {
         "text": "Multiple Driving Cycle 진단",
-        "color": "rgb(146,208,80)"
+        "color": "rgb(183,222,232)"
     },
     "SHUT_OFF": {
         "text": "시동꺼짐 연관성 (REC)",
@@ -95,6 +95,238 @@ C_EVENT: Dict[str, Dict] ={
     "GRP_RPT": {
         "text": "Group Reporting Event",
         "color": "rgb(146,208,80)"
+    }
+}
+
+C_PATH: Dict[str, Dict] ={
+    "ELEMENT_NAME": {
+        "text": "Event Path 명칭",
+        "color": "rgb(146, 208, 80)"
+    },
+    "DESC": {
+        "text": "진단 Event Path 설명(영문)",
+        "color": "rgb(146, 208, 80)"
+    },
+    "DESC_KR": {
+        "text": "진단 Event Path 설명(한글)",
+        "color": "rgb(177,160,199)"
+    },
+    "SYSCON": {
+        "text": "System Constant 조건",
+        "color": "rgb(183,222,232)"
+    },
+    "FAULT_MAX": {
+        "text": "Max 고장 Event 명칭",
+        "color": "rgb(146, 208, 80)"
+    },
+    "FAULT_MIN": {
+        "text": "Min 고장 Event 명칭",
+        "color": "rgb(146, 208, 80)"
+    },
+    "FAULT_SIG": {
+        "text": "Sig 고장 Event 명칭",
+        "color": "rgb(146, 208, 80)"
+    },
+    "FAULT_NPL" : {
+        "text": "Plaus 고장 Event 명칭",
+        "color": "rgb(146, 208, 80)"
+    },
+    "MDL_INHIBIT": {
+        "text": "모듈 자체의 금지 조건 (Event)",
+        "color": "rgb(255,192,0)"
+    },
+    "REQ_FID": {
+        "text": "모듈 자체의 진단 조건 (FID)",
+        "color": "rgb(255,192,0)"
+    },
+}
+
+# C_FID: Dict[str, Dict] = {
+#     "ELEMENT_NAME": {
+#         "color": "",
+#         "text": "함수 식별자 명칭"
+#     },
+#     "DESC": {
+#         "color": "",
+#         "text": "함수 식별자 설명(영문)"
+#     },
+#     "DESC_KR": {
+#         "color": "",
+#         "text": "함수 식별자 설명(한글)"
+#     },
+#     "SYSCON": {
+#         "color": "",
+#         "text": "System Constant 조건"
+#     },
+#     "PROVIDING_EVENT": {
+#         "color": "",
+#         "text": "모듈에서 이 FID가 진단 조건인 Event"
+#     },
+#     "PROVIDING_SIGNAL": {
+#         "color": "",
+#         "text": "모듈에서 이 FID가 진단 조건인 Signal"
+#     },
+#     "SCHED_MODE": {
+#         "color": "",
+#         "text": "Scheduling Mode"
+#     },
+#     {
+#         "color": "",
+#         "text": "Sleep/Lock 사용 여부"
+#     },
+#     {
+#         "color": "",
+#         "text": "Short Test시 Permisson 처리 여부"
+#     },
+#     {
+#         "color": "",
+#         "text": "IUMPR Group 할당"
+#     },
+#     {
+#         "color": "",
+#         "text": "IUMPR 적용 System Constant 조건"
+#     },
+#     {
+#         "color": "",
+#         "text": "IUMPR 분모 Release 방식"
+#     },
+#     {
+#         "color": "",
+#         "text": "IUMPR 분자 Release Event"
+#     },
+#     {
+#         "color": "",
+#         "text": "Ready 조건 GDI 모드"
+#     },
+#     {
+#         "color": "",
+#         "text": "배타적 FID 관계"
+#     },
+#     {
+#         "color": "",
+#         "text": "배타적 FID 처리 순서"
+#     },
+#     {
+#         "color": "",
+#         "text": "배타적 FID System Constant 조건"
+#     },
+#     {
+#         "color": "",
+#         "text": "FID 금지 요건인 Event"
+#     },
+#     {
+#         "color": "",
+#         "text": "상기 Event 요건의 Mask 속성"
+#     },
+#     {
+#         "color": "",
+#         "text": "상기 Event 요건의 System Constant"
+#     },
+#     {
+#         "color": "",
+#         "text": "FID 금지 요건인 Sum-Event"
+#     },
+#     {
+#         "color": "",
+#         "text": "상기 Sum-Event 요건의 Mask 속성"
+#     },
+#     {
+#         "color": "",
+#         "text": "상기 Sum-Event의 System Constant"
+#     },
+#     {
+#         "color": "",
+#         "text": "FID 금지 요건인 Signal"
+#     },
+#     {
+#         "color": "",
+#         "text": "상기 Signal 요건의 Mask 속성"
+#     },
+#     {
+#         "color": "",
+#         "text": "상기 Signal 요건의 System Constant"
+#     },
+#     {
+#         "color": "",
+#         "text": "FID가 Mode7 조건인 Signal"
+#     },
+#     {
+#         "color": "",
+#         "text": "상기 Signal의 System Constant 조건"
+#     },
+# }
+
+C_DTR: Dict[str, Dict] = {
+    "ELEMENT_NAME": {
+        "text": "DTR test 명칭",
+        "color": "rgb(146,208,80)"
+    },
+    "DESC" : {
+        "text": "DTR test 설명(영문)",
+        "color": "rgb(146,208,80)"
+    },
+    "DESC_KR": {
+        "text": "DTR test 설명(한글)",
+        "color": "rgb(177,160,199)"
+    },
+    "SYSCON": {
+        "text": "System Constant 조건",
+        "color": "rgb(183,222,232)"
+    },
+    "EVENT": {
+        "text": "관련 Event",
+        "color": "rgb(255,192,0)"
+    },
+    "ELEMENT_COUNT": {
+        "text": "소속 DTR 개수",
+        "color": "rgb(146,208,80)"
+    },
+    "UASID": {
+        "text": "Unit and Scaling ID",
+        "color": "rgb(250,191,143)"
+    },
+    "OBDMID": {
+        "text": "OBD MID",
+        "color": "rgb(250,191,143)"
+    },
+    "TID": {
+        "text": "Test ID",
+        "color": "rgb(250,191,143)"
+    }
+}
+
+C_SIG: Dict[str, Dict] = {
+    "ELEMENT_NAME": {
+        "text": "신호 명칭",
+        "color": "rgb(146, 208, 80)"
+    },
+    "DESC": {
+        "text": "신호 설명(영문)",
+        "color": "rgb(146, 208, 80)"
+    },
+    "DESC_KR": {
+        "text": "신호 설명(한글)",
+        "color": "rgb(177,160,199)"
+    },
+    "SYSCON": {
+        "text": "System Constant 조건",
+        "color": "rgb(183,222,232)"
+    },
+    "ELEMENT_COUNT": {
+        "text": "소속 신호 개수",
+        "color": "rgb(146, 208, 80)"
+    },
+    "NOT_LABELD1": {
+        "text": "모듈 자체의 Invalid 조건 Event",
+        "color": "rgb(177,160,199)"
+    },
+    "NOT_LABELD2": {
+        "text": "모듈 자체의 Invalid 조건 Signal",
+        "color": "rgb(177,160,199)"
+    },
+    "MDL_INHIBIT": {
+        "text": "모듈 자체의 진단 조건 (FID)",
+        "color": "rgb(255,192,0)"
     }
 }
 
@@ -192,10 +424,10 @@ class confReader(ElementTree):
     def html(self, kind:str) -> str:
         columns = self.columns(kind)
         df = self.dem(kind).T.fillna("")
-
-        head = [f'<td class="key">{len(df.columns)} ITEMS</td>'] + \
-               ['<td class="conf-action"><i class="fa fa-trash"></i></td>'] * len(df.columns) + \
-               ['<td class="conf-action"><i class="fa fa-plus"></i></td>']
+        ids = df.iloc[0].tolist()
+        head = [f'<td class="key dem-count" style="background-color:white;">{len(df.columns)} ITEMS</td>'] + \
+               [f'<td class="conf-action" value="{_id}" ><i class="fa fa-trash"></i></td>' for _id in ids] + \
+               ['<td class="conf-action new-col"><i class="fa fa-plus"></i></td>']
         head = "\n".join(head)
         thead = f"<tr>\n{head}\n</tr>"
 
@@ -203,8 +435,8 @@ class confReader(ElementTree):
         for row in df.itertuples(index=True):
             n = row[0]
             tds = [f'<td class="key" style="background-color:{columns[n]["color"]};">{columns[n]["text"]}</td>']
-            for td in row[1:]:
-                tds.append(f'<td class="dem-value" onclick="editCell(this);">{td}</td>')
+            for _id, td in zip(ids, row[1:]):
+                tds.append(f'<td class="dem-value" onclick="editCell(this);" value="{_id}">{td}</td>')
             td = "\n".join(tds)
             rows.append(f"<tr>\n{td}\n</tr>")
         tbody = "\n".join(rows)

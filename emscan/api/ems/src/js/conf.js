@@ -1,3 +1,5 @@
+var TAB = 'Summary';
+
 function openTab(evt, key) {
     var tabcontent, tablinks;
 
@@ -82,20 +84,30 @@ function readConf(src) {
         method: 'POST',
         body: formData
     })
-        .then(response => response.json())
-        .then(data => {
-			var admin = JSON.parse(data.admin);
-			console.log(data.event);
-			$('.module').html(admin.Model);
-			$('.conf-unit').html(admin.Filename);
-			$('.user').html(admin.User);
-			$('.gen-date').html(admin.Date);
-			$('.svn-date').html(admin.SVNDate);
-			$('.svn-version').html(admin.SVNRev);
-			$('.svn-user').html(admin.SVNUser);
-			$('.history').html(data.history);
-            
-			$('#EVENT').html(data.event);
-        })
-        .catch(error => console.error('Error Reading Conf: ', error))
+	.then(response => response.json())
+	.then(data => {
+		var admin = JSON.parse(data.admin);
+		
+		$('.module').html(admin.Model);
+		$('.conf-unit').html(admin.Filename);
+		$('.user').html(admin.User);
+		$('.gen-date').html(admin.Date);
+		$('.svn-date').html(admin.SVNDate);
+		$('.svn-version').html(admin.SVNRev);
+		$('.svn-user').html(admin.SVNUser);
+		$('.history').html(data.history);
+		
+		$('#EVENT').html(data.event);
+		$('.tab-event').html("EVENT(" + data.n_event + ")");
+		
+		$('.fa-trash').click(function(){
+			$('td[value="' + $(this).parent().attr('value') + '"]').remove();
+			var cnt = $('thead td').length;
+			
+		});
+	})
+	.catch(error => console.error('Error Reading Conf: ', error));
+		
+		
+
 }

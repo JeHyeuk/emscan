@@ -26,7 +26,7 @@ except FileNotFoundError:
     SVN = SVN[SVN["상대경로"].str.endswith("_confdata.xml")]
 
 @app.get("/")
-def read_root():
+def read_root():\
     return FileResponse("index.html")
 
 @app.get("/conf")
@@ -39,7 +39,8 @@ def load_conf():
 
 @app.post("/read-conf")
 def read_conf(conf:str=Form(...)):
-    svn = SVN.file(conf)
+    svn = SVN[SVN['상대경로'] == conf].iloc[0]
+
     file = os.path.join(PATH.SVN.CONF, conf)
     read = confReader(file)
 
@@ -53,7 +54,8 @@ def read_conf(conf:str=Form(...)):
         "admin": admin.to_json(),
         "history": read.history \
                    .replace("\n", "<br>"),
-        "event": read.html("DEM_EVENT")
+        "event": read.html("DEM_EVENT"),
+        "n_event": len(read.dem("DEM_EVENT").T.columns)
     }
     return JSONResponse(content=jsonable_encoder(data))
 

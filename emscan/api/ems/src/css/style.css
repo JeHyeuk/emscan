@@ -288,6 +288,11 @@ textarea {
 	flex: 1 0 auto;
 	width: 100%;
 	overflow-x:auto;
+	
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	position: relative;
 }
 
 .confdata .tabcontent {
@@ -299,7 +304,16 @@ textarea {
 .confdata .tabcontent .key {
     text-align: center;
     font-weight: 500;
-    width: 240px;
+    width: 240px;	
+	min-width: 240px;
+	max-width: 240px;
+	white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	
+	position: sticky;
+	left: 0;
+	z-index: 2;
 }
 
 .confdata .tabcontent .conf-action {
