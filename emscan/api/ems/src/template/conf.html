@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/src/css/select2.min.css">
+  <link rel="stylesheet" href="/src/css/style.css">
+  <link rel="icon" href="/src/img/logo.ico" type="image/x-icon">
+
+  <script type="text/javascript" src="/src/js/jquery-3.6.1.min.js"></script>
+  <script type="text/javascript" src="/src/js/select2.min.js"></script>
+  <script type="text/javascript" src="/src/js/conf.js"></script>
+  
+  <title>KE::CONF</title>
+</head>
+<body>
+  <header id="header" class="header header-fix">
+    <a href="/" class="logo">
+      <img src="/src/img/logo.png" alt="EMS">
+    </a>
+    <nav id="navbar" class="navbar">
+      <ul>
+        <li><a href="/">COMM</a></li>
+        <li><a href="/conf">CONF</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="container config">
+      <div class="exes">
+        <span class="exe edit"><i class="fa fa-cloud-download"></i></span>
+      </div>
+      <select name="model" class="confdata-list"></select>
+      <div class="exes">
+		<span class="exe reload"><i class="fa fa-refresh"></i></span>
+        <span class="exe download"><i class="fa fa-download"></i></span>
+      </div>
+    </section>
+	
+	<section class="container confdata">
+      <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'Summary')">요약</button>
+        <button class="tablinks tab-EVENT" onclick="openTab(event, 'EVENT')">EVENT</button>
+        <button class="tablinks tab-PATH" onclick="openTab(event, 'PATH')">PATH</button>
+        <button class="tablinks tab-FID" onclick="openTab(event, 'FID')">FID</button>
+        <button class="tablinks tab-DTR" onclick="openTab(event, 'DTR')">DTR</button>
+        <button class="tablinks tab-SIG" onclick="openTab(event, 'SIG')">SIG</button>
+      </div>
+	  
+	  <div class="table-container">
+		<table id="Summary" class="tabcontent conf-items">
+			<tbody>
+			  <tr>
+				<td class="key" style="background-color:rgb(146,208,80);">모듈명</td>
+				<td class="module" style="cursor:not-allowed;"></td>
+			  </tr>
+			  <tr>
+				<td class="key" style="background-color:rgb(146,208,80);">파일명</td>
+				<td class="conf-unit" style="cursor:not-allowed;"></td>
+			  </tr>
+			  <tr>
+				<td class="key" style="background-color:rgb(183,222,232);">작성자 (영문)</td>
+				<td class="user" onclick="editCell(this);"></td>
+			  </tr>
+			  <tr>
+				<td class="key" style="background-color:rgb(183,222,232);">최근 생성일</td>
+				<td class="gen-date" style="cursor:not-allowed;"></td>
+			  </tr>
+			  <tr>
+				<td class="key" style="background-color:rgb(250,192,144);">SVN 변경일자</td>
+				<td class="svn-date" style="cursor:not-allowed;"></td>
+			  </tr>
+			  <tr>
+				<td class="key" style="background-color:rgb(250,192,144);">SVN 버전</td>
+				<td class="svn-version" style="cursor:not-allowed;"></td>
+			  </tr>
+			  <tr>
+				<td class="key" style="background-color:rgb(250,192,144);">SVN 최근 작성자</td>
+				<td class="svn-user" style="cursor:not-allowed;"></td>
+			  </tr>
+			  <tr>
+				<td class="key" style="background-color:rgb(183,222,232);">이력</td>
+				<td class="history" onclick="editParagraph(this);"></td>
+			  </tr>
+			</tbody>
+		</table>
+		{% for _id, cols in columns.items() %}
+		<table id="{{ _id }}" class="tabcontent conf-items">
+			<thead>
+				<tr>
+					<td class="key">0 ITEMS</td>
+					<td class="conf-action"><i class="fa fa-plus"></i></td>
+				</tr>
+			</thead>
+			<tbody>
+			{% for key, col in cols.items() %}
+				<tr>
+					<td class="key" style="background-color:{{ col['color'] }};">{{ col['text'] }}</td>
+					<td></td>
+				</tr>{% endfor %}
+			</tbody>
+		</table>{% endfor %}
+		
+	  </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-bottom">
+      <div class="copyright">
+        &copy; Copyright HYUNDAI KEFICO. 2020-2025. All Rights Reserved.
+      </div>
+      <div class="credits">
+        BY. WG2, VEHICLE CONTROL SOLUTION TEAM
+      </div>
+    </div>
+  </footer>
+</body>
+<script type="text/javascript">
+
+  $(document).ready(function(){
+    loadConf();
+  })
+
+  $('.reload').click(function(){
+    // TODO
+    // SVN 최신으로 업데이트 요청
+    loadConf();
+  })
+
+  $('.confdata-list').on('select2:select', function(e) {
+    readConf(e.params.data.id);
+  });
+  
+
+
+</script>
+</html>

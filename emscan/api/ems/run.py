@@ -1,24 +1,27 @@
 try:
-    from ...core.conf.read import confReader
+    from ...core.conf.read import confReader, COLUMNS
     from ...config import PATH
     from ...svn.vcon import VersionControl
     from ...svn.scon import SourceControl
 except ImportError:
-    from emscan.core.conf.read import confReader
+    from emscan.core.conf.read import confReader, COLUMNS
     from emscan.config import PATH
     from emscan.svn.vcon import VersionControl
     from emscan.svn.scon import SourceControl
 
-from fastapi import FastAPI, Form
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi import FastAPI, Form, Request
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from json import dumps
 import os, uvicorn
 
 
 app = FastAPI()
 app.mount("/src", StaticFiles(directory="src"), name="src")
-app.mount("/conf", StaticFiles(directory="conf"), name="conf")
+template = Jinja2Templates(directory="src/template")
+
 try:
     SVN = VersionControl(PATH.SVN.CONF.db)
 except FileNotFoundError:
@@ -26,12 +29,12 @@ except FileNotFoundError:
     SVN = SVN[SVN["상대경로"].str.endswith("_confdata.xml")]
 
 @app.get("/")
-def read_root():\
+async def read_root():\
     return FileResponse("index.html")
 
 @app.get("/conf")
-def read_conf():
-    return FileResponse("conf/index.html")
+async def read_conf(request:Request):
+    return template.TemplateResponse("conf.html", {"request": request, "columns": COLUMNS})
 
 @app.get("/load-conf")
 def load_conf():
@@ -39,7 +42,7 @@ def load_conf():
 
 @app.post("/read-conf")
 def read_conf(conf:str=Form(...)):
-    svn = SVN[SVN['상대경로'] == conf].iloc[0]
+    svn = SVN[SVN['상대경로'].str.endswith(conf)].iloc[0]
 
     file = os.path.join(PATH.SVN.CONF, conf)
     read = confReader(file)
@@ -52,15 +55,17 @@ def read_conf(conf:str=Form(...)):
 
     data = {
         "admin": admin.to_json(),
-        "history": read.history \
-                   .replace("\n", "<br>"),
-        "event": read.html("DEM_EVENT"),
-        "n_event": len(read.dem("DEM_EVENT").T.columns)
+        "history": read.history.replace("\n", "<br>"),
+        "meta": dumps(read.TABS),
     }
+    for tab, key in read.TABS.items():
+        data[key] = read.html(tab)
+        data[f'N_{key}'] = len(read.dem(tab).T.columns)
     return JSONResponse(content=jsonable_encoder(data))
 
 
 if __name__ == "__main__":
+    import socket
 
-    uvicorn.run(app, host="10.224.53.132", port=8000)
+    uvicorn.run(app, host=socket.gethostbyname(socket.gethostname()), port=8000)
 

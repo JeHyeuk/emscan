@@ -303,7 +303,8 @@ textarea {
 
 .confdata .tabcontent .key {
     text-align: center;
-    font-weight: 500;
+	font-size: 14px;
+    font-weight: 450;
     width: 240px;	
 	min-width: 240px;
 	max-width: 240px;
@@ -326,6 +327,7 @@ textarea {
 
 .confdata .tabcontent .dem-value {
 	font-size: 12px;
+	min-width: 180px;
 }
 
 .confdata #Summary {

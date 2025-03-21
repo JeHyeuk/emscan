@@ -12,7 +12,7 @@ function openTab(evt, key) {
     for (var i = 0; i < tablinks.length; i++) {
       tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
-
+	TAB = key;
     document.getElementById(key).style.display = "table";
     evt.currentTarget.className += " active";
 }
@@ -87,6 +87,7 @@ function readConf(src) {
 	.then(response => response.json())
 	.then(data => {
 		var admin = JSON.parse(data.admin);
+		var meta = JSON.parse(data.meta);
 		
 		$('.module').html(admin.Model);
 		$('.conf-unit').html(admin.Filename);
@@ -97,8 +98,10 @@ function readConf(src) {
 		$('.svn-user').html(admin.SVNUser);
 		$('.history').html(data.history);
 		
-		$('#EVENT').html(data.event);
-		$('.tab-event').html("EVENT(" + data.n_event + ")");
+		Object.entries(meta).forEach(([key, obj]) => {
+			$('#' + obj).html(data[obj]);
+			$('.tab-' + obj).html(obj + "(" + data["N_" + obj] + ")");
+		});
 		
 		$('.fa-trash').click(function(){
 			$('td[value="' + $(this).parent().attr('value') + '"]').remove();
@@ -106,7 +109,11 @@ function readConf(src) {
 			
 		});
 	})
-	.catch(error => console.error('Error Reading Conf: ', error));
+	.catch(
+		error => {
+			console.error('Error Reading Conf: ', error);
+			alert(error);
+	});
 		
 		
 
