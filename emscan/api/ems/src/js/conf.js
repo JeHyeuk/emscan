@@ -74,6 +74,10 @@ function loadConf() {
             });
         })
         .catch(error => console.error('Error Loading Conf: ', error));
+	
+	$('.reload').click(function(){
+		readConf($('.confdata-list').val());
+	})
 }
 
 function readConf(src) {
@@ -105,8 +109,10 @@ function readConf(src) {
 		
 		$('.fa-trash').click(function(){
 			$('td[value="' + $(this).parent().attr('value') + '"]').remove();
-			var cnt = $('thead td').length;
-			
+			var tds = $("#" + TAB + " thead tr td")
+			var cnt = tds.length - 2;
+			$(tds[0]).html(cnt + " ITEMS");
+			$('.tab-' + TAB).html(TAB + "(" + cnt + ")");
 		});
 	})
 	.catch(
@@ -114,7 +120,30 @@ function readConf(src) {
 			console.error('Error Reading Conf: ', error);
 			alert(error);
 	});
-		
-		
+}
 
+function downloadConf(conf) {
+	const formData = new FormData();
+	const tables = $("table").map(function() {
+		return $(this).prop("outerHTML");
+	}).get().join("\n");
+	
+	formData.append('conf', conf);
+    formData.append('tables', tables);
+
+    fetch('/download-conf', {
+        method: 'POST',
+        body: formData
+    })
+	.then(response => response.blob())  // XML 파일로 응답 받기
+	.then(blob => {
+		const url = window.URL.createObjectURL(blob);
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = conf.replace(".xml", "_sample.xml");
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+	})
+	.catch(error => console.error("Error:", error));
 }

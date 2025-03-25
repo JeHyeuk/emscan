@@ -42,7 +42,7 @@
 	
 	<section class="container confdata">
       <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'Summary')">요약</button>
+        <button class="tablinks tab-Summary active" onclick="openTab(event, 'Summary')">요약</button>
         <button class="tablinks tab-EVENT" onclick="openTab(event, 'EVENT')">EVENT</button>
         <button class="tablinks tab-PATH" onclick="openTab(event, 'PATH')">PATH</button>
         <button class="tablinks tab-FID" onclick="openTab(event, 'FID')">FID</button>
@@ -111,10 +111,10 @@
   <footer class="footer">
     <div class="footer-bottom">
       <div class="copyright">
-        &copy; Copyright HYUNDAI KEFICO. 2020-2025. All Rights Reserved.
+        &copy;Copyright HYUNDAI KEFICO. 2020-2025. All Rights Reserved.
       </div>
       <div class="credits">
-        BY. WG2, VEHICLE CONTROL SOLUTION TEAM
+        WG2, VEHICLE CONTROL SOLUTION TEAM
       </div>
     </div>
   </footer>
@@ -125,15 +125,19 @@
     loadConf();
   })
 
-  $('.reload').click(function(){
-    // TODO
-    // SVN 최신으로 업데이트 요청
-    loadConf();
-  })
-
   $('.confdata-list').on('select2:select', function(e) {
     readConf(e.params.data.id);
   });
+  
+  $('.download').on('click', function() {
+  	var conf = $('.confdata-list').val();
+	if (!conf) {
+		alert("선택된 Confdata가 없습니다.");
+		return;
+	}
+	downloadConf(conf);
+	
+  })
   
 
 

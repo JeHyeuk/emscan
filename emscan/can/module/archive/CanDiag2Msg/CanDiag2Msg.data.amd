@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ComponentData toolVersion="V6.1.0-Win10" schemaVersion="6.1.0.0">
+	<DataSet name="{self.moduleName}" OID="{src.OID}" default="false" classConfig="true">
+		<TimeStamp timeStampKey="{src.timeStampKey}" timeStampValue="{src.timeStampValue}" timeStampCounter="{src.timeStampCounter}"/>
+		<DataEntry elementName="EEP_stFD{self.__MSGE1__}" elementOID="_040g00002u801q07081079845gv08">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="EEP_stFD{self.__MSGE2__}" elementOID="_040g00002u801q07081079l9lo90c">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+	</DataSet>
+	<DataSet name="Data" OID="{src.pOID}" default="true" classConfig="false">
+		<TimeStamp timeStampKey="{src.pTimeStampKey}" timeStampValue="{src.pTimeStampValue}" timeStampCounter="{src.pTimeStampCounter}"/>
+		<DataEntry elementName="CanD_cEnaDet{self.__MsgE1__}" elementOID="_040g00002u801q07081079845gsg8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Logic value="false"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_cEnaDet{self.__MsgE2__}" elementOID="_040g00002u801q07081079avr61g8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Logic value="false"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_cEnaDiag{self.__MsgE1__}" elementOID="_040g00002u801q07081079845gpg8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Logic value="false"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_cEnaDiag{self.__MsgE2__}" elementOID="_040g00002u801q07081079avr60g8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Logic value="false"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_cErr{self.__MsgE1__}Alv" elementOID="_040g00002u801q07081079845gu08">
+			<DataVariant name="default">
+				<ScalarType>
+					<Logic value="false"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_cErr{self.__MsgE1__}Crc" elementOID="_040g00002u801q07081079845glg8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Logic value="false"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_cErr{self.__MsgE1__}Msg" elementOID="_040g00002u801q07081079845gn08">
+			<DataVariant name="default">
+				<ScalarType>
+					<Logic value="false"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_cErr{self.__MsgE2__}Alv" elementOID="_040g00002u801q07081079avr5ug8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Logic value="false"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_cErr{self.__MsgE2__}Crc" elementOID="_040g00002u801q07081079avr5vg8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Logic value="false"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_cErr{self.__MsgE2__}Msg" elementOID="_040g00002u801q07081079avr5tg8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Logic value="false"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_ctDet{self.__Ctrl__}_C" elementOID="_040g00002u801q07081079845gq08">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="5"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_ctDet{self.__MsgE1__}" elementOID="_040g00002u801q07081079845gs08">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_ctDet{self.__MsgE2__}" elementOID="_040g00002u801q07081079euhr2g8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_RstEep{self.__Ctrl__}_C" elementOID="_040g00002u801q07081079845gqg8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_stRdEep{self.__MsgE1__}" elementOID="_040g00002u801q07081079845gog8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_stRdEep{self.__MsgE2__}" elementOID="_040g00002u801q07081079fjhnug8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_tiFlt{self.__MsgE1__}_C" elementOID="_040g00002u801q07081079845gvg8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="2.0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_tiFlt{self.__MsgE1__}Alv" elementOID="_040g00002u801q07081079845gtg8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="0.0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_tiFlt{self.__MsgE1__}Crc" elementOID="_040g00002u801q07081079845gm08">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="0.0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_tiFlt{self.__MsgE1__}Msg" elementOID="_040g00002u801q07081079845gmg8">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="0.0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_tiFlt{self.__MsgE2__}_C" elementOID="_040g00002u801q07081079gnk0qga">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="2.0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_tiFlt{self.__MsgE2__}Alv" elementOID="_040g00002u801q07081079gnk0rga">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="0.0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_tiFlt{self.__MsgE2__}Crc" elementOID="_040g00002u801q07081079gnk0sga">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="0.0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_tiFlt{self.__MsgE2__}Msg" elementOID="_040g00002u801q07081079gnk0tga">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="0.0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="CanD_tiMonDet{self.__Ctrl__}_C" elementOID="_040g00002u801q07081079845gr08">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="10.0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="Cfg_FD{self.__CTRL__}D_C" elementOID="_040g00002u801q07081079845go08">
+			<DataVariant name="default">
+				<ScalarType>
+					<Numeric value="0"/>
+				</ScalarType>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="{self.__CTRL__}_EnaDiag_ER" elementOID="_040g00002u801q07081079845h2g8">
+			<DataVariant name="default">
+				<ComplexType dataName="EdgeFallinig" dataOID="_040g030000001m87144g3oqctbp00"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="autodetection_CW_STD" elementOID="_040g00002u801q07081079845h6g8">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g1ngg01pp1oo70c2g6se48vbdi"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="autodetection_STD" elementOID="_040g00002u801q07081079845h608">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g1ngg01pp1oo70c2g6sc5o6qti"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="BAAEEP" elementOID="_040g00002u801q07081079845h108">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g04136ps01mo710cgi4us2n46e"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="DEve_FD{self.__MsgE1__}Alv" elementOID="_040g00002u801q07081079845h3g8">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g030000001mg70o7g6cotfe814"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="DEve_FD{self.__MsgE1__}Crc" elementOID="_040g00002u801q07081079845h1g8">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g030000001mg70o7g6cotfe814"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="DEve_FD{self.__MsgE1__}Msg" elementOID="_040g00002u801q07081079845h408">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g030000001mg70o7g6cotfe814"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="DEve_FD{self.__MsgE2__}Alv" elementOID="_040g00002u801q07081079javumga">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g030000001mg70o7g6cotfe814"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="DEve_FD{self.__MsgE2__}Crc" elementOID="_040g00002u801q07081079jas2kga">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g030000001mg70o7g6cotfe814"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="DEve_FD{self.__MsgE2__}Msg" elementOID="_040g00002u801q07081079javulga">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g030000001mg70o7g6cotfe814"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="DFRM_stClrReq" elementOID="_040g00002u801q07081079845h008">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g030000001mg70k62k84jc68g2"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="DFSdl_stPrms" elementOID="_040g00002u801q07081079845h308">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g030000001mg70o3hukl9ujs9g"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="errordetection_STD" elementOID="_040g00002u801q07081079845h208">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g1ngg01pp1oo70c2g6t0e843tk"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="Fid_FD{self.__MSGE1__}D" elementOID="_040g00002u801q07081079845h5g8">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g030000001mg70o7g6co9eog12"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="Fid_FD{self.__MSGE2__}D" elementOID="_040g00002u801q07081079mo25cgc">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g030000001mg70o7g6co9eog12"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="hmc_GetBit" elementOID="_040g00002u801q07081079845h508">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g030000001m8710d08cna54eg8"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="MonDly{self.__CTRL__}_TOFFV" elementOID="_040g00002u801q07081079845h4g8">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g030000001m87149g79js4pag6"/>
+			</DataVariant>
+		</DataEntry>
+		<DataEntry elementName="Rst_autodetectionTester_STD" elementOID="_040g00002u801q07081079845h0g8">
+			<DataVariant name="default">
+				<ComplexType dataName="Data" dataOID="_040g1ngg01pp1oo70c2g6t63hckdk"/>
+			</DataVariant>
+		</DataEntry>
+	</DataSet>
+	<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+		<SignedInfo>
+			<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+			<SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+			<Reference>
+				<Transforms>
+					<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+				</Transforms>
+				<DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+				<DigestValue>{src.digestValue}</DigestValue>
+			</Reference>
+		</SignedInfo>
+		<SignatureValue>{src.signatureValue}</SignatureValue>
+		<KeyInfo>
+			<KeyName>Etas Ascet Verification</KeyName>
+		</KeyInfo>
+	</Signature>
+</ComponentData>

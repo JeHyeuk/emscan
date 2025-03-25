@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ComponentMain toolVersion="V6.1.0-Win10" schemaVersion="6.1.0.0">
+	<Component name="{self.moduleName}" nameSpace="{src.nameSpace}" OID="{src.OID}" timeStamp="{src.timeStamp}" componentType="{src.componentType}" specificationType="{src.specificationType}" defaultProjectName="{src.defaultProjectName}" defaultProjectOID="{src.defaultProjectOID}">
+		<TimeStamp timeStampKey="{src.timeStampKey}" timeStampValue="{src.timeStampValue}" timeStampCounter="{src.timeStampCounter}"/>
+		<Comment>{BASIC}</Comment>
+		<CustomerSpecificAttributes>
+			<ConfigurationManagement edition="true" versionID="" configurationID=""/>
+			<RequirementsManagement requirementsID=""/>
+			<AccessManagement read="true" write="true" import="true"/>
+		</CustomerSpecificAttributes>
+		<Elements>
+			<Element name="CanD_cEnaDet{self.__MsgE1__}" OID="_040g00002u801q07081079845gsg8" ignore="false">
+				<Comment>Enable {self.__MSG1__} message receive detection</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_cEnaDet{self.__MsgE2__}" OID="_040g00002u801q07081079avr61g8" ignore="false">
+				<Comment>Enable {self.__MSG2__} message receive detection</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_cEnaDiag{self.__MsgE1__}" OID="_040g00002u801q07081079845gpg8" ignore="false">
+				<Comment>Enable diagnosis for {self.__MSG1__} message</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_cEnaDiag{self.__MsgE2__}" OID="_040g00002u801q07081079avr60g8" ignore="false">
+				<Comment>Enable diagnosis for {self.__MSG2__} message</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_cErr{self.__MsgE1__}Alv" OID="_040g00002u801q07081079845gu08" ignore="false">
+				<Comment>{self.__MSG1__} alive counter error occurred</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_cErr{self.__MsgE1__}Crc" OID="_040g00002u801q07081079845glg8" ignore="false">
+				<Comment>{self.__MSG1__} CRC error occurred</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_cErr{self.__MsgE1__}Msg" OID="_040g00002u801q07081079845gn08" ignore="false">
+				<Comment>{self.__MSG1__} message counter error occurred</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_cErr{self.__MsgE2__}Alv" OID="_040g00002u801q07081079avr5ug8" ignore="false">
+				<Comment>{self.__MSG2__} alive counter error occurred</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_cErr{self.__MsgE2__}Crc" OID="_040g00002u801q07081079avr5vg8" ignore="false">
+				<Comment>{self.__MSG2__} CRC error occurred</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_cErr{self.__MsgE2__}Msg" OID="_040g00002u801q07081079avr5tg8" ignore="false">
+				<Comment>{self.__MSG2__} message counter error occurred</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_ctDet{self.__Ctrl__}_C" OID="_040g00002u801q07081079845gq08" ignore="false">
+				<Comment>Detection threshold to acknowledge {self.__CTRL__} message</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="udisc" unit="-">
+					<ScalarType>
+						<PrimitiveAttributes kind="parameter" scope="local" virtual="false" dependent="false" volatile="false" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_ctDet{self.__MsgE1__}" OID="_040g00002u801q07081079845gs08" ignore="false">
+				<Comment>Detection counter to acknowledge {self.__MSG1__}</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="udisc" unit="-">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_ctDet{self.__MsgE2__}" OID="_040g00002u801q07081079euhr2g8" ignore="false">
+				<Comment>Detection counter to acknowledge {self.__MSG2__}</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="udisc" unit="-">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_RstEep{self.__Ctrl__}_C" OID="_040g00002u801q07081079845gqg8" ignore="false">
+				<Comment>Codeword to reset the presence value in EEPROM</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="udisc" unit="-">
+					<ScalarType>
+						<PrimitiveAttributes kind="parameter" scope="local" virtual="false" dependent="false" volatile="false" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_stRdEep{self.__MsgE1__}" OID="_040g00002u801q07081079845gog8" ignore="false">
+				<Comment>EEP Read status of CAN {self.__MSG1__}</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="udisc" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_stRdEep{self.__MsgE2__}" OID="_040g00002u801q07081079fjhnug8" ignore="false">
+				<Comment>EEP Read status of CAN {self.__MSG2__}</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="udisc" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_tiFlt{self.__MsgE1__}_C" OID="_040g00002u801q07081079845gvg8" ignore="false">
+				<Comment>De-bounce timer threshold to set or reset {self.__MSG1__} error</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="cont" unit="s">
+					<ScalarType>
+						<PrimitiveAttributes kind="parameter" scope="local" virtual="false" dependent="false" volatile="false" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_tiFlt{self.__MsgE1__}Alv" OID="_040g00002u801q07081079845gtg8" ignore="false">
+				<Comment>De-bounce timer to set {self.__MSG1__} alive counter fault</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="cont" unit="s">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_tiFlt{self.__MsgE1__}Crc" OID="_040g00002u801q07081079845gm08" ignore="false">
+				<Comment>De-bounce timer to set {self.__MSG1__} CRC fault</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="cont" unit="s">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_tiFlt{self.__MsgE1__}Msg" OID="_040g00002u801q07081079845gmg8" ignore="false">
+				<Comment>De-bounce timer to set {self.__MSG1__} message counter fault</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="cont" unit="s">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_tiFlt{self.__MsgE2__}_C" OID="_040g00002u801q07081079gnk0qga" ignore="false">
+				<Comment>De-bounce timer threshold to set or reset {self.__MSG2__} error</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="cont" unit="s">
+					<ScalarType>
+						<PrimitiveAttributes kind="parameter" scope="local" virtual="false" dependent="false" volatile="false" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_tiFlt{self.__MsgE2__}Alv" OID="_040g00002u801q07081079gnk0rga" ignore="false">
+				<Comment>De-bounce timer to set {self.__MSG2__} alive counter fault</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="cont" unit="s">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_tiFlt{self.__MsgE2__}Crc" OID="_040g00002u801q07081079gnk0sga" ignore="false">
+				<Comment>De-bounce timer to set {self.__MSG2__} CRC fault</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="cont" unit="s">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_tiFlt{self.__MsgE2__}Msg" OID="_040g00002u801q07081079gnk0tga" ignore="false">
+				<Comment>De-bounce timer to set {self.__MSG2__} message counter fault</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="cont" unit="s">
+					<ScalarType>
+						<PrimitiveAttributes kind="variable" scope="local" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="CanD_tiMonDet{self.__Ctrl__}_C" OID="_040g00002u801q07081079845gr08" ignore="false">
+				<Comment>Monitoring time for the detection of the {self.__CTRL__} message</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="cont" unit="s">
+					<ScalarType>
+						<PrimitiveAttributes kind="parameter" scope="local" virtual="false" dependent="false" volatile="false" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="Cfg_FD{self.__CTRL__}D_C" OID="_040g00002u801q07081079845go08" ignore="false">
+				<Comment>Codeword to configure diagnosis for {self.__CTRL__}</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="udisc" unit="-">
+					<ScalarType>
+						<PrimitiveAttributes kind="parameter" scope="local" virtual="false" dependent="false" volatile="false" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="EEP_FD{self.__MSGE1__}" OID="_040g00002u801q07081079845gug8" ignore="false">
+				<Comment></Comment>
+				<ElementAttributes modelType="scalar" basicModelType="udisc" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="sysconstant" scope="imported" virtual="false" dependent="false" volatile="false" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="EEP_FD{self.__MSGE2__}" OID="_040g00002u801q07081079l9loa0c" ignore="false">
+				<Comment></Comment>
+				<ElementAttributes modelType="scalar" basicModelType="udisc" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="sysconstant" scope="imported" virtual="false" dependent="false" volatile="false" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="EEP_stFD{self.__MSGE1__}" OID="_040g00002u801q07081079845gv08" ignore="false">
+				<Comment>Current message {self.__MSG1__} presence stored in EEPROM</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="udisc" unit="-">
+					<ScalarType>
+						<PrimitiveAttributes kind="message" scope="exported" virtual="false" dependent="false" volatile="false" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="EEP_stFD{self.__MSGE2__}" OID="_040g00002u801q07081079l9lo90c" ignore="false">
+				<Comment>Current message {self.__MSG2__} presence stored in EEPROM</Comment>
+				<ElementAttributes modelType="scalar" basicModelType="udisc" unit="-">
+					<ScalarType>
+						<PrimitiveAttributes kind="message" scope="exported" virtual="false" dependent="false" volatile="false" calibrated="true" set="false" get="false" read="true" write="true" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="FD_cEnaDiag" OID="_040g00002u801q07081079845grg8" ignore="false">
+				<Comment></Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="message" scope="imported" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="FD_cVld{self.__MsgE1__}Alv" OID="_040g00002u801q07081079845gp08" ignore="false">
+				<Comment></Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="message" scope="imported" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="FD_cVld{self.__MsgE1__}Crc" OID="_040g00002u801q07081079845gng8" ignore="false">
+				<Comment></Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="message" scope="imported" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="FD_cVld{self.__MsgE1__}Msg" OID="_040g00002u801q07081079845gt08" ignore="false">
+				<Comment></Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="message" scope="imported" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="FD_cVld{self.__MsgE2__}Alv" OID="_040g00002u801q07081079mo25agc" ignore="false">
+				<Comment></Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="message" scope="imported" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="FD_cVld{self.__MsgE2__}Crc" OID="_040g00002u801q07081079mo25dgc" ignore="false">
+				<Comment></Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="message" scope="imported" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="FD_cVld{self.__MsgE2__}Msg" OID="_040g00002u801q07081079mo25bgc" ignore="false">
+				<Comment></Comment>
+				<ElementAttributes modelType="scalar" basicModelType="log" unit="">
+					<ScalarType>
+						<PrimitiveAttributes kind="message" scope="imported" virtual="false" dependent="false" volatile="true" calibrated="true" set="false" get="false" read="true" write="false" reference="false"/>
+					</ScalarType>
+				</ElementAttributes>
+			</Element>
+			<Element name="{self.__CTRL__}_EnaDiag_ER" OID="_040g00002u801q07081079845h2g8" ignore="false">
+				<Comment>Edge rising function</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HMC_ECU_Library/HMC_SystemLibrary/Miscellaneous/hmc_EdgeRising" componentID="_040g030000001m87144g3oqcpflg0" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="autodetection_CW_STD" OID="_040g00002u801q07081079845h6g8" ignore="false">
+				<Comment>Autodetection codeword class in {self.__CTRL__} CAN diagnosis</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HNB_GASOLINE/_29_CommunicationVehicle/CANInterfaceCommon/DiagnosisLibrary/autodetection/autodetection_CW_STD" componentID="_040g1ngg01pp1oo70c2g6se48v6ti" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="autodetection_STD" OID="_040g00002u801q07081079845h608" ignore="false">
+				<Comment>Autodetection class in {self.__CTRL__} CAN diagnosis</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HNB_GASOLINE/_29_CommunicationVehicle/CANInterfaceCommon/DiagnosisLibrary/autodetection/autodetection_STD" componentID="_040g1ngg01pp1oo70c2g6sc5o6mdi" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="BAAEEP" OID="_040g00002u801q07081079845h108" ignore="false">
+				<Comment>EEPROM initialize class in {self.__CTRL__} CAN diagnosis</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HNB_GASOLINE/BAA/BAAC/BAAEEP" componentID="_040g04136ps01mo710cgi4us2mdme" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="DEve_FD{self.__MsgE1__}Alv" OID="_040g00002u801q07081079845h3g8" ignore="false">
+				<Comment>{self.__MSG1__} alive counter DEve</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HMC_ECU_Library/HMC_DiagLibrary/DSM_Types/DEve_Typ" componentID="_040g030000001mg70o7g6cotfe6h4" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="DEve_FD{self.__MsgE1__}Crc" OID="_040g00002u801q07081079845h1g8" ignore="false">
+				<Comment>{self.__MSG1__} CRC DEve</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HMC_ECU_Library/HMC_DiagLibrary/DSM_Types/DEve_Typ" componentID="_040g030000001mg70o7g6cotfe6h4" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="DEve_FD{self.__MsgE1__}Msg" OID="_040g00002u801q07081079845h408" ignore="false">
+				<Comment>{self.__MSG1__} message counter DEve</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HMC_ECU_Library/HMC_DiagLibrary/DSM_Types/DEve_Typ" componentID="_040g030000001mg70o7g6cotfe6h4" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="DEve_FD{self.__MsgE2__}Alv" OID="_040g00002u801q07081079javumga" ignore="false">
+				<Comment>{self.__MSG2__} alive counter DEve</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HMC_ECU_Library/HMC_DiagLibrary/DSM_Types/DEve_Typ" componentID="_040g030000001mg70o7g6cotfe6h4" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="DEve_FD{self.__MsgE2__}Crc" OID="_040g00002u801q07081079jas2kga" ignore="false">
+				<Comment>{self.__MSG2__} CRC DEve</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HMC_ECU_Library/HMC_DiagLibrary/DSM_Types/DEve_Typ" componentID="_040g030000001mg70o7g6cotfe6h4" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="DEve_FD{self.__MsgE2__}Msg" OID="_040g00002u801q07081079javulga" ignore="false">
+				<Comment>{self.__MSG2__} message counter DEve</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HMC_ECU_Library/HMC_DiagLibrary/DSM_Types/DEve_Typ" componentID="_040g030000001mg70o7g6cotfe6h4" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="DFRM_stClrReq" OID="_040g00002u801q07081079845h008" ignore="false">
+				<Comment></Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HMC_ECU_Library/HMC_DiagLibrary/DEve/DFRM_stClrReq" componentID="_040g030000001mg70k62k84j8a602" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="DFSdl_stPrms" OID="_040g00002u801q07081079845h308" ignore="false">
+				<Comment></Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HMC_ECU_Library/HMC_DiagLibrary/DFSdl/DFSdl_stPrms" componentID="_040g030000001mg70o3hukl9qnopg" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="errordetection_STD" OID="_040g00002u801q07081079845h208" ignore="false">
+				<Comment>Error detection class in {self.__CTRL__} CAN diagnosis</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HNB_GASOLINE/_29_CommunicationVehicle/CANInterfaceCommon/DiagnosisLibrary/errordetection/errordetection_STD" componentID="_040g1ngg01pp1oo70c2g6t0e87tti" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="Fid_FD{self.__MSGE1__}D" OID="_040g00002u801q07081079845h5g8" ignore="false">
+				<Comment>Function inhibitor for {self.__MSG1__} Rx error</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HMC_ECU_Library/HMC_DiagLibrary/DSM_Types/Fid_Typ" componentID="_040g030000001mg70o7g6co9cseh2" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="Fid_FD{self.__MSGE2__}D" OID="_040g00002u801q07081079mo25cgc" ignore="false">
+				<Comment>Function inhibitor for {self.__MSG2__} Rx error</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HMC_ECU_Library/HMC_DiagLibrary/DSM_Types/Fid_Typ" componentID="_040g030000001mg70o7g6co9cseh2" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="hmc_GetBit" OID="_040g00002u801q07081079845h508" ignore="false">
+				<Comment>Get Bit value</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HMC_ECU_Library/HMC_SystemLibrary/Bitoperations/hmc_GetBit" componentID="_040g030000001m8710d08cna38c08" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="MonDly{self.__CTRL__}_TOFFV" OID="_040g00002u801q07081079845h4g8" ignore="false">
+				<Comment>CAN message learning shutdown time</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HMC_ECU_Library/HMC_SystemLibrary/Delay/hmc_TurnOffDelayVariable" componentID="_040g030000001m87149g79jrp56g6" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+			<Element name="Rst_autodetectionTester_STD" OID="_040g00002u801q07081079845h0g8" ignore="false">
+				<Comment>Reset Autodetection Tester class in {self.__CTRL__} CAN diagnosis</Comment>
+				<ElementAttributes modelType="complex" basicModelType="class" unit="">
+					<ComplexType>
+						<ComplexAttributes componentName="/HNB_GASOLINE/_29_CommunicationVehicle/CANInterfaceCommon/DiagnosisLibrary/ResetAutoDetectionTester/Rst_autodetectionTester_STD" componentID="_040g1ngg01pp1oo70c2g6t63hchdk" scope="local" set="false" get="false" read="true" write="true" reference="false"/>
+					</ComplexType>
+				</ElementAttributes>
+			</Element>
+		</Elements>
+		<MethodSignatures>
+			<MethodSignature name="_100msRun" OID="{self._methods_["_100msRun"]}" public="true" default="false" defaultMethod="true" hidden="false" availableForOS="true"/>
+			<MethodSignature name="_EEPRes" OID="{self._methods_["_EEPRes"]}" public="true" default="false" defaultMethod="false" hidden="false" availableForOS="true"/>
+			<MethodSignature name="_fcmclr" OID="{self._methods_["_fcmclr"]}" public="true" default="false" defaultMethod="false" hidden="false" availableForOS="true"/>
+			<MethodSignature name="_Init" OID="{self._methods_["_Init"]}" public="true" default="false" defaultMethod="false" hidden="false" availableForOS="true"/>
+		</MethodSignatures>
+		<TimeStamps>
+			<TimeStamp timeStampKey="implementationTypeTimeStampKey" timeStampValue="2020-04-10T02:14:38"/>
+			<TimeStamp timeStampKey="methodsTimeStampKey" timeStampValue="2024-02-02T05:03:24"/>
+			<TimeStamp timeStampKey="formulaTimeStampKey" timeStampValue="2020-04-10T02:14:38"/>
+			<TimeStamp timeStampKey="directAccessTimeStampKey" timeStampValue="2020-04-10T02:14:38"/>
+			<TimeStamp timeStampKey="exportImportTimeStampKey" timeStampValue="2024-02-02T02:33:48"/>
+			<TimeStamp timeStampKey="implementationCastTimeStampKey" timeStampValue="2020-04-10T02:14:38"/>
+		</TimeStamps>
+	</Component>
+	<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+		<SignedInfo>
+			<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+			<SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+			<Reference>
+				<Transforms>
+					<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+				</Transforms>
+				<DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+				<DigestValue>{src.digestValue}</DigestValue>
+			</Reference>
+		</SignedInfo>
+		<SignatureValue>{src.signatureValue}</SignatureValue>
+		<KeyInfo>
+			<KeyName>Etas Ascet Verification</KeyName>
+		</KeyInfo>
+	</Signature>
+</ComponentMain>

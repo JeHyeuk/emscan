@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ComponentImplementation toolVersion="V6.1.0-Win10" schemaVersion="6.1.0.0">
+	<ImplementationSet name="CanDiag1Msg" default="false" classConfig="true" memoryLocation="Default" generateMethodBody="true" optimizeMethodCalls="true" usingServiceRoutines="false" hierarchicalGenerationForSM="true" outlineMethodsSM="true" inlinePrivateMethodsSM="true" cacheLocking="automatic" userDefinedOrder="false" OID="_040g00002u801q07080lo2n2u32ju">
+		<TimeStamp timeStampKey="applicationTimeStamp" timeStampValue="2024-02-07T05:16:03" timeStampCounter="5450"/>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="EEP_stFD{self.__MSGE1__}" elementOID="_040g00002u801q07080lo2n2q6k3u">
+					<ScalarImplementation>
+						<NumericImplementation limitAssignments="false" isLimitOverflow="false" limitOverflow="automatic" memoryLocationInstance="EEPROM_CAN_8bit" additionalInformation="" cacheLocking="automatic" quantization="1" formula="OneToOne" master="Implementation" physType="uint32" implType="uint8" zeroNotIncluded="false">
+							<PhysicalInterval min="0" max="255"/>
+							<ImplementationInterval min="0" max="255"/>
+						</NumericImplementation>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+	</ImplementationSet>
+	<ImplementationSet name="Impl" default="true" classConfig="false" memoryLocation="Default" generateMethodBody="true" optimizeMethodCalls="true" usingServiceRoutines="false" hierarchicalGenerationForSM="true" outlineMethodsSM="true" inlinePrivateMethodsSM="true" cacheLocking="automatic" userDefinedOrder="false" OID="_040g00002u801q07080lo2n2s31ju">
+		<TimeStamp timeStampKey="applicationTimeStamp" timeStampValue="2024-02-07T05:16:02" timeStampCounter="5449"/>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="CanD_cEnaDet{self.__MsgE1__}" elementOID="_040g00002u801q07080lo2n2q6hju">
+					<ScalarImplementation>
+						<LogicImplementation physType="log" implType="uint8" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic"/>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="CanD_cEnaDiag{self.__MsgE1__}" elementOID="_040g00002u801q07080lo2n2q6eju">
+					<ScalarImplementation>
+						<LogicImplementation physType="log" implType="uint8" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic"/>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="CanD_cErr{self.__MsgE1__}Alv" elementOID="_040g00002u801q07080lo2n2q6j3u">
+					<ScalarImplementation>
+						<LogicImplementation physType="log" implType="uint8" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic"/>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="CanD_cErr{self.__MsgE1__}Crc" elementOID="_040g00002u801q07080lo2n2q6a3u">
+					<ScalarImplementation>
+						<LogicImplementation physType="log" implType="uint8" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic"/>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="CanD_cErr{self.__MsgE1__}Msg" elementOID="_040g00002u801q07080lo2n2q6bju">
+					<ScalarImplementation>
+						<LogicImplementation physType="log" implType="uint8" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic"/>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="CanD_ctDet{self.__Ctrl__}_C" elementOID="_040g00002u801q07080lo2n2q6f3u">
+					<ScalarImplementation>
+						<NumericImplementation limitAssignments="false" isLimitOverflow="false" limitOverflow="automatic" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic" quantization="1" formula="OneToOne" master="Implementation" physType="uint32" implType="uint8" zeroNotIncluded="false">
+							<PhysicalInterval min="0" max="255"/>
+							<ImplementationInterval min="0" max="255"/>
+						</NumericImplementation>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="CanD_ctDet{self.__MsgE1__}" elementOID="_040g00002u801q07080lo2n2q6h3u">
+					<ScalarImplementation>
+						<NumericImplementation limitAssignments="true" isLimitOverflow="true" limitOverflow="automatic" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic" quantization="1" formula="OneToOne" master="Implementation" physType="uint32" implType="uint8" zeroNotIncluded="false">
+							<PhysicalInterval min="0" max="255"/>
+							<ImplementationInterval min="0" max="255"/>
+						</NumericImplementation>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="CanD_RstEep{self.__Ctrl__}_C" elementOID="_040g00002u801q07080lo2n2q6fju">
+					<ScalarImplementation>
+						<NumericImplementation limitAssignments="false" isLimitOverflow="false" limitOverflow="automatic" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic" quantization="1" formula="OneToOne" master="Implementation" physType="uint32" implType="uint8" zeroNotIncluded="false">
+							<PhysicalInterval min="0" max="255"/>
+							<ImplementationInterval min="0" max="255"/>
+						</NumericImplementation>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="CanD_stRdEep{self.__MsgE1__}" elementOID="_040g00002u801q07081077imqbo04">
+					<ScalarImplementation>
+						<NumericImplementation limitAssignments="false" isLimitOverflow="false" limitOverflow="automatic" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic" quantization="1" formula="OneToOne" master="Implementation" physType="uint32" implType="uint8" zeroNotIncluded="false">
+							<PhysicalInterval min="0" max="255"/>
+							<ImplementationInterval min="0" max="255"/>
+						</NumericImplementation>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="CanD_tiFlt{self.__MsgE1__}_C" elementOID="_040g00002u801q07080lo2n2q6l3u">
+					<ScalarImplementation>
+						<NumericImplementation limitAssignments="true" isLimitOverflow="true" limitOverflow="automatic" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic" quantization="0" formula="Ti_q0p1_s" master="Implementation" physType="real64" implType="uint8" zeroNotIncluded="false">
+							<PhysicalInterval min="0.0" max="25.5"/>
+							<ImplementationInterval min="0" max="255"/>
+						</NumericImplementation>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="CanD_tiFlt{self.__MsgE1__}Alv" elementOID="_040g00002u801q07080lo2n2q6iju">
+					<ScalarImplementation>
+						<NumericImplementation limitAssignments="true" isLimitOverflow="true" limitOverflow="automatic" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic" quantization="0" formula="Ti_q0p1_s" master="Implementation" physType="real64" implType="uint8" zeroNotIncluded="false">
+							<PhysicalInterval min="0.0" max="25.5"/>
+							<ImplementationInterval min="0" max="255"/>
+						</NumericImplementation>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="CanD_tiFlt{self.__MsgE1__}Crc" elementOID="_040g00002u801q07080lo2n2q6aju">
+					<ScalarImplementation>
+						<NumericImplementation limitAssignments="true" isLimitOverflow="true" limitOverflow="automatic" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic" quantization="0" formula="Ti_q0p1_s" master="Implementation" physType="real64" implType="uint8" zeroNotIncluded="false">
+							<PhysicalInterval min="0.0" max="25.5"/>
+							<ImplementationInterval min="0" max="255"/>
+						</NumericImplementation>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="CanD_tiFlt{self.__MsgE1__}Msg" elementOID="_040g00002u801q07080lo2n2q6b3u">
+					<ScalarImplementation>
+						<NumericImplementation limitAssignments="true" isLimitOverflow="true" limitOverflow="automatic" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic" quantization="0" formula="Ti_q0p1_s" master="Implementation" physType="real64" implType="uint8" zeroNotIncluded="false">
+							<PhysicalInterval min="0.0" max="25.5"/>
+							<ImplementationInterval min="0" max="255"/>
+						</NumericImplementation>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="CanD_tiMonDet{self.__Ctrl__}_C" elementOID="_040g00002u801q07080lo2n2q6g3u">
+					<ScalarImplementation>
+						<NumericImplementation limitAssignments="true" isLimitOverflow="true" limitOverflow="automatic" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic" quantization="0" formula="Ti_q0p1_s" master="Implementation" physType="real64" implType="uint8" zeroNotIncluded="false">
+							<PhysicalInterval min="0.0" max="25.5"/>
+							<ImplementationInterval min="0" max="255"/>
+						</NumericImplementation>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="Cfg_FD{self.__CTRL__}D_C" elementOID="_040g00002u801q07080lo2n2q6d3u">
+					<ScalarImplementation>
+						<NumericImplementation limitAssignments="false" isLimitOverflow="false" limitOverflow="automatic" memoryLocationInstance="Default" additionalInformation="" cacheLocking="automatic" quantization="1" formula="OneToOne" master="Implementation" physType="uint32" implType="uint8" zeroNotIncluded="false">
+							<PhysicalInterval min="0" max="255"/>
+							<ImplementationInterval min="0" max="255"/>
+						</NumericImplementation>
+					</ScalarImplementation>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="{self.__CTRL__}_EnaDiag_ER" elementOID="_040g00002u801q07080lo2n2q6oju">
+					<ComplexImplementation implementationName="UB" implementationOID="_040g030000001mg704a04r4g8834i"/>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="autodetection_CW_STD" elementOID="_040g00002u801q07080lo2n2q6tju">
+					<ComplexImplementation implementationName="Impl" implementationOID="_040g1ngg01pp1oo70c2g6se4arbti"/>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="autodetection_STD" elementOID="_040g00002u801q07080lo2n2q6t3u">
+					<ComplexImplementation implementationName="Impl" implementationOID="_040g1ngg01pp1oo70c2g6sc5o6rti"/>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="BAAEEP" elementOID="_040g00002u801q07080lo2n2q6mju">
+					<ComplexImplementation implementationName="U8" implementationOID="_040g04136ps01mo710ehojkjj5p6i"/>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="DEve_FD{self.__MsgE1__}Alv" elementOID="_040g00002u801q07080lo2n2q6q3u">
+					<ComplexImplementation implementationName="NoUse_DEve" implementationOID="_040g030000001mg70o7g6cpa5m8h4"/>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="DEve_FD{self.__MsgE1__}Crc" elementOID="_040g00002u801q07080lo2n2q6nju">
+					<ComplexImplementation implementationName="NoUse_DEve" implementationOID="_040g030000001mg70o7g6cpa5m8h4"/>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="DEve_FD{self.__MsgE1__}Msg" elementOID="_040g00002u801q07080lo2n2q6r3u">
+					<ComplexImplementation implementationName="NoUse_DEve" implementationOID="_040g030000001mg70o7g6cpa5m8h4"/>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="DFRM_stClrReq" elementOID="_040g00002u801q07080lo2n2q6lju">
+					<ComplexImplementation implementationName="Impl" implementationOID="_040g030000001mg70k62k84je2902"/>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="DFSdl_stPrms" elementOID="_040g00002u801q07080lo2n2q6p3u">
+					<ComplexImplementation implementationName="Impl" implementationOID="_040g030000001mg70o3hukla8bspg"/>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="errordetection_STD" elementOID="_040g00002u801q07080lo2n2q6o3u">
+					<ComplexImplementation implementationName="Impl" implementationOID="_040g1ngg01pp1oo70c2g6t0e844dk"/>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="Fid_FD{self.__MSGE1__}D" elementOID="_040g00002u801q07080lo2n2q6sju">
+					<ComplexImplementation implementationName="NoUse_Fid" implementationOID="_040g030000001mg70o7g6cog1ogh2"/>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="hmc_GetBit" elementOID="_040g00002u801q07080lo2n2q6s3u">
+					<ComplexImplementation implementationName="U8_Srv" implementationOID="_040g030000001m8710d08cnaisg08"/>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="MonDly{self.__CTRL__}_TOFFV" elementOID="_040g00002u801q07080lo2n2q6rju">
+					<ComplexImplementation implementationName="UB_t_q0p1" implementationOID="_040g030000001m871g907pqp44bje"/>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+		<ImplementationEntry>
+			<ImplementationVariant name="default">
+				<ElementImplementation elementName="Rst_autodetectionTester_STD" elementOID="_040g00002u801q07080lo2n2q6m3u">
+					<ComplexImplementation implementationName="Impl" implementationOID="_040g1ngg01pp1oo70c2g6t63hcktk"/>
+				</ElementImplementation>
+			</ImplementationVariant>
+		</ImplementationEntry>
+	</ImplementationSet>
+	<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+		<SignedInfo>
+			<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+			<SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+			<Reference>
+				<Transforms>
+					<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+				</Transforms>
+				<DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+				<DigestValue>fKXEYhXHUkZCNkZuadFCOncD2bQ=</DigestValue>
+			</Reference>
+		</SignedInfo>
+		<SignatureValue>Cf0+Aialft0FZiV5nL1D9/+KucCbZvD0CrxCd5nRnSA7WWf30BbFhTichb1ixIcu
+nGD8DaWYyobu6U6qqQp5eD/+f/4GNoSu4LK43WvtM30E9ROQn79856RY9tj9LOlE
+Rn6C4/1v/4ewG3ECpjgxxPJ8zGDNl2vK8woeYfIJfByng6/ktKCpKdbY2y333l6N
+Y78v3EH8GLRmFUklR+1EdtoQIlSLQKNdL6a6GYzUa8tWFt7VqErEnqytsSt0RTaE
+z7Lsg/KrqtzPvOnVMVmjAhPdANcybMYUTrekQP1cqqJXa+s6kQoTZ2F6Yw8fwi4v
+zow5a59UxV9fhzIyRx40rA==</SignatureValue>
+		<KeyInfo>
+			<KeyName>Etas Ascet Verification</KeyName>
+		</KeyInfo>
+	</Signature>
+</ComponentImplementation>
