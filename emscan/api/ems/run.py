@@ -29,8 +29,8 @@ except FileNotFoundError:
     SVN = SVN[SVN["상대경로"].str.endswith("_confdata.xml")]
 
 @app.get("/")
-async def read_root():\
-    return FileResponse("index.html")
+async def read_root(request:Request):\
+    return template.TemplateResponse("index.html", {"request": request})
 
 @app.get("/conf")
 async def read_conf(request:Request):

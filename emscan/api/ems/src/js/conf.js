@@ -1,5 +1,22 @@
 var TAB = 'Summary';
 
+function highlight() {
+	$('td:contains("배타적 FID 관계")').parent().css('border-top', '2px double grey');
+	$('td:contains("배타적 FID System Constant 조건")').parent().css('border-bottom', '2px double grey');
+	
+	$('td:contains("FID 금지 요건인 Event")').parent().css('border-top', '2px double grey');
+	$('td:contains("상기 Event 요건의 System Constant")').parent().css('border-bottom', '2px double grey');
+	
+	$('td:contains("FID 금지 요건인 Sum-Event")').parent().css('border-top', '2px double grey');
+	$('td:contains("상기 Sum-Event의 System Constant")').parent().css('border-bottom', '2px double grey');
+	
+	$('td:contains("FID 금지 요건인 Signal")').parent().css('border-top', '2px double grey');
+	$('td:contains("상기 Signal 요건의 System Constant")').parent().css('border-bottom', '2px double grey');
+	
+	$('td:contains("FID가 Mode7 조건인 Signal")').parent().css('border-top', '2px double grey');
+	$('td:contains("상기 Signal의 System Constant 조건")').parent().css('border-bottom', '2px double grey');
+}
+
 function openTab(evt, key) {
     var tabcontent, tablinks;
 

@@ -88,13 +88,13 @@ h1, h2, h3, h4, h5, h6 {
 
 table {
     border-collapse: collapse;
-    padding: 6px 12px;
     border: 1px solid #ccc;
     border-top: none;
 }
 
 td, th {
-    border: 1px solid #dddddd;
+    border: 1px solid lightgrey;
+    border-top:none;
     text-align: left;
     padding: 8px;
 }

@@ -98,7 +98,7 @@
 			<tbody>
 			{% for key, col in cols.items() %}
 				<tr>
-					<td class="key" style="background-color:{{ col['color'] }};">{{ col['text'] }}</td>
+					<td class="key" style="{{ col['style'] }}">{{ col['text'] }}</td>
 					<td></td>
 				</tr>{% endfor %}
 			</tbody>
@@ -123,6 +123,7 @@
 
   $(document).ready(function(){
     loadConf();
+	highlight();
   })
 
   $('.confdata-list').on('select2:select', function(e) {
@@ -136,7 +137,6 @@
 		return;
 	}
 	downloadConf(conf);
-	
   })
   
 
