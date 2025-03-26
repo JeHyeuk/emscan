@@ -325,6 +325,14 @@ textarea {
     cursor:pointer;
 }
 
+.confdata .tabcontent .group-top {
+	border-top: 2px double grey;
+}
+
+.confdata .tabcontent .group-bottom {
+	border-bottom: 2px double grey;
+}
+
 .confdata .tabcontent .dem-value {
 	font-size: 12px;
 	min-width: 180px;
@@ -334,7 +342,22 @@ textarea {
     display: table;
 }
 
+.color-ref {
+    display: flex;
+    align-items:center;
+    width: 20vw;
 
+    margin-top: 4px;
+}
+
+.color-ref .color-title {
+    margin-right: 6px;
+}
+
+.color-ref .color-box {
+    flex: 1 0 auto;
+    min-height: 28px;
+}
 
 /*--------------------------------------------------------------
 # Header

@@ -96,14 +96,22 @@
 				</tr>
 			</thead>
 			<tbody>
-			{% for key, col in cols.items() %}
+			{% for key, col in cols.items() %}{% if key != "DEB_PARAM" %}
 				<tr>
-					<td class="key" style="{{ col['style'] }}">{{ col['text'] }}</td>
+					<td class="key" style="{{ col['style'] }}">{{ col['label'] }}</td>
 					<td></td>
-				</tr>{% endfor %}
+				</tr>{% endif %}{% endfor %}
 			</tbody>
 		</table>{% endfor %}
 		
+	  </div>
+	  <div class="color-ref">
+		  <span class="color-title">* 범례 : </span>
+		  <span class="color-box" style="background-color:rgb(146, 208, 80);"></span>
+		  <span class="color-box" style="background-color:rgb(250, 191, 143);"></span>
+		  <span class="color-box" style="background-color:rgb(255, 192, 0);"></span>
+		  <span class="color-box" style="background-color:rgb(183, 222, 232);"></span>
+		  <span class="color-box" style="background-color:rgb(177, 160, 199);"></span>
 	  </div>
     </section>
   </main>

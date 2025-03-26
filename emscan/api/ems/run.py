@@ -65,7 +65,7 @@ def read_conf(conf:str=Form(...)):
     }
     for tab, key in read.TABS.items():
         data[key] = read.html(tab)
-        data[f'N_{key}'] = len(read.dem(tab).T.columns)
+        data[f'N_{key}'] = len(read.dem(tab))
     return JSONResponse(content=jsonable_encoder(data))
 
 @app.post("/download-conf")

@@ -11,319 +11,337 @@ T_ITEMS: str = 'SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-ITEM/CONF-ITEMS/C
 COLUMNS:Dict[str, Dict] = {
     "EVENT": {
         "ELEMENT_NAME": {
-            "text": "진단 Event 명칭",
+            "label": "진단 Event 명칭",
             "style": "background-color:rgb(146, 208, 80);"
         },
         "DESC": {
-            "text": "진단 Event 설명(영문)",
+            "label": "진단 Event 설명(영문)",
             "style": "background-color:rgb(146,208,80);"
         },
         "DESC_KR": {
-            "text": "진단 Event 설명(한글)",
+            "label": "진단 Event 설명(한글)",
             "style": "background-color:rgb(177,160,199);"
         },
         "SYSCON": {
-            "text": "System Constant 조건",
+            "label": "System Constant 조건",
             "style": "background-color:rgb(183,222,232);"
         },
         "DEB_METHOD": {
-            "text": "Debouncing 방식",
+            "label": "Debouncing 방식",
             "style": "background-color:rgb(146,208,80);"
         },
+        "DEB_PARAM": {
+            "label": "(Conf 존재 / 미사용 KEY)",
+            "style": "display:none;"
+        },
         "DEB_PARAM_OK": {
-            "text": "Deb Parameter Data for OK",
+            "label": "Deb Parameter Data for OK",
             "style": "background-color:rgb(146,208,80);"
         },
         "DEB_PARAM_Def": {
-            "text": "Deb Parameter Data for OK",
+            "label": "Deb Parameter Data for OK",
             "style": "background-color:rgb(146,208,80);"
         },
         "DEB_PARAM_Ratio": {
-            "text": "Deb Parameter Data for OK",
+            "label": "Deb Parameter Data for OK",
             "style": "background-color:rgb(146,208,80);"
         },
         "ELEMENT_COUNT": {
-            "text":"소속 Event 개수",
+            "label":"소속 Event 개수",
             "style": "background-color:rgb(146,208,80);"
         },
         "SIMILAR_COND": {
-            "text": "Similar Conidtion 필요",
+            "label": "Similar Conidtion 필요",
             "style": "background-color:rgb(146,208,80);"
         },
         "MIL": {
-            "text": "MIL 점등 여부",
+            "label": "MIL 점등 여부",
             "style": "background-color:rgb(146,208,80);"
         },
         "DCY_TEST": {
-            "text": "Multiple Driving Cycle 진단",
+            "label": "Multiple Driving Cycle 진단",
             "style": "background-color:rgb(183,222,232);"
         },
         "SHUT_OFF": {
-            "text": "시동꺼짐 연관성 (REC)",
+            "label": "시동꺼짐 연관성 (REC)",
             "style": "background-color:rgb(250,191,143);"
         },
         "RESET_INIT": {
-            "text": "DCY 시작시 초기화",
+            "label": "DCY 시작시 초기화",
             "style": "background-color:rgb(146,208,80);"
         },
         "RESET_POSTCANCEL": {
-            "text": "PostCancel 초기화",
+            "label": "PostCancel 초기화",
             "style": "background-color:rgb(146,208,80);"
         },
         "DTC_2B": {
-            "text": "기본 DTC 설정값",
+            "label": "기본 DTC 설정값",
             "style": "background-color:rgb(146,208,80);"
         },
         "DTC_EX": {
-            "text": "확장 DTC 설정값 (UDS용)",
+            "label": "확장 DTC 설정값 (UDS용)",
             "style": "background-color:rgb(183,222,232);"
         },
         "MDL_INHIBIT": {
-            "text": "모듈 자체의 금지 조건 (Event)",
+            "label": "모듈 자체의 금지 조건 (Event)",
             "style": "background-color:rgb(255,192,0);"
         },
         "REQ_FID": {
-            "text": "모듈 자체의 진단 조건 (FID)",
+            "label": "모듈 자체의 진단 조건 (FID)",
             "style": "background-color:rgb(255,192,0);"
         },
         "IUMPR_GRP": {
-            "text": "IUMPR 소속",
+            "label": "IUMPR 소속",
             "style": "background-color:rgb(177,160,199);"
         },
         "READY_GRP": {
-            "text": "Readiness 소속",
+            "label": "Readiness 소속",
             "style": "background-color:rgb(146,208,80);"
         },
         "GRP_RPT": {
-            "text": "Group Reporting Event",
+            "label": "Group Reporting Event",
             "style": "background-color:rgb(146,208,80);"
         }
     },
     "PATH": {
         "ELEMENT_NAME": {
-            "text": "Event Path 명칭",
+            "label": "Event Path 명칭",
             "style": "background-color:rgb(146, 208, 80);"
         },
         "DESC": {
-            "text": "진단 Event Path 설명(영문)",
+            "label": "진단 Event Path 설명(영문)",
             "style": "background-color:rgb(146, 208, 80);"
         },
         "DESC_KR": {
-            "text": "진단 Event Path 설명(한글)",
+            "label": "진단 Event Path 설명(한글)",
             "style": "background-color:rgb(177,160,199);"
         },
         "SYSCON": {
-            "text": "System Constant 조건",
+            "label": "System Constant 조건",
             "style": "background-color:rgb(183,222,232);"
         },
         "FAULT_MAX": {
-            "text": "Max 고장 Event 명칭",
+            "label": "Max 고장 Event 명칭",
             "style": "background-color:rgb(146, 208, 80);"
         },
         "FAULT_MIN": {
-            "text": "Min 고장 Event 명칭",
+            "label": "Min 고장 Event 명칭",
             "style": "background-color:rgb(146, 208, 80);"
         },
         "FAULT_SIG": {
-            "text": "Sig 고장 Event 명칭",
+            "label": "Sig 고장 Event 명칭",
             "style": "background-color:rgb(146, 208, 80);"
         },
         "FAULT_NPL" : {
-            "text": "Plaus 고장 Event 명칭",
+            "label": "Plaus 고장 Event 명칭",
             "style": "background-color:rgb(146, 208, 80);"
         },
         "MDL_INHIBIT": {
-            "text": "모듈 자체의 금지 조건 (Event)",
+            "label": "모듈 자체의 금지 조건 (Event)",
             "style": "background-color:rgb(255,192,0);"
         },
         "REQ_FID": {
-            "text": "모듈 자체의 진단 조건 (FID)",
+            "label": "모듈 자체의 진단 조건 (FID)",
             "style": "background-color:rgb(255,192,0);"
         },
     },
     "FID": {
         "ELEMENT_NAME": {
             "style": "background-color:rgb(146, 208, 80);",
-            "text": "함수 식별자 명칭"
+            "label": "함수 식별자 명칭"
         },
         "DESC": {
             "style": "background-color:rgb(146, 208, 80);",
-            "text": "함수 식별자 설명(영문)"
+            "label": "함수 식별자 설명(영문)"
         },
         "DESC_KR": {
             "style": "background-color:rgb(177,160,199);",
-            "text": "함수 식별자 설명(한글)"
+            "label": "함수 식별자 설명(한글)"
         },
         "SYSCON": {
             "style": "background-color:rgb(183,222,232);",
-            "text": "System Constant 조건"
+            "label": "System Constant 조건"
         },
         "PROVIDING_EVENT": {
             "style": "background-color:rgb(177,160,199);",
-            "text": "모듈에서 이 FID가 진단 조건인 Event"
+            "label": "모듈에서 이 FID가 진단 조건인 Event"
         },
         "PROVIDING_SIGNAL": {
             "style": "background-color:rgb(177,160,199);",
-            "text": "모듈에서 이 FID가 진단 조건인 Signal"
+            "label": "모듈에서 이 FID가 진단 조건인 Signal"
         },
         "SCHED_MODE": {
             "style": "background-color:rgb(146, 208, 80);",
-            "text": "Scheduling Mode"
+            "label": "Scheduling Mode"
         },
         "LOCKED": {
             "style": "background-color:rgb(177,160,199);",
-            "text": "Sleep/Lock 사용 여부"
+            "label": "Sleep/Lock 사용 여부"
         },
         "SHORT_TEST": {
             "style": "background-color:rgb(177,160,199);",
-            "text": "Short Test시 Permisson 처리 여부"
+            "label": "Short Test시 Permisson 처리 여부"
         },
         "FID_GROUP": {
             "style": "background-color:rgb(146, 208, 80);",
-            "text": "IUMPR Group 할당"
+            "label": "IUMPR Group 할당"
         },
         "IUMPR_SYSCON": {
             "style": "background-color:rgb(183,222,232);",
-            "text": "IUMPR 적용 System Constant 조건"
+            "label": "IUMPR 적용 System Constant 조건"
         },
         "DENOM_PHYRLS": {
             "style": "background-color:rgb(146, 208, 80);",
-            "text": "IUMPR 분모 Release 방식"
+            "label": "IUMPR 분모 Release 방식"
         },
         "NUM_RLS": {
             "style": "background-color:rgb(146, 208, 80);",
-            "text": "IUMPR 분자 Release Event"
+            "label": "IUMPR 분자 Release Event"
         },
         "ENG_MODE": {
             "style": "background-color:rgb(177,160,199);",
-            "text": "Ready 조건 GDI 모드"
+            "label": "Ready 조건 GDI 모드"
         },
         "EXCLUSION": {
             "style": "background-color:rgb(146, 208, 80);",
-            "text": "배타적 FID 관계"
+            "label": "배타적 FID 관계",
+            "group": "EXCLUSION",
         },
         "EXCLU_PRIO": {
             "style": "background-color:rgb(146, 208, 80);",
-            "text": "배타적 FID 처리 순서"
+            "label": "배타적 FID 처리 순서",
+            "group": "EXCLUSION",
         },
         "EXCLUSIVE_SYSCON": {
             "style": "background-color:rgb(183,222,232);",
-            "text": "배타적 FID System Constant 조건"
+            "label": "배타적 FID System Constant 조건",
+            "group": "EXCLUSION",
         },
         "INHIBITED_EVENT": {
             "style": "background-color:rgb(146, 208, 80);",
-            "text": "FID 금지 요건인 Event"
+            "label": "FID 금지 요건인 Event",
+            "group": "INHIBITED_EVENT"
         },
         "INHIBITED_EVENT_MASK": {
             "style": "background-color:rgb(146, 208, 80);",
-            "text": "상기 Event 요건의 Mask 속성"
+            "label": "상기 Event 요건의 Mask 속성",
+            "group": "INHIBITED_EVENT"
         },
         "INHIBITED_EVENT_SYSCON": {
             "style": "background-color:rgb(183,222,232);",
-            "text": "상기 Event 요건의 System Constant"
+            "label": "상기 Event 요건의 System Constant",
+            "group": "INHIBITED_EVENT"
         },
         "INHIBITED_SUM_EVENT": {
             "style": "background-color:rgb(183,222,232);",
-            "text": "FID 금지 요건인 Sum-Event"
+            "label": "FID 금지 요건인 Sum-Event",
+            "group": "INHIBITED_SUM_EVENT",
         },
-        "SUM_EVENT_MASK": {
+        "INHIBITED_SUM_EVENT_MASK": {
             "style": "background-color:rgb(183,222,232);",
-            "text": "상기 Sum-Event 요건의 Mask 속성"
+            "label": "상기 Sum-Event 요건의 Mask 속성",
+            "group": "INHIBITED_SUM_EVENT",
         },
-        "SUM_EVENT_SYSCON": {
+        "INHIBITED_SUM_EVENT_SYSCON": {
             "style": "background-color:rgb(183,222,232);",
-            "text": "상기 Sum-Event의 System Constant"
+            "label": "상기 Sum-Event의 System Constant",
+            "group": "INHIBITED_SUM_EVENT",
         },
-        "INHIBITED_SIGS": {
+        "INHIBITED_SIG": {
             "style": "background-color:rgb(146, 208, 80);",
-            "text": "FID 금지 요건인 Signal"
+            "label": "FID 금지 요건인 Signal",
+            "group": "INHIBITED_SIG",
         },
         "INHIBITED_SIG_MASK": {
             "style": "background-color:rgb(146, 208, 80);",
-            "text": "상기 Signal 요건의 Mask 속성"
+            "label": "상기 Signal 요건의 Mask 속성",
+            "group": "INHIBITED_SIG",
         },
         "INHIBITED_SIG_SYSCON": {
             "style": "background-color:rgb(183,222,232);",
-            "text": "상기 Signal 요건의 System Constant"
+            "label": "상기 Signal 요건의 System Constant",
+            "group": "INHIBITED_SIG",
         },
         "PROVIDED": {
             "style": "background-color:rgb(146, 208, 80);",
-            "text": "FID가 Mode7 조건인 Signal"
+            "label": "FID가 Mode7 조건인 Signal",
+            "group": "PROVIDED",
         },
         "PROVIDED_SYSCON": {
             "style": "background-color:rgb(183,222,232);",
-            "text": "상기 Signal의 System Constant 조건"
+            "label": "상기 Signal의 System Constant 조건",
+            "group": "PROVIDED",
         },
     },
     "DTR": {
         "ELEMENT_NAME": {
-            "text": "DTR test 명칭",
+            "label": "DTR test 명칭",
             "style": "background-color:rgb(146,208,80);"
         },
         "DESC" : {
-            "text": "DTR test 설명(영문)",
+            "label": "DTR test 설명(영문)",
             "style": "background-color:rgb(146,208,80);"
         },
         "DESC_KR": {
-            "text": "DTR test 설명(한글)",
+            "label": "DTR test 설명(한글)",
             "style": "background-color:rgb(177,160,199);"
         },
         "SYSCON": {
-            "text": "System Constant 조건",
+            "label": "System Constant 조건",
             "style": "background-color:rgb(183,222,232);"
         },
         "EVENT": {
-            "text": "관련 Event",
+            "label": "관련 Event",
             "style": "background-color:rgb(255,192,0);"
         },
         "ELEMENT_COUNT": {
-            "text": "소속 DTR 개수",
+            "label": "소속 DTR 개수",
             "style": "background-color:rgb(146,208,80);"
         },
         "UASID": {
-            "text": "Unit and Scaling ID",
+            "label": "Unit and Scaling ID",
             "style": "background-color:rgb(250,191,143);"
         },
         "OBDMID": {
-            "text": "OBD MID",
+            "label": "OBD MID",
             "style": "background-color:rgb(250,191,143);"
         },
         "TID": {
-            "text": "Test ID",
+            "label": "Test ID",
             "style": "background-color:rgb(250,191,143);"
         }
     },
     "SIG": {
         "ELEMENT_NAME": {
-            "text": "신호 명칭",
+            "label": "신호 명칭",
             "style": "background-color:rgb(146, 208, 80);"
         },
         "DESC": {
-            "text": "신호 설명(영문)",
+            "label": "신호 설명(영문)",
             "style": "background-color:rgb(146, 208, 80);"
         },
         "DESC_KR": {
-            "text": "신호 설명(한글)",
+            "label": "신호 설명(한글)",
             "style": "background-color:rgb(177,160,199);"
         },
         "SYSCON": {
-            "text": "System Constant 조건",
+            "label": "System Constant 조건",
             "style": "background-color:rgb(183,222,232);"
         },
         "ELEMENT_COUNT": {
-            "text": "소속 신호 개수",
+            "label": "소속 신호 개수",
             "style": "background-color:rgb(146, 208, 80);"
         },
         "NOT_LABELD1": {
-            "text": "모듈 자체의 Invalid 조건 Event",
+            "label": "모듈 자체의 Invalid 조건 Event",
             "style": "background-color:rgb(177,160,199);"
         },
         "NOT_LABELD2": {
-            "text": "모듈 자체의 Invalid 조건 Signal",
+            "label": "모듈 자체의 Invalid 조건 Signal",
             "style": "background-color:rgb(177,160,199);"
         },
         "MDL_INHIBIT": {
-            "text": "모듈 자체의 진단 조건 (FID)",
+            "label": "모듈 자체의 진단 조건 (FID)",
             "style": "background-color:rgb(255,192,0);"
         }
     }
@@ -361,85 +379,147 @@ class confReader(ElementTree):
     def columns(self, kind:str):
         return COLUMNS[self.TABS[kind]]
 
-    def dem(self, kind:str) -> DataFrame:
+    def dem(self, kind:str) -> Dict[str, Dict[str, List]]:
         """
         :param kind: One of ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]
         :return:
         """
-        def _inner(tag:Element, index:List, value:List):
-            for sub_tag in tag.findall('CONF-ITEMS/CONF-ITEM'):
-                name = sub_tag.find('SHORT-NAME').text
-                if sub_tag.find('SW-SYSCOND') is not None:
-                    index.append(f'{name}_SYSCON')
-                    value.append(sub_tag.find('SW-SYSCOND').text)
-                if sub_tag.find('VF') is not None:
-                    index.append(name)
-                    value.append(sub_tag.find('VF').text)
-                _inner(sub_tag, index, value)
-
         if not kind.upper() in self.TABS:
             raise KeyError()
         columns = self.columns(kind.upper())
 
-        objs = []
+        elements:Dict[str, Dict[str, List]] = {}
         for dem in self.findall(T_ITEMS):
-            index, value = [], []
+
             dem_type = dem.find('SHORT-NAME').text # DEM 이름
             if not kind.upper() in dem_type:
                 continue
+
+            name_tag = dem.find('CONF-ITEMS/CONF-ITEM')
+            if name_tag.find('SHORT-NAME').text != 'ELEMENT_NAME':
+                raise AttributeError('ELEMENT_NAME이 없습니다')
+
+            name = name_tag.find('VF').text
+            elements[name] = {key: [] for key in columns}
+            elements[name]['ELEMENT_NAME'] += [name]
             if dem.find('SW-SYSCOND') is not None:
-                index.append("SYSCON")
-                value.append(dem.find('SW-SYSCOND').text)
-            _inner(dem, index, value)
+                elements[name]['SYSCON'] += [dem.find('SW-SYSCOND').text]
 
-            elem = Series(data=value, index=index)
-            elem.name = elem["ELEMENT_NAME"]
-            counter = defaultdict(int)
-            reindex = []
-            for i in elem.index:
-                counter[i] += 1
-                reindex.append(f'{i}:{counter[i]}' if counter[i] > 1 else i)
-            elem.index = reindex
-            objs.append(elem)
+            for item in dem.findall('CONF-ITEMS/CONF-ITEM'):
+                key = item.find('SHORT-NAME').text
+                if key == "IUMPR":
+                    if item.find('SW-SYSCOND') is not None:
+                        elements[name][f'{key}_SYSCON'] += [item.find('SW-SYSCOND').text]
+                    for sub_item in item.findall('CONF-ITEMS/CONF-ITEM'):
+                        sub_key = sub_item.find('SHORT-NAME').text
+                        elements[name][sub_key] += [sub_item.find('VF').text]
+                    continue
 
-            # data.append(self.__dem__(dem))
-        df = concat(objs, axis=1).T
-        # return df
+                if key == "SCHED":
+                    for sub_item in item.findall('CONF-ITEMS/CONF-ITEM'):
+                        sub_key = sub_item.find('SHORT-NAME').text
+                        if sub_key == "EXCLUSIVE":
+                            if sub_item.find('SW-SYSCOND') is not None:
+                                elements[name][f'{sub_key}_SYSCON'] += [sub_item.find('SW-SYSCOND').text]
+                            for sub_item2 in sub_item.findall('CONF-ITEMS/CONF-ITEM'):
+                                sub_key2 = sub_item2.find('SHORT-NAME').text
+                                elements[name][sub_key2] += [sub_item2.find('VF').text]
+                            continue
+                        elements[name][sub_key] += [sub_item.find('VF').text]
 
-        for col in columns:
-            if not col in df:
-                df[col] = [""] * len(df)
-        # return df[columns.keys()].fillna("")
-        return df.fillna("").T
+                if "group" in columns[key]:
+                    g_name = item.find('VF').text
+                    g_mask = "" if not "(" in g_name else g_name[g_name.find("(") + 1 : g_name.find(")")]
+                    g_sysc = "" if item.find('SW-SYSCOND') is None else item.find('SW-SYSCOND').text
+                    elements[name][key] += [g_name.replace(f'({g_mask})', '')].copy()
+                    elements[name][f'{key}_MASK'] += [g_mask]
+                    elements[name][f'{key}_SYSCON'] += [g_sysc]
+                    continue
+
+                value = item.find('VF').text
+                elements[name][key] = [value if value else '']
+        return elements
+
 
     def html(self, kind:str) -> str:
-        columns = self.columns(kind)
-        df = self.dem(kind).T
-        ids = df.iloc[0].tolist()
-        head = [f'<td class="key dem-count" style="background-color:white;">{len(df.columns)} ITEMS</td>'] + \
-               [f'<td class="conf-action" value="{_id}" ><i class="fa fa-trash"></i></td>' for _id in ids] + \
-               ['<td class="conf-action new-col"><i class="fa fa-plus"></i></td>']
-        head = "\n".join(head)
-        thead = f"<tr>\n{head}\n</tr>"
+        _ELEMENTS = self.dem(kind)
+        _COLUMNS = self.columns(kind)
+        _GROUPS = list(set([prop['group'] for prop in _COLUMNS.values() if 'group' in prop]))
 
-        rows = []
-        for row in df.itertuples(index=True):
-            n = row[0]
-            tds = [f'<td class="key" style="{columns[n]["style"]};">{columns[n]["text"]}</td>']
-            for _id, td in zip(ids, row[1:]):
-                onclick = "editCell(this)"
-                if "\n" in td:
-                    onclick = "editParagraph(this)"
-                tds.append(f'<td class="dem-value" onclick="{onclick};" value="{_id}">{td}</td>')
-            td = "\n".join(tds)
-            rows.append(f"<tr>\n{td}\n</tr>")
-        tbody = "\n".join(rows)
-        return f"""<thead>
-{thead}
+        headers = []
+        bodies = []
+        for n, (key, spec) in enumerate(_COLUMNS.items()):
+            if key == "DEB_PARAM":
+                continue
+
+            if "group" in spec and _ELEMENTS:
+                n_group_row = max([len(prop[key]) for prop in _ELEMENTS.values()])
+                if n_group_row == 0:
+                    pass
+                else:
+                    if not key in _GROUPS:
+                        continue
+                    group_columns = {}
+                    for _key, _spec in _COLUMNS.items():
+                        if "group" in _spec and _spec["group"] == spec["group"]:
+                            group_columns[_key] = _spec
+
+                    for m in range(n_group_row):
+                        for _key, _spec in group_columns.items():
+                            tds = [f'    <td class="key" style="{_spec["style"]}">{_spec["label"]}</td>']
+                            for element, prop in _ELEMENTS.items():
+                                try:
+                                    onclick = "editParagraph(this)" if "\n" in prop[_key][m] else "editCell(this)"
+                                    tds.append(
+                                        f'    <td class="dem-value" onclick="{onclick};" value="{element}">{prop[_key][m]}</td>'
+                                    )
+                                except IndexError:
+                                    tds.append(
+                                        f'    <td class="dem-value" onclick="editCell(this);" value="{element}"></td>'
+                                    )
+
+                            tr = "<tr>"
+                            if _key in _GROUPS:
+                                tr = '<tr class="group-top">'
+                            if _key in ["EXCLUSIVE_SYSCON", "INHIBITED_EVENT_SYSCON", "INHIBITED_SUM_EVENT_SYSCON",
+                                       "INHIBITED_SIG_SYSCON", "PROVIDED_SYSCON"]:
+                                tr = '<tr class="group-bottom">'
+                            td = '\n'.join(tds)
+                            bodies.append(f"  {tr}\n{td}\n  </tr>")
+                    continue
+
+            tds = [f'    <td class="key" style="{spec["style"]}">{spec["label"]}</td>']
+            for element, prop in _ELEMENTS.items():
+                if not n:
+                    headers.append(f'    <td class="conf-action" value="{element}" ><i class="fa fa-trash"></i></td>')
+
+                if not prop[key]:
+                    value = ""
+                elif len(prop[key]) == 1:
+                    value = prop[key][0]
+                else:
+                    value = prop[key]
+
+                onclick = "editParagraph(this)" if "\n" in value else "editCell(this)"
+                tds.append(
+                    f'    <td class="dem-value" onclick="{onclick};" value="{element}">{value}</td>'
+                )
+            td = '\n'.join(tds)
+            bodies.append(f"  <tr>\n{td}\n  </tr>")
+
+        td_header = "\n".join(headers)
+        tr_bodies = "\n".join(bodies)
+        return f'''
+<thead>
+  <tr>
+    <td class="key dem-count" style="background-color:white;">{len(_ELEMENTS)} ITEMS</td>
+{td_header}
+    <td class="conf-action new-col"><i class="fa fa-plus"></i></td>
+  </tr>
 </thead>
 <tbody>
-{tbody}
-</tbody>""".replace("\n", "<br>")
+{tr_bodies}
+</tbody>'''
 
 
     @property
@@ -487,19 +567,22 @@ class confReader(ElementTree):
 
 if __name__ == "__main__":
     from pandas import set_option
+    from pprint import pprint
     set_option('display.expand_frame_repr', False)
 
     conf = confReader(
         # r'./template.xml'
-        r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\egrd_confdata.xml'
+        # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\egrd_confdata.xml'
+        # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\aafd_confdata.xml'
+        r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\aewpr_confdata.xml'
     )
     # print(conf)
-    # print(conf.df)
+
     # print(conf.admin)
     # print(conf.history)
+    # ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]
+    demType = "DEM_EVENT"
+    pprint(conf.dem(demType))
+    print(conf.html(demType))
 
-    print(conf.dem("FIM"))
-    # print(conf.html("DEM_EVENT"))
-    # for key, label in conf.TABS.items():
-    #     print(conf.dem(key))
 

@@ -15,6 +15,8 @@ function highlight() {
 	
 	$('td:contains("FID가 Mode7 조건인 Signal")').parent().css('border-top', '2px double grey');
 	$('td:contains("상기 Signal의 System Constant 조건")').parent().css('border-bottom', '2px double grey');
+	
+	$('.color-ref').css('display', 'none');
 }
 
 function openTab(evt, key) {
@@ -32,6 +34,11 @@ function openTab(evt, key) {
 	TAB = key;
     document.getElementById(key).style.display = "table";
     evt.currentTarget.className += " active";
+	if (TAB == 'Summary'){
+		$('.color-ref').css('display', 'none');
+	} else {
+		$('.color-ref').css('display', 'flex');
+	}
 }
 
 function editCell(cell) {
