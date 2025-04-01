@@ -384,6 +384,10 @@ class confReader(ElementTree):
         :param kind: One of ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]
         :return:
         """
+        def getV(_o, _t):
+            v = _o.find(_t).text if _o.find(_t) is not None else ''
+            return '' if not v else v
+
         if not kind.upper() in self.TABS:
             raise KeyError()
         columns = self.columns(kind.upper())
@@ -402,28 +406,23 @@ class confReader(ElementTree):
             name = name_tag.find('VF').text
             elements[name] = {key: [] for key in columns}
             elements[name]['ELEMENT_NAME'] += [name]
-            if dem.find('SW-SYSCOND') is not None:
-                elements[name]['SYSCON'] += [dem.find('SW-SYSCOND').text]
+            elements[name]['SYSCON'] += [getV(dem, 'SW-SYSCOND')]
 
             for item in dem.findall('CONF-ITEMS/CONF-ITEM'):
                 key = item.find('SHORT-NAME').text
                 if key == "IUMPR":
-                    if item.find('SW-SYSCOND') is not None:
-                        elements[name][f'{key}_SYSCON'] += [item.find('SW-SYSCOND').text]
+                    elements[name][f'{key}_SYSCON'] += [getV(item, 'SW-SYSCOND')]
                     for sub_item in item.findall('CONF-ITEMS/CONF-ITEM'):
-                        sub_key = sub_item.find('SHORT-NAME').text
-                        elements[name][sub_key] += [sub_item.find('VF').text]
+                        elements[name][getV(sub_item, 'SHORT-NAME')] += [getV(sub_item, 'VF')]
                     continue
 
                 if key == "SCHED":
                     for sub_item in item.findall('CONF-ITEMS/CONF-ITEM'):
                         sub_key = sub_item.find('SHORT-NAME').text
                         if sub_key == "EXCLUSIVE":
-                            if sub_item.find('SW-SYSCOND') is not None:
-                                elements[name][f'{sub_key}_SYSCON'] += [sub_item.find('SW-SYSCOND').text]
+                            elements[name][f'{sub_key}_SYSCON'] += [getV(sub_item, 'SW-SYSCOND')]
                             for sub_item2 in sub_item.findall('CONF-ITEMS/CONF-ITEM'):
-                                sub_key2 = sub_item2.find('SHORT-NAME').text
-                                elements[name][sub_key2] += [sub_item2.find('VF').text]
+                                elements[name][getV(sub_item2, 'SHORT-NAME')] += [getV(sub_item2, 'VF')]
                             continue
                         elements[name][sub_key] += [sub_item.find('VF').text]
 
@@ -436,12 +435,13 @@ class confReader(ElementTree):
                     elements[name][f'{key}_SYSCON'] += [g_sysc]
                     continue
 
-                value = item.find('VF').text
-                elements[name][key] = [value if value else '']
+                elements[name][key] = [getV(item, 'VF')]
         return elements
 
 
     def html(self, kind:str) -> str:
+        lf = lambda v: v.replace("\n", "<br>")
+
         _ELEMENTS = self.dem(kind)
         _COLUMNS = self.columns(kind)
         _GROUPS = list(set([prop['group'] for prop in _COLUMNS.values() if 'group' in prop]))
@@ -471,11 +471,11 @@ class confReader(ElementTree):
                                 try:
                                     onclick = "editParagraph(this)" if "\n" in prop[_key][m] else "editCell(this)"
                                     tds.append(
-                                        f'    <td class="dem-value" onclick="{onclick};" value="{element}">{prop[_key][m]}</td>'
+                                        f'    <td class="dem-value" onclick="{onclick};" value="{element}">{lf(prop[_key][m])}</td>'
                                     )
                                 except IndexError:
                                     tds.append(
-                                        f'    <td class="dem-value" onclick="editCell(this);" value="{element}"></td>'
+                                        f'    <td class="dem-value" onclick="editCell(this);" value="{lf(element)}"></td>'
                                     )
 
                             tr = "<tr>"
@@ -502,7 +502,7 @@ class confReader(ElementTree):
 
                 onclick = "editParagraph(this)" if "\n" in value else "editCell(this)"
                 tds.append(
-                    f'    <td class="dem-value" onclick="{onclick};" value="{element}">{value}</td>'
+                    f'    <td class="dem-value" onclick="{onclick};" value="{element}">{lf(value)}</td>'
                 )
             td = '\n'.join(tds)
             bodies.append(f"  <tr>\n{td}\n  </tr>")
@@ -555,7 +555,7 @@ class confReader(ElementTree):
     @property
     def history(self) -> str:
         history_label = "History"
-        if self._admin["Model"] in ["EgrD"]:
+        if self._admin["Model"] in ["EgrD", "EgrFAC", "EgrR", "EgrChrMx"]:
             history_label = "Variant"
         history = self._admin[history_label]
         while not (history[0].isalpha() or history[0].isdigit()):
@@ -573,16 +573,16 @@ if __name__ == "__main__":
     conf = confReader(
         # r'./template.xml'
         # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\egrd_confdata.xml'
-        # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\aafd_confdata.xml'
-        r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\aewpr_confdata.xml'
+        r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\aafd_confdata.xml'
+        # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\afimd_confdata.xml'
     )
     # print(conf)
 
     # print(conf.admin)
     # print(conf.history)
     # ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]
-    demType = "DEM_EVENT"
+    demType = "FIM"
     pprint(conf.dem(demType))
-    print(conf.html(demType))
+    # print(conf.html(demType))
 
 

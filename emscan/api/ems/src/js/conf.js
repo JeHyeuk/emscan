@@ -41,6 +41,22 @@ function openTab(evt, key) {
 	}
 }
 
+function addRow(button) {
+    var tr = $(button).parent();
+	var set = [tr];
+	tr.prevAll().each(function() {
+		if ($(this).hasClass('group-top')){
+			set.push($(this).clone());
+			return false;
+		}
+		set.push($(this).clone())
+	});
+	set.forEach(item => {
+		$(item).find("td.dem-value").text("");
+		tr.after(item[0].outerHTML);
+	});
+}
+
 function editCell(cell) {
     if (cell.querySelector("input")) return;
 
@@ -54,7 +70,24 @@ function editCell(cell) {
 
     input.addEventListener("blur", function() {
       saveCell(cell, input.value);
+	  
+	  var col = $(cell).parent().find('td:first');
+	  if (
+	    (col.text() == "진단 Event 명칭") || 
+		(col.text() == "Event Path 명칭") || 
+	    (col.text() == "함수 식별자 명칭") ||
+		(col.text() == "DTR test 명칭") || 
+		(col.text() == "신호 명칭")
+	  ){
+		  if (originalText != input.value) {
+			  $('td[value="' + originalText +'"]').attr("value", input.value);
+		  }
+		  
+	  }
+	  
     });
+	
+	
 }
 
 function editParagraph(cell) {
@@ -130,6 +163,7 @@ function readConf(src) {
 			$('#' + obj).html(data[obj]);
 			$('.tab-' + obj).html(obj + "(" + data["N_" + obj] + ")");
 		});
+		$('.group-bottom').append('<button class="add-row" onclick="addRow(this);"><i class="fa fa-plus"></i></button>');
 		
 		$('.fa-trash').click(function(){
 			$('td[value="' + $(this).parent().attr('value') + '"]').remove();
@@ -137,6 +171,30 @@ function readConf(src) {
 			var cnt = tds.length - 2;
 			$(tds[0]).html(cnt + " ITEMS");
 			$('.tab-' + TAB).html(TAB + "(" + cnt + ")");
+		});
+		
+		$('.fa-plus').click(function(){
+			var n = 1;
+			var elem = "new_element";
+			
+			$(this).parent().prevAll().each(function() {
+				var val = $(this).attr("value");
+				if (typeof val === "string" && val.startsWith("new_element")) {
+					n += 1;
+				}
+			});
+			elem = elem + '_' + n;
+			
+			$(this).parent().before('<td class="conf-action" value="' + elem + '"><i class="fa fa-trash"></i></td>');
+			$("#" + TAB + " tbody tr").each(function(i, e) {
+				if (i == 0){
+					$(e).find("td:last").after('<td class="dem-value" onclick="editCell(this);" value="'+elem+'">' + elem + '</td>');
+				} else {
+					$(e).find("td:last").after('<td class="dem-value" onclick="editCell(this);" value="'+elem+'"></td>');
+				}				
+			});
+			
+			$(".table-container").scrollLeft($(".table-container")[0].scrollWidth);
 		});
 	})
 	.catch(
