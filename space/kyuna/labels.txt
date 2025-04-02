@@ -1,0 +1,95 @@
+pathName = {
+
+    "SYSCON": "System Constant 조건",  # [3]
+    "ELEMENT_NAME": "Event Path 명칭",  # [0]
+    "DESC": "진단 Event Path 설명 (영문)",  # [2]
+    "DESC_KR": "진단 Event Path 설명 (한글)",  # [3]
+    "FAULT_MAX": "Max 고장 Event 명칭",  # [4]
+    "FAULT_MIN": "Min 고장 Event 명칭",  # [5]
+    "FAULT_SIG": "Sig 고장 Event 명칭",  # [6]
+    "FAULT_NPL": "Plaus 고장 Event 명칭",  # [7]
+    "MDL_INHIBIT": "모듈 자체의 금지 조건 (Event)",  # [8]
+    "REQ_FID": "모듈 자체의 진단 조건 (FID)"  # [9]
+
+}
+
+eventName = {
+    "SYSCON": "System Constant 조건",  # [3]
+    "ELEMENT_NAME": "진단 Event 명칭",  # [0]
+    "DESC": "진단 Event 설명 (영문)",  # [1]
+    "DESC_KR": "진단 Event 설명 (한글)",  # [2]
+    "DEB_METHOD": "Debouncing 방식",  # [4]
+    "DEB_PARAM_OK": "Deb Parameter Data for OK",  # [5]
+    "DEB_PARAM_Def": "Deb Parameter Data for OK",  # [6]
+    "DEB_PARAM_Ratio": "Deb Parameter Data for OK",  # [7]
+    "ELEMENT_COUNT": "소속 Event 개수",  # [8]
+    "SIMILAR_COND": "Similar Condition 필요",  # [9]
+    "MIL": "MIL 점등 여부",  # [10]
+    "DCY_TEST": "Multiple Driving Cycle 진단",  # [11]
+    "SHUT_OFF": "시동꺼짐 연관성 (REC)",  # [12]
+    "RESET_INIT": "DCY 시작시 초기화",  # [13]
+    "RESET_POSTCANCEL": "PostCancel 초기화",  # [14]
+    "DTC_2B": "기본 DTC 설정값",  # [15]
+    "DTC_EX": "확장 DTC 설정값 (UDS용)",  # [16]
+    "MDL_INHIBIT": "모듈 자체의 금지 조건 (Event)",  # [17]
+    "REQ_FID": "column[18]",  # [18]모듈 자체의 진단 조건 (FID)
+    "IUMPR_GRP": "column[19]",  # [19]IUMPR 소속
+    "READY_GRP": "column[20]",  # [20]Readiness 소속
+    "GRP_RPT": "column[21]"  # [21]Group Reporting Event
+    }
+
+fidName = {
+  "ELEMENT_NAME": "함수 식별자 명칭",  # [0]
+  "DESC": "함수 식별자 설명(영문))",  # [1]
+  "DESC_KR": "함수 식별자 설명(한글)",  # [2]
+  "SYSCON": "System Constant 조건",  # [3]
+  "PROVIDING_EVENT": "모듈에서 이 FID가 진단 조건인 Event",  # [4]
+  "PROVIDING_SIGNAL": "모듈에서 이 FID가 진단 조건인 Signal",  # [5]
+  "SCHED_MODE": "Scheduling Mode",  # [6]
+  "LOCKED": "Sleep/Lock 사용 여부",  # [7]
+  "SHORT_TEST": "Short Test시 Permisson 처리 여부",  # [8]
+  "FID_GROUP": "IUMPR Group 할당",  # [9]
+  "IUMPR 적용 System Constant 조건": "IUMPR 적용 System Constant 조건",  # [10]
+  "DENOM_PHYRLS": "IUMPR 분모 Release 방식",  # [11]
+  "NUM_RLS": "IUMPR 분자 Release Event",  # [12]
+  "ENG_MODE": "Ready 조건 GDI 모드",  # [13]
+  "EXCLUSION": "배타적 FID 관계", #list
+  "EXCLU_PRIO": "배타적 FID 처리 순서",  #list
+  "배타적 FID System Constant 조건": "배타적 FID System Constant 조건",  #list
+  "INHIBITED_EVENT": "ID 금지 요건인 Event",  #list
+  "INHIBITED_EVENT_MASK": "상기 Event 요건의 Mask 속성",  #list
+  "INHIBITED_EVENT_SYSCON": "상기 Event 요건의 System Constant",  #list
+  "INHIBITED_SUM_EVENT": "FID 금지 요건인 Sum-Event",  #list
+  "SUM_EVENT_MASK": "상기 Sum-Event 요건의 Mask 속성",  #list
+  "SUM_EVENT_SYSCON": "상기 Sum-Event의 System Constant",  #list
+  "INHIBITED_SIG": "FID 금지 요건인 Signal",  #list
+  "INHIBITED_SIG_MASK": "상기 Signal 요건의 Mask 속성",  #list
+  "INHIBITED_SIG_SYSCON": "상기 Signal 요건의 System Constant",  #list
+  "PROVIDED": "FID가 Mode7 조건인 Signal",
+  "상기 Signal의 System": "상기 Signal의 System Constant 조건",
+  "상기 Signal의 System Constant 조건": "상기 Signal의 System Constant 조건"  #list
+
+}
+
+dtrName = {
+        "SYSCON": "System Constant 조건",  # [3]
+        "ELEMENT_NAME": "DTR test 명칭",  # [0]
+        "DESC": "DTR test 설명(영문)",  # [1]
+        "DESC_KR": "DTR test 설명(한글)",  # [2]
+        "EVENT": "관련 Event",  # [4]
+        "ELEMENT_COUNT": "소속 DTR 개수",  # [5]
+        "UASID": "Unit and Scaling ID",  # [6]
+        "OBDMID": "OBD MID",  # [7]
+        "TID": "Test ID"  # [8]
+}
+
+sigName =  {
+        "SYSCON": "System Constant 조건",  # [3]
+        "ELEMENT_NAME": "신호 명칭",  #[0]
+        "DESC": "신호 설명(영문)",  # [1]
+        "DESC_KR": "신호 설명(한글)",  # [3]
+        "ELEMENT_COUNT": "소속 신호 개수",  # [4]
+        "MDL_INHIBIT": "모듈 자체의 Invalid 조건 Event",  # [5]
+        "AAA": "AAA 값",  # [6]
+        "BBB": "BBB 값"  # [7]
+}
