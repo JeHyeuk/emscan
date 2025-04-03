@@ -127,9 +127,3 @@ if __name__ == "__main__":
     import socket
 
     uvicorn.run(app, host=socket.gethostbyname(socket.gethostname()), port=8000)
-    # ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]
-    # all_conf = [c for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xml')]
-    # for n, conf in enumerate(all_conf):
-    #     # print(f'{n+1} {os.path.join(PATH.SVN.CONF, conf)}', '*' * 50)
-    #     read = confReader(os.path.join(PATH.SVN.CONF, conf))
-    #     print(read.html("FIM"))

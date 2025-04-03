@@ -410,6 +410,7 @@ class confReader(ElementTree):
 
             for item in dem.findall('CONF-ITEMS/CONF-ITEM'):
                 key = item.find('SHORT-NAME').text
+
                 if key == "IUMPR":
                     elements[name][f'{key}_SYSCON'] += [getV(item, 'SW-SYSCOND')]
                     for sub_item in item.findall('CONF-ITEMS/CONF-ITEM'):
@@ -425,13 +426,15 @@ class confReader(ElementTree):
                                 elements[name][getV(sub_item2, 'SHORT-NAME')] += [getV(sub_item2, 'VF')]
                             continue
                         elements[name][sub_key] += [sub_item.find('VF').text]
+                    continue
 
                 if "group" in columns[key]:
                     g_name = item.find('VF').text
-                    g_mask = "" if not "(" in g_name else g_name[g_name.find("(") + 1 : g_name.find(")")]
+                    g_mask = "" if not "(" in g_name else g_name[g_name.find("(") + 1: g_name.find(")")]
                     g_sysc = "" if item.find('SW-SYSCOND') is None else item.find('SW-SYSCOND').text
                     elements[name][key] += [g_name.replace(f'({g_mask})', '')].copy()
-                    elements[name][f'{key}_MASK'] += [g_mask]
+                    if key != "PROVIDED":
+                        elements[name][f'{key}_MASK'] += [g_mask]
                     elements[name][f'{key}_SYSCON'] += [g_sysc]
                     continue
 
@@ -499,6 +502,9 @@ class confReader(ElementTree):
                     value = prop[key][0]
                 else:
                     value = prop[key]
+
+                if value is None:
+                    value = ""
 
                 onclick = "editParagraph(this)" if "\n" in value else "editCell(this)"
                 tds.append(
@@ -573,16 +579,28 @@ if __name__ == "__main__":
     conf = confReader(
         # r'./template.xml'
         # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\egrd_confdata.xml'
-        r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\aafd_confdata.xml'
-        # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\afimd_confdata.xml'
+        # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\aafd_confdata.xml'
+        # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\catdft_confdata.xml'
+        r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\hegordd_confdata.xml'
     )
-    # print(conf)
+
 
     # print(conf.admin)
     # print(conf.history)
     # ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]
-    demType = "FIM"
-    pprint(conf.dem(demType))
+    # demType = "FIM"
+    # pprint(conf.dem(demType))
     # print(conf.html(demType))
 
-
+    from emscan.config import PATH
+    import os
+    for n, xml in enumerate([c for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xml')]):
+        # print(f'{n+1} {os.path.join(PATH.SVN.CONF, conf)}', '*' * 50)
+        conf = os.path.join(PATH.SVN.CONF, xml)
+        read = confReader(conf)
+        for dem in ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]:
+            try:
+                test = read.html(dem)
+            except Exception as error:
+                print(f"ERROR: {dem} @{n+1}/{xml}")
+                print(error)
