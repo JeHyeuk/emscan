@@ -4,12 +4,30 @@ try:
     from ...svn.vcon import VersionControl
     from ...svn.scon import SourceControl
     from ...space.kyuna.parse import tableParser
+    from ...space.jaehyeong.confgen import (
+        Summary_Sheet,
+        Path_Sheet,
+        Event_Sheet,
+        FID_Sheet,
+        DTR_Sheet,
+        Sig_Sheet,
+        REST
+    )
 except ImportError:
     from emscan.core.conf.read import confReader, COLUMNS
     from emscan.config import PATH
     from emscan.svn.vcon import VersionControl
     from emscan.svn.scon import SourceControl
     from space.kyuna.parse import tableParser
+    from space.jaehyeong.confgen import (
+        Summary_Sheet,
+        Path_Sheet,
+        Event_Sheet,
+        FID_Sheet,
+        DTR_Sheet,
+        Sig_Sheet,
+        REST
+    )
 
 from fastapi import FastAPI, Form, Request
 from fastapi.encoders import jsonable_encoder
@@ -73,8 +91,8 @@ def read_conf(conf:str=Form(...)):
 
 @app.post("/download-conf")
 def download_conf(conf:str=Form(...), tables:str=Form(...)):
-    print(conf)
-    print(tables)
+    # print(conf)
+    # print(tables)
 
 
 
@@ -83,14 +101,24 @@ def download_conf(conf:str=Form(...), tables:str=Form(...)):
     # @조규나 연구원
     # 1. {tables} Parse
     # 2. Deliver {tables} to write function
-    summary, event_list, path_list, dtr_list, sig_list = tableParser(tables)
-
+    summary, path_list, event_list, fid_list, dtr_list, sig_list = tableParser(tables)
+    print(path_list)
     file = os.path.join(os.path.dirname(__file__), rf"bin/{conf}")
-    with open(file, mode="w", encoding="utf-8") as xml:
-        xml.write(f"테스트 XML 파일: {conf} 입니다")
-        # TODO
-        # @조재형 연구원
-        # write 함수 결과 문자열 반환
+    with open(file, "w", encoding="utf-8") as f:
+        Summary_Sheet(f, [])
+        Path_Sheet(f, path_list)
+        Event_Sheet(f, event_list)
+        FID_Sheet(f, fid_list)
+        DTR_Sheet(f, dtr_list)
+        Sig_Sheet(f, sig_list)
+        REST(f)
+
+    # file = os.path.join(os.path.dirname(__file__), rf"bin/{conf}")
+    # with open(file, mode="w", encoding="utf-8") as xml:
+    #     xml.write(f"테스트 XML 파일: {conf} 입니다")
+    #     # TODO
+    #     # @조재형 연구원
+    #     # write 함수 결과 문자열 반환
     return FileResponse(path=file, filename=conf, media_type="text/plain")
 
 
@@ -99,4 +127,9 @@ if __name__ == "__main__":
     import socket
 
     uvicorn.run(app, host=socket.gethostbyname(socket.gethostname()), port=8000)
-
+    # ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]
+    # all_conf = [c for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xml')]
+    # for n, conf in enumerate(all_conf):
+    #     # print(f'{n+1} {os.path.join(PATH.SVN.CONF, conf)}', '*' * 50)
+    #     read = confReader(os.path.join(PATH.SVN.CONF, conf))
+    #     print(read.html("FIM"))

@@ -14,7 +14,7 @@ set_option('display.expand_frame_repr', False)
 
 
 
-def tableParser(src : str) -> list:
+def tableParser(src : str) -> tuple:
     """
         CONFDATA TABLE PARSER
         :param : str
@@ -258,7 +258,7 @@ def tableParser(src : str) -> list:
                     sig_list.append(sig)
                 print("sig_list: ",sig_list)
 
-    return summary, event_list, fid_list, dtr_list, sig_list
+    return summary, path_list, event_list, fid_list, dtr_list, sig_list
 
 
 

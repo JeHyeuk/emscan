@@ -39,11 +39,11 @@ COLUMNS:Dict[str, Dict] = {
             "style": "background-color:rgb(146,208,80);"
         },
         "DEB_PARAM_Def": {
-            "label": "Deb Parameter Data for OK",
+            "label": "Deb Parameter Data for Def",
             "style": "background-color:rgb(146,208,80);"
         },
         "DEB_PARAM_Ratio": {
-            "label": "Deb Parameter Data for OK",
+            "label": "Deb Parameter Data for Ratio",
             "style": "background-color:rgb(146,208,80);"
         },
         "ELEMENT_COUNT": {
