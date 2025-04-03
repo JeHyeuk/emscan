@@ -3,11 +3,13 @@ try:
     from ...config import PATH
     from ...svn.vcon import VersionControl
     from ...svn.scon import SourceControl
+    from ...space.kyuna.parse import tableParser
 except ImportError:
     from emscan.core.conf.read import confReader, COLUMNS
     from emscan.config import PATH
     from emscan.svn.vcon import VersionControl
     from emscan.svn.scon import SourceControl
+    from space.kyuna.parse import tableParser
 
 from fastapi import FastAPI, Form, Request
 from fastapi.encoders import jsonable_encoder
@@ -16,6 +18,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from json import dumps
 import os, uvicorn
+
 
 
 app = FastAPI()
@@ -73,10 +76,14 @@ def download_conf(conf:str=Form(...), tables:str=Form(...)):
     print(conf)
     print(tables)
 
+
+
+
     # TODO
     # @조규나 연구원
     # 1. {tables} Parse
-    # 2. Deliver {tables} to write function    
+    # 2. Deliver {tables} to write function
+    summary, event_list, path_list, dtr_list, sig_list = tableParser(tables)
 
     file = os.path.join(os.path.dirname(__file__), rf"bin/{conf}")
     with open(file, mode="w", encoding="utf-8") as xml:
@@ -85,6 +92,7 @@ def download_conf(conf:str=Form(...), tables:str=Form(...)):
         # @조재형 연구원
         # write 함수 결과 문자열 반환
     return FileResponse(path=file, filename=conf, media_type="text/plain")
+
 
 
 if __name__ == "__main__":

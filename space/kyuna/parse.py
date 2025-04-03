@@ -1,11 +1,16 @@
+import sys
+import os
+
+# 현재 파일의 상위 디렉터리를 sys.path에 추가
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import pandas as pd
 from tables import returnTables
 from tables import returnTables2
 from pandas import set_option
-from bs4 import BeautifulSoup
 from io import StringIO
-import numpy as np
+
 set_option('display.expand_frame_repr', False)
+
 
 
 
@@ -28,11 +33,11 @@ def tableParser(src : str) -> list:
         print(f"Error occured while reading HTML : {e}")
         return []
     summary = []
-    Event_list = []
-    Path_list = []
-    Fid_list = []
-    Dtr_list = []
-    Sig_list = []
+    event_list = []
+    path_list = []
+    fid_list = []
+    dtr_list = []
+    sig_list = []
 
     for i in range(0,6):
 
@@ -100,9 +105,9 @@ def tableParser(src : str) -> list:
                         "GRP_RPT": column[label.index("Group Reporting Event")] if pd.notna(column[label.index("Group Reporting Event")]) else "" # [21]Group Reporting Event
                     }]
 
-                    Event_list.append(event)
+                    event_list.append(event)
 
-                print("event_list: ", Event_list)
+                print("event_list: ", event_list)
 
         elif i == 2:
 
@@ -134,8 +139,8 @@ def tableParser(src : str) -> list:
                         }
                     ]
 
-                    Path_list.append(path)
-                print("path_list: ", Path_list)
+                    path_list.append(path)
+                print("path_list: ", path_list)
 
         elif i == 3:
 
@@ -163,13 +168,13 @@ def tableParser(src : str) -> list:
                       "LOCKED": column[label.index("Sleep/Lock 사용 여부")] if pd.notna(column[label.index("Sleep/Lock 사용 여부")]) else "",  # [7]Sleep/Lock 사용 여부
                       "SHORT_TEST": column[label.index("Short Test시 Permisson 처리 여부")] if pd.notna(column[label.index("Short Test시 Permisson 처리 여부")]) else "",  # [8]Short Test시 Permisson 처리 여부
                       "FID_GROUP": column[label.index("IUMPR Group 할당")] if pd.notna(column[label.index("IUMPR Group 할당")]) else "",  # [9]IUMPR Group 할당
-                      "IUMPR 적용 System Constant 조건": column[label.index("IUMPR 적용 System Constant 조건")] if pd.notna(column[label.index("IUMPR 적용 System Constant 조건")]) else "",  # [10]IUMPR 적용 System Constant 조건
+                      "IUMPR_SYSCON": column[label.index("IUMPR 적용 System Constant 조건")] if pd.notna(column[label.index("IUMPR 적용 System Constant 조건")]) else "",  # [10]IUMPR 적용 System Constant 조건
                       "DENOM_PHYRLS": column[label.index("IUMPR 분모 Release 방식")] if pd.notna(column[label.index("IUMPR 분모 Release 방식")]) else "",  # [11]IUMPR 분모 Release 방식
                       "NUM_RLS": column[label.index("IUMPR 분자 Release Event")] if pd.notna(column[label.index("IUMPR 분자 Release Event")]) else "",  # [12]IUMPR 분자 Release Event
                       "ENG_MODE": column[label.index("Ready 조건 GDI 모드")] if pd.notna(column[label.index("Ready 조건 GDI 모드")]) else "",  # [13]Ready 조건 GDI 모드
                       "EXCLUSION": column[[i for i, v in enumerate(label) if v == "배타적 FID 관계"]].fillna("").tolist() ,  # 배타적 FID 관계 (list)
                       "EXCLU_PRIO": column[[i for i, v in enumerate(label) if v == "배타적 FID 처리 순서"]].fillna("").tolist() ,  # 배타적 FID 처리 순서 (list)
-                      "배타적 FID System Constant 조건": column[[i for i, v in enumerate(label) if v == "배타적 FID System Constant 조건"]].fillna("").tolist(),  # 배타적 FID System Constant 조건 (list)
+                      "EXCLUSIVE_SYSCON": column[[i for i, v in enumerate(label) if v == "배타적 FID System Constant 조건"]].fillna("").tolist(),  # 배타적 FID System Constant 조건 (list)
                       "INHIBITED_EVENT": column[[i for i, v in enumerate(label) if v == "FID 금지 요건인 Event"]].fillna("").tolist(),  # FID 금지 요건인 Event (list)
                       "INHIBITED_EVENT_MASK": column[[i for i, v in enumerate(label) if v == "상기 Event 요건의 Mask 속성"]].fillna("").tolist(),  # 상기 Event 요건의 Mask 속성 (list)
                       "INHIBITED_EVENT_SYSCON": column[[i for i, v in enumerate(label) if v == "상기 Event 요건의 System Constant"]].fillna("").tolist(),  # 상기 Event 요건의 System Constant (list)
@@ -180,13 +185,12 @@ def tableParser(src : str) -> list:
                       "INHIBITED_SIG_MASK": column[[i for i, v in enumerate(label) if v == "상기 Signal 요건의 Mask 속성"]].fillna("").tolist(),  # 상기 Signal 요건의 Mask 속성 (list)
                       "INHIBITED_SIG_SYSCON": column[[i for i, v in enumerate(label) if v == "상기 Signal 요건의 System Constant"]].fillna("").tolist(),  # 상기 Signal 요건의 System Constant(list)
                       "PROVIDED": column[label.index("FID가 Mode7 조건인 Signal")] if pd.notna(column[label.index("FID가 Mode7 조건인 Signal")]) else "",  # FID가 Mode7 조건인 Signal
-                      "상기 Signal의 System": column[label.index("상기 Signal의 System")] if "상기 Signal의 System" in label else "",  # 상기 Signal의 System Constant  ##조건 아래꺼와 둘중 랜덤으로
-                      "상기 Signal의 System Constant 조건": column[label.index("상기 Signal의 System Constant 조건")] if "상기 Signal의 System Constant 조건" in label else "" # 상기 Signal의 System Constant 조건
+                      "PROVIDED_SYSCON": column[label.index("상기 Signal의 System Constant 조건")] if "상기 Signal의 System Constant 조건" in label and pd.notna(column[label.index("상기 Signal의 System Constant 조건")]) else "" # 상기 Signal의 System Constant 조건
 
                     }]
 
-                    Fid_list.append(fid)
-                print("fid_list : ",Fid_list)
+                    fid_list.append(fid)
+                print("fid_list : ",fid_list)
 
         elif i == 4:
             label = tables[i].iloc[ : , 0].tolist()
@@ -218,8 +222,8 @@ def tableParser(src : str) -> list:
                     ]
 
 
-                    Dtr_list.append(dtr)
-                print("dtr_list:", Dtr_list)
+                    dtr_list.append(dtr)
+                print("dtr_list:", dtr_list)
 
         elif i == 5:
 
@@ -251,15 +255,15 @@ def tableParser(src : str) -> list:
                         }
                     ]
 
-                    Sig_list.append(sig)
-                print("sig_list: ",Sig_list)
+                    sig_list.append(sig)
+                print("sig_list: ",sig_list)
 
-    return
-
-
+    return summary, event_list, fid_list, dtr_list, sig_list
 
 
 
-tableParser(returnTables2())
+
+
+
 
 

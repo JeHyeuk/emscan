@@ -49,13 +49,13 @@ fidName = {
   "LOCKED": "Sleep/Lock 사용 여부",  # [7]
   "SHORT_TEST": "Short Test시 Permisson 처리 여부",  # [8]
   "FID_GROUP": "IUMPR Group 할당",  # [9]
-  "IUMPR 적용 System Constant 조건": "IUMPR 적용 System Constant 조건",  # [10]
+  "IUMPR_SYSCON": "IUMPR 적용 System Constant 조건",  # [10]
   "DENOM_PHYRLS": "IUMPR 분모 Release 방식",  # [11]
   "NUM_RLS": "IUMPR 분자 Release Event",  # [12]
   "ENG_MODE": "Ready 조건 GDI 모드",  # [13]
   "EXCLUSION": "배타적 FID 관계", #list
   "EXCLU_PRIO": "배타적 FID 처리 순서",  #list
-  "배타적 FID System Constant 조건": "배타적 FID System Constant 조건",  #list
+  "EXCLUSIVE_SYSCON": "배타적 FID System Constant 조건",  #list
   "INHIBITED_EVENT": "ID 금지 요건인 Event",  #list
   "INHIBITED_EVENT_MASK": "상기 Event 요건의 Mask 속성",  #list
   "INHIBITED_EVENT_SYSCON": "상기 Event 요건의 System Constant",  #list
@@ -66,8 +66,7 @@ fidName = {
   "INHIBITED_SIG_MASK": "상기 Signal 요건의 Mask 속성",  #list
   "INHIBITED_SIG_SYSCON": "상기 Signal 요건의 System Constant",  #list
   "PROVIDED": "FID가 Mode7 조건인 Signal",
-  "상기 Signal의 System": "상기 Signal의 System Constant 조건",
-  "상기 Signal의 System Constant 조건": "상기 Signal의 System Constant 조건"  #list
+  "PROVIDED_SYSCON": "상기 Signal의 System Constant 조건"  #list
 
 }
 
