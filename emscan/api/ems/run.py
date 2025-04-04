@@ -105,7 +105,7 @@ def download_conf(conf:str=Form(...), tables:str=Form(...)):
     print(path_list)
     file = os.path.join(os.path.dirname(__file__), rf"bin/{conf}")
     with open(file, "w", encoding="utf-8") as f:
-        Summary_Sheet(f, [])
+        Summary_Sheet(f, summary)
         Path_Sheet(f, path_list)
         Event_Sheet(f, event_list)
         FID_Sheet(f, fid_list)
