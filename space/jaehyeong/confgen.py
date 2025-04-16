@@ -1,8 +1,3 @@
-# Conf6_Event_FID_db1.py에서 FID_list와 Event_list를 불러오기
-#from Conf6_PATH_Event_FID_DTR_SIG_data1 import History, PATH_list, FID_list, Event_list, DTR_list, Sig_list
-
-
-
 #from Conf6_PATH_Event_FID_DTR_SIG_data2 import summary, Path_list, Fid_list, Event_list, DTR_list, Sig_list
 # XML 파일 네임 및 저장 경로 설정
 Out_path = r"D:\Confdata.xml"
@@ -82,9 +77,8 @@ def Path_Sheet(f, Path_list):
                 f.write(f'									</CONF-ITEM>\n')
                 f.write(f'									<CONF-ITEM>\n')
                 f.write(f'										<SHORT-NAME>DESC</SHORT-NAME>\n')
-                if element.get("DESC"):
-                    DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
-                    f.write(f'										<VF>{DESC}</VF>\n')
+                DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                f.write(f'										<VF>{DESC}</VF>\n')
                 f.write(f'									</CONF-ITEM>\n')
                 # DESC_KR 값이 있을 때만 추가
                 if element.get("DESC_KR"):
@@ -153,9 +147,8 @@ def Event_Sheet(f, Event_list):
                 f.write(f'									</CONF-ITEM>\n')
                 f.write(f'									<CONF-ITEM>\n')
                 f.write(f'										<SHORT-NAME>DESC</SHORT-NAME>\n')#진단 Event 설명(영문)
-                if element.get("DESC"):
-                    DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
-                    f.write(f'										<VF>{DESC}</VF>\n')
+                DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                f.write(f'										<VF>{DESC}</VF>\n')
                 f.write(f'									</CONF-ITEM>\n')
                 # DESC_KR 값이 있을 때만 추가
                 if element.get("DESC_KR"):
@@ -289,9 +282,9 @@ def FID_Sheet(f, Fid_list):
                 f.write(f'									</CONF-ITEM>\n')
                 f.write(f'									<CONF-ITEM>\n')
                 f.write(f'										<SHORT-NAME>DESC</SHORT-NAME>\n')  # 함수 식별자 설명(영문)
-                if element.get("DESC"):
-                    DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
-                    f.write(f'										<VF>{DESC}</VF>\n')
+
+                DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                f.write(f'										<VF>{DESC}</VF>\n')
                 f.write(f'									</CONF-ITEM>\n')
                 # DESC_KR 값이 있을 때만 추가
                 if element.get("DESC_KR"):
@@ -502,9 +495,9 @@ def DTR_Sheet(f, DTR_list):
 
                 f.write(f'									<CONF-ITEM>\n')
                 f.write(f'										<SHORT-NAME>DESC</SHORT-NAME>\n')
-                if element.get("DESC"):
-                    DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
-                    f.write(f'										<VF>{DESC}</VF>\n')
+
+                DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                f.write(f'										<VF>{DESC}</VF>\n')
                 f.write(f'									</CONF-ITEM>\n')
 
                 if element.get("DESC_KR"):
@@ -559,9 +552,9 @@ def Sig_Sheet(f, Sig_list):
                 f.write(f'									</CONF-ITEM>\n')
                 f.write(f'									<CONF-ITEM>\n')
                 f.write(f'										<SHORT-NAME>DESC</SHORT-NAME>\n')
-                if element.get("DESC"):
-                    DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
-                    f.write(f'										<VF>{DESC}</VF>\n')
+
+                DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                f.write(f'										<VF>{DESC}</VF>\n')
 
                 f.write('									</CONF-ITEM>\n')
                 # DESC_KR 값이 있을 때만 추가
