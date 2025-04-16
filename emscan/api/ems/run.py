@@ -92,7 +92,7 @@ def read_conf(conf:str=Form(...)):
 @app.post("/download-conf")
 def download_conf(conf:str=Form(...), tables:str=Form(...)):
     # print(conf)
-    # print(tables)
+    print(tables)
 
 
 
@@ -101,8 +101,8 @@ def download_conf(conf:str=Form(...), tables:str=Form(...)):
     # @조규나 연구원
     # 1. {tables} Parse
     # 2. Deliver {tables} to write function
-    summary, path_list, event_list, fid_list, dtr_list, sig_list = tableParser(tables)
-    print(path_list)
+    summary, event_list, path_list, fid_list, dtr_list, sig_list = tableParser(tables)
+
     file = os.path.join(os.path.dirname(__file__), rf"bin/{conf}")
     with open(file, "w", encoding="utf-8") as f:
         Summary_Sheet(f, summary)

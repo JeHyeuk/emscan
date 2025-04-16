@@ -1,1 +1,99 @@
-테스트 XML 파일: aewpc_confdata.xml 입니다
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MSRSW PUBLIC "-//MSR//DTD MSR SOFTWARE DTD:V2.2.2:HMC:LAI:IAI:XML:MSRSW.DTD//EN" "msrsw_v222_hmc.xml.dtd">
+<!-- File Format is generated for DEM_ASW_Conf_Tool version 1.2 by J.H.JO at 21:14:14, 01 Feb 2025 -->
+<MSRSW>
+	<CATEGORY>ConfData</CATEGORY>
+	<ADMIN-DATA>
+		<LANGUAGE>en</LANGUAGE>
+		<USED-LANGUAGES>
+			<L-10 L="en">en</L-10>
+			<L-10 L="kr">kr</L-10>
+		</USED-LANGUAGES>
+		<COMPANY-DOC-INFOS>
+			<COMPANY-DOC-INFO>
+				<COMPANY-REF>HKMC</COMPANY-REF>
+				<SDGS>
+					<SDG GID="HKMCHead-eASEE-Keywords">
+						<SD GID="Filename">aafd_confdata.xml</SD>
+						<SD GID="Author"></SD>
+						<SD GID="Function">This version is created by migration tool</SD>
+						<SD GID="Domain">SDOM</SD>
+						<SD GID="User">JaeHyeong.Jo</SD>
+						<SD GID="Date">2025.03.17</SD>
+						<SD GID="Class">DEM_CONFDATA</SD>
+						<SD GID="Name">Summary</SD>
+						<SD GID="Variant">1.0.0</SD>
+						<SD GID="Revision">0</SD>
+						<SD GID="Type">XML</SD>
+						<SD GID="State">AVAILABLE</SD>
+						<SD GID="UniqueName"></SD>
+						<SD GID="Component"></SD>
+						<SD GID="Generated"></SD>
+						<SD GID="History">
+{'Filename': 'aewpc_confdata.xml', 'user_name': 'Kim.JinSung', 'Date': '2018-12-10', 'Model_Name': 'AEWPC', 'History': '1.0.0; 0 2018.12.10 Kim.JinSung\n Initial Release'}
+</SD>
+					</SDG>
+				</SDGS>
+			</COMPANY-DOC-INFO>
+		</COMPANY-DOC-INFOS>
+	</ADMIN-DATA>
+	<SW-SYSTEMS>
+		<SW-SYSTEM>
+			<LONG-NAME>
+				<L-4 L="for-all">HNB</L-4>
+			</LONG-NAME>
+			<SHORT-NAME>HNB</SHORT-NAME>
+			<CONF-SPEC>
+				<CONF-ITEMS>
+					<CONF-SOURCE>
+						<SW-FEATURE-REF>AAAA</SW-FEATURE-REF>
+					</CONF-SOURCE>
+					<CONF-ITEM>
+						<SHORT-NAME>DEM</SHORT-NAME>
+						<CONF-ITEMS>
+							<CONF-ITEM>
+								<SHORT-NAME>FIM</SHORT-NAME>
+								<SW-SYSCOND>HEV_SC &gt; 0</SW-SYSCOND>
+								<CONF-ITEMS>
+									<CONF-ITEM>
+										<SHORT-NAME>ELEMENT_NAME</SHORT-NAME>
+										<VF>EHRSTPlaus</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DESC</SHORT-NAME>
+										<VF>Fid to validate the Exhaust Heat Recircurator System Temperature Sensor</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>SCHED_MODE</SHORT-NAME>
+										<VF>Inhibit_Only</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>HEV_SC &gt; 0</SW-SYSCOND>
+										<VF>EHRTUMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>HEV_SC &gt; 0</SW-SYSCOND>
+										<VF>EHRTUMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>HEV_SC &gt; 0</SW-SYSCOND>
+										<VF>EHRTUNpl</VF>
+									</CONF-ITEM>
+								</CONF-ITEMS>
+							</CONF-ITEM>
+						</CONF-ITEMS>
+					</CONF-ITEM>
+				</CONF-ITEMS>
+			</CONF-SPEC>
+		</SW-SYSTEM>
+	</SW-SYSTEMS>
+	<MATCHING-DCIS>
+		<MATCHING-DCI>
+			<SHORT-LABEL>ConfData</SHORT-LABEL>
+			<URL></URL>
+		</MATCHING-DCI>
+	</MATCHING-DCIS>
+</MSRSW>
