@@ -3,9 +3,9 @@
 
 
 
-#from Conf6_PATH_Event_FID_DTR_SIG_data2 import summary, Path_list, Fid_list, Event_list, DTR_list, Sig_list
+from Conf6_PATH_Event_FID_DTR_SIG_data2 import summary, Path_list, Fid_list, Event_list, DTR_list, Sig_list
 # XML 파일 네임 및 저장 경로 설정
-#Out_path = r"D:\Confdata.xml"
+Out_path = r"D:\Confdata.xml"
 # Filename = "aafd_confdata"
 # user_name = "JaeHyeong.Jo" #개발자의 이름 입력
 # Date = "2025.03.17" #ConfData를 생성한 날짜
@@ -82,13 +82,16 @@ def Path_Sheet(f, Path_list):
                 f.write(f'									</CONF-ITEM>\n')
                 f.write(f'									<CONF-ITEM>\n')
                 f.write(f'										<SHORT-NAME>DESC</SHORT-NAME>\n')
-                f.write(f'										<VF>{element["DESC"]}</VF>\n')
+                if element.get("DESC"):
+                    DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                    f.write(f'										<VF>{DESC}</VF>\n')
                 f.write(f'									</CONF-ITEM>\n')
                 # DESC_KR 값이 있을 때만 추가
                 if element.get("DESC_KR"):
                     f.write(f'									<CONF-ITEM>\n')
                     f.write(f'										<SHORT-NAME>DESC_KR</SHORT-NAME>\n')
-                    f.write(f'										<VF>{element["DESC_KR"]}</VF>\n')
+                    DESC_KR = element["DESC_KR"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                    f.write(f'										<VF>{DESC_KR}</VF>\n')
                     f.write(f'									</CONF-ITEM>\n')
                 # FAULT_MAX 값이 있을 때만 추가
                 if element.get("FAULT_MAX"):
@@ -150,13 +153,16 @@ def Event_Sheet(f, Event_list):
                 f.write(f'									</CONF-ITEM>\n')
                 f.write(f'									<CONF-ITEM>\n')
                 f.write(f'										<SHORT-NAME>DESC</SHORT-NAME>\n')#진단 Event 설명(영문)
-                f.write(f'										<VF>{element["DESC"]}</VF>\n')
+                if element.get("DESC"):
+                    DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                    f.write(f'										<VF>{DESC}</VF>\n')
                 f.write(f'									</CONF-ITEM>\n')
                 # DESC_KR 값이 있을 때만 추가
                 if element.get("DESC_KR"):
                     f.write(f'									<CONF-ITEM>\n')
                     f.write(f'										<SHORT-NAME>DESC_KR</SHORT-NAME>\n')#진단 Event 설명(한글)
-                    f.write(f'										<VF>{element["DESC_KR"]}</VF>\n')
+                    DESC_KR = element["DESC_KR"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                    f.write(f'										<VF>{DESC_KR}</VF>\n')
                     f.write(f'									</CONF-ITEM>\n')
                 f.write(f'									<CONF-ITEM>\n')
                 f.write(f'										<SHORT-NAME>DEB_METHOD</SHORT-NAME>\n')#Debouncing 방식
@@ -283,13 +289,16 @@ def FID_Sheet(f, Fid_list):
                 f.write(f'									</CONF-ITEM>\n')
                 f.write(f'									<CONF-ITEM>\n')
                 f.write(f'										<SHORT-NAME>DESC</SHORT-NAME>\n')  # 함수 식별자 설명(영문)
-                f.write(f'										<VF>{element["DESC"]}</VF>\n')
+                if element.get("DESC"):
+                    DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                    f.write(f'										<VF>{DESC}</VF>\n')
                 f.write(f'									</CONF-ITEM>\n')
                 # DESC_KR 값이 있을 때만 추가
                 if element.get("DESC_KR"):
                     f.write(f'									<CONF-ITEM>\n')
                     f.write(f'										<SHORT-NAME>DESC_KR</SHORT-NAME>\n')  # 진단 Event 설명(한글)
-                    f.write(f'										<VF>{element["DESC_KR"]}</VF>\n')
+                    DESC_KR = element["DESC_KR"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                    f.write(f'										<VF>{DESC_KR}</VF>\n')
                     f.write(f'									</CONF-ITEM>\n')
                 # PROVIDING_EVENT 값이 있을 때만 추가
                 if element.get("PROVIDING_EVENT"):
@@ -493,13 +502,16 @@ def DTR_Sheet(f, DTR_list):
 
                 f.write(f'									<CONF-ITEM>\n')
                 f.write(f'										<SHORT-NAME>DESC</SHORT-NAME>\n')
-                f.write(f'										<VF>{element["DESC"]}</VF>\n')
+                if element.get("DESC"):
+                    DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                    f.write(f'										<VF>{DESC}</VF>\n')
                 f.write(f'									</CONF-ITEM>\n')
 
                 if element.get("DESC_KR"):
                     f.write(f'									<CONF-ITEM>\n')
                     f.write(f'										<SHORT-NAME>DESC_KR</SHORT-NAME>\n')
-                    f.write(f'										<VF>{element["DESC_KR"]}</VF>\n')
+                    DESC_KR = element["DESC_KR"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                    f.write(f'										<VF>{DESC_KR}</VF>\n')
                     f.write(f'									</CONF-ITEM>\n')
 
                 f.write(f'									<CONF-ITEM>\n')
@@ -547,14 +559,17 @@ def Sig_Sheet(f, Sig_list):
                 f.write(f'									</CONF-ITEM>\n')
                 f.write(f'									<CONF-ITEM>\n')
                 f.write(f'										<SHORT-NAME>DESC</SHORT-NAME>\n')
-                f.write(f'										<VF>{element["DESC"]}</VF>\n')
+                if element.get("DESC"):
+                    DESC = element["DESC"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                    f.write(f'										<VF>{DESC}</VF>\n')
 
                 f.write('									</CONF-ITEM>\n')
                 # DESC_KR 값이 있을 때만 추가
                 if element.get("DESC_KR"):
                     f.write(f'									<CONF-ITEM>\n')
                     f.write(f'										<SHORT-NAME>DESC_KR</SHORT-NAME>\n')
-                    f.write(f'										<VF>{element["DESC_KR"]}</VF>\n')
+                    DESC_KR = element["DESC_KR"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                    f.write(f'										<VF>{DESC_KR}</VF>\n')
                     f.write(f'									</CONF-ITEM>\n')
                 # ELEMENT_COUNT 값이 있을 때만 추가
                 if element.get("ELEMENT_COUNT"):
