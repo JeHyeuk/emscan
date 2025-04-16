@@ -26,6 +26,7 @@ def tableParser(src : str) -> tuple[dict, list]:
     try :
 
         src = src.replace('<br>', '\\n').replace('<br/>', '\\n').replace('<br />', '\\n')
+        src = src.replace('None', '없음')
 
         # tables = pd.read_html(StringIO(src))
 
@@ -66,6 +67,7 @@ def tableParser(src : str) -> tuple[dict, list]:
         table = dataframes[i]
         label = table.iloc[:, 0].tolist()
         table = table.map(lambda x: x.replace('\\n', '\n') if isinstance(x, str) else x)
+        table = table.map(lambda x: x.replace('없음', 'None') if isinstance(x, str) else x)
 
         ## test 용
         caller_frame = inspect.stack()[1]
@@ -94,13 +96,15 @@ def tableParser(src : str) -> tuple[dict, list]:
             if len(table.columns) > 2:
                 df  = table.iloc[: , 1:-1]
                 for column_name, column in df.items():
+                    print("빈칸 : ", column[label.index("진단 Event 설명(한글)")])
+                    print("None : ", column[label.index("Debouncing 방식")])
 
                     event = [{
                         "SYSCON": column[label.index("System Constant 조건")] if pd.notna(column[label.index("System Constant 조건")]) else "",  # [3]System Constant 조건
                         "ELEMENT_NAME": column[label.index("진단 Event 명칭")] if pd.notna(column[label.index("진단 Event 명칭")])  else "",  # [0]진단 Event 명칭
                         "DESC": column[label.index("진단 Event 설명(영문)")] if pd.notna(column[label.index("진단 Event 설명(영문)")])  else "",  # [1]진단 Event 설명(영문)
                         "DESC_KR": column[label.index("진단 Event 설명(한글)")] if pd.notna(column[label.index("진단 Event 설명(한글)")])  else "",  # [2]진단 Event 설명(한글)
-                        "DEB_METHOD": column[label.index("Debouncing 방식")] if pd.notna(column[label.index("진단 Event 설명(한글)")])  else "None",  # [4]Debouncing 방식
+                        "DEB_METHOD": column[label.index("Debouncing 방식")] if pd.notna(column[label.index("Debouncing 방식")])  else "",  # [4]Debouncing 방식
                         "DEB_PARAM_OK": column[label.index("Deb Parameter Data for OK")] if pd.notna(column[label.index("Deb Parameter Data for OK")])  else "",  # [5]Deb Parameter Data for OK
                         "DEB_PARAM_Def": column[label.index("Deb Parameter Data for Def")] if pd.notna(column[label.index("Deb Parameter Data for OK")])  else "",  # [6]Deb Parameter Data for Def
                         "DEB_PARAM_Ratio": column[label.index("Deb Parameter Data for Ratio")] if pd.notna(column[label.index("Deb Parameter Data for OK")])  else "",  # [7]Deb Parameter Data for Ratio
