@@ -1,20 +1,22 @@
 import sys
 import os
+import inspect
+from IPython.display import display
 
 # 현재 파일의 상위 디렉터리를 sys.path에 추가
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import pandas as pd
-from tables import returnTables
 from tables import returnTables2
+from tables import returnTables
 from pandas import set_option
 from io import StringIO
-
+from bs4 import BeautifulSoup
 set_option('display.expand_frame_repr', False)
 
 
 
 
-def tableParser(src : str) -> tuple:
+def tableParser(src : str) -> tuple[dict, list]:
     """
         CONFDATA TABLE PARSER
         :param : str
@@ -23,69 +25,86 @@ def tableParser(src : str) -> tuple:
     """
     try :
 
-        tables = pd.read_html(StringIO(src))
+        src = src.replace('<br>', '\\n').replace('<br/>', '\\n').replace('<br />', '\\n')
+        src = src.replace('None', '없음')
 
-        print(f"tables 리스트에  {len(tables)}개의 테이블이 존재합니다.")
+        # tables = pd.read_html(StringIO(src))
+
+        # # 기존 디버깅 방법
+        # print(f"tables 리스트에  {len(tables)}개의 테이블이 존재합니다.")
         # # 각 테이블을 순차적으로 확인
         # for idx, table in enumerate(tables):
-        #     print(f"테이블 {idx}:", table)  # 각 테이블의 첫 5행 출력
+        #     print(f"테이블 {idx}:", table.to_string())
+
+        # BeautifulSoup parsing 방법
+        soup = BeautifulSoup(src, "html.parser")
+        tables = soup.find_all("table")
+        print(f"tables 리스트에 총 {len(tables)}개의 <table>을 찾았습니다.")
+
+        # 각 테이블을 판다스로 파싱
+        dataframes = []
+        for i, table in enumerate(tables):
+            try:
+                df = pd.read_html(StringIO(str(table)))[0]  # 항상 리스트로 반환되므로 [0]
+                print(f"[INFO] ✅ Table {i} shape: {df.shape}")
+                dataframes.append(df)
+            except Exception as e:
+                print(f"[ERROR] ❌ Table {i} 파싱 실패: {e}")
+
     except Exception as e:
         print(f"Error occured while reading HTML : {e}")
         return []
-    summary = []
+
+
+    summary = {}
     event_list = []
     path_list = []
     fid_list = []
     dtr_list = []
     sig_list = []
 
-    for i in range(0,6):
+    for i in range(len(dataframes)):
+        table = dataframes[i]
+        label = table.iloc[:, 0].tolist()
+        table = table.map(lambda x: x.replace('\\n', '\n') if isinstance(x, str) else x)
+        table = table.map(lambda x: x.replace('없음', 'None') if isinstance(x, str) else x)
+
+        ## test 용
+        caller_frame = inspect.stack()[1]
+        caller_filename = caller_frame.filename
+        caller_basename = os.path.basename(caller_filename)
+        if caller_basename == 'create.py' :
+            i += 1
 
         if i == 0:
-            label = tables[i].iloc[: ,0].tolist()
-            df = tables[i]
-            if len(df.columns) > 2:
-                table  = tables[i].iloc[: , 1:-1]
+            df  = table.iloc[: , 1:]
+            if df.empty :
+                print("summary : Table is empty.")
             else :
-                table = tables[i].iloc[: , 1:]
-
-
-            if table.empty :
-                print("sig_list : Table is empty.")
-            else :
-                for column_name, column in table.items():
-                    summary = [{
+                for column_name, column in df.items():
+                    summary = {
                         "Filename" : column[label.index("파일명")],
                         "user_name" : column[label.index("작성자 (영문)")],
                         "Date" : column[label.index("최근 생성일")],
                         "Model_Name" : column[label.index("모듈명")],
-                        "History" : column[label.index("이력")],
+                        "History" :  column[label.index("이력")] ,
+                    }
 
-                    }]
-
-                print("summary : ", summary)
 
 
         if i == 1:
-            label = tables[i].iloc[: ,0].tolist()
-            df = tables[i]
-            if len(df.columns) > 2:
-                table  = tables[i].iloc[: , 1:-1]
-            else :
-                table = tables[i].iloc[: , 1:]
-
-
-            if table.empty :
-                print("event_list : Table is empty.")
-            else :
-                for column_name, column in table.items():
+            if len(table.columns) > 2:
+                df  = table.iloc[: , 1:-1]
+                for column_name, column in df.items():
+                    print("빈칸 : ", column[label.index("진단 Event 설명(한글)")])
+                    print("None : ", column[label.index("Debouncing 방식")])
 
                     event = [{
                         "SYSCON": column[label.index("System Constant 조건")] if pd.notna(column[label.index("System Constant 조건")]) else "",  # [3]System Constant 조건
                         "ELEMENT_NAME": column[label.index("진단 Event 명칭")] if pd.notna(column[label.index("진단 Event 명칭")])  else "",  # [0]진단 Event 명칭
                         "DESC": column[label.index("진단 Event 설명(영문)")] if pd.notna(column[label.index("진단 Event 설명(영문)")])  else "",  # [1]진단 Event 설명(영문)
                         "DESC_KR": column[label.index("진단 Event 설명(한글)")] if pd.notna(column[label.index("진단 Event 설명(한글)")])  else "",  # [2]진단 Event 설명(한글)
-                        "DEB_METHOD": column[label.index("Debouncing 방식")] if pd.notna(column[label.index("Debouncing 방식")]) else "",  # [4]Debouncing 방식
+                        "DEB_METHOD": column[label.index("Debouncing 방식")] if pd.notna(column[label.index("Debouncing 방식")])  else "",  # [4]Debouncing 방식
                         "DEB_PARAM_OK": column[label.index("Deb Parameter Data for OK")] if pd.notna(column[label.index("Deb Parameter Data for OK")])  else "",  # [5]Deb Parameter Data for OK
                         "DEB_PARAM_Def": column[label.index("Deb Parameter Data for Def")] if pd.notna(column[label.index("Deb Parameter Data for OK")])  else "",  # [6]Deb Parameter Data for Def
                         "DEB_PARAM_Ratio": column[label.index("Deb Parameter Data for Ratio")] if pd.notna(column[label.index("Deb Parameter Data for OK")])  else "",  # [7]Deb Parameter Data for Ratio
@@ -106,23 +125,14 @@ def tableParser(src : str) -> tuple:
                     }]
 
                     event_list.append(event)
-
-                print("event_list: ", event_list)
+            else :
+                print("event_list : Table is empty.")
+                # print("event_list: ", event_list)
 
         elif i == 2:
-
-            label = tables[i].iloc[: ,0].tolist()
-            df = tables[i]
-            if len(df.columns) > 2:
-                table  = tables[i].iloc[: , 1:-1]
-            else :
-                table = tables[i].iloc[: , 1:]
-
-
-            if table.empty :
-                print("path_list : Table is empty.")
-            else :
-                for column_name, column in table.items():
+            if len(table.columns) > 2:
+                df  = table.iloc[: , 1:-1]
+                for column_name, column in df.items():
 
                     path = [
                         {
@@ -140,23 +150,15 @@ def tableParser(src : str) -> tuple:
                     ]
 
                     path_list.append(path)
-                print("path_list: ", path_list)
+            # print("path_list: ", path_list)
+            else :
+                print("path_list : Table is empty.")
 
         elif i == 3:
+            if len(table.columns) > 2:
+                df  = table.iloc[: , 1:-1]
 
-            label = tables[i].iloc[:, 0].tolist()
-            df = tables[i]
-
-            if len(df.columns) > 2:
-                table  = tables[i].iloc[: , 1:-1]
-            else :
-                table = tables[i].iloc[: , 1:]
-
-            if table.empty :
-                print("fid_list : Table is empty.")
-            else :
-                for column_name, column in table.items():    # column_name : Series, column : Series
-
+                for column_name, column in df.items():    # column_name : Series, column : Series
                     fid = [{
                       "ELEMENT_NAME": column[label.index("함수 식별자 명칭")] if pd.notna(column[label.index("함수 식별자 명칭")]) else "",  # [0]함수 식별자 명칭
                       "DESC": column[label.index("함수 식별자 설명(영문)")] if pd.notna(column[label.index("함수 식별자 설명(영문)")]) else "",  # [1]함수 식별자 설명(영문)
@@ -188,77 +190,80 @@ def tableParser(src : str) -> tuple:
                       "PROVIDED_SYSCON": column[label.index("상기 Signal의 System Constant 조건")] if "상기 Signal의 System Constant 조건" in label and pd.notna(column[label.index("상기 Signal의 System Constant 조건")]) else "" # 상기 Signal의 System Constant 조건
 
                     }]
-
                     fid_list.append(fid)
-                print("fid_list : ",fid_list)
+                # print("fid_list : ",fid_list)
+
+            else :
+                print("fid_list : Table is empty.")
+
+
 
         elif i == 4:
-            label = tables[i].iloc[ : , 0].tolist()
-            df = tables[i]
+            if len(table.columns) > 2:
+                df  = table.iloc[: , 1:-1]
+                for column_name, column in df.items():
 
-            if len(df.columns) > 2:
-                table  = tables[i].iloc[: , 1:-1]
-            else :
-                table = tables[i].iloc[: , 1:]
-
-            if table.empty :
-                print("dtr_list : Table is empty.")
-            else :
-                for column_name, column in table.items():
-
-
-                    dtr = [
-                        {
+                    dtr = [{
                             "SYSCON": column[label.index("System Constant 조건")] if pd.notna(column[label.index("System Constant 조건")]) else "",  # [3]System Constant 조건
                             "ELEMENT_NAME": column[label.index("DTR test 명칭")] if pd.notna(column[label.index("DTR test 명칭")]) else "",  # [0]DTR test 명칭
                             "DESC": column[label.index("DTR test 설명(영문)")] if pd.notna(column[label.index("DTR test 설명(영문)")]) else "",  # [1]DTR test 설명(영문)
                             "DESC_KR": column[label.index("DTR test 설명(한글)")] if pd.notna(column[label.index("DTR test 설명(한글)")]) else "",  # [2]DTR test 설명(한글)
                             "EVENT": column[label.index("관련 Event")] if pd.notna(column[label.index("관련 Event")]) else "",  # [4]관련 Event
-                            "ELEMENT_COUNT": ccolumn[label.index("소속 DTR 개수")] if pd.notna(column[label.index("소속 DTR 개수")]) else "",  # [5]소속 DTR 개수
+                            "ELEMENT_COUNT": column[label.index("소속 DTR 개수")] if pd.notna(column[label.index("소속 DTR 개수")]) else "",  # [5]소속 DTR 개수
                             "UASID": column[label.index("Unit and Scaling ID")] if pd.notna(column[label.index("Unit and Scaling ID")]) else "",  # [6]Unit and Scaling ID
                             "OBDMID": column[label.index("OBD MID")] if pd.notna(column[label.index("OBD MID")]) else "",  # [7]OBD MID
                             "TID": column[label.index("Test ID")] if pd.notna(column[label.index("Test ID")]) else ""  # [8]Test ID
-                        }
-                    ]
-
-
+                        }]
                     dtr_list.append(dtr)
-                print("dtr_list:", dtr_list)
+
+            else :
+                print("dtr_list : Table is empty.")
+
 
         elif i == 5:
 
-            label = tables[i].iloc[ : , 0].tolist()
-            df = tables[i]
-
-            if len(df.columns) > 2:
-                table  = tables[i].iloc[: , 1:-1]
-            else :
-                table = tables[i].iloc[: , 1:]
-
-
-            if table.empty :
-                print("sig_list : Table is empty.")
-            else :
-                for column_name, column in table.items():
-
-
-                    sig = [
-                        {
-                            "SYSCON": column[label.index("System Constant 조건")] if pd.notna(column[label.index("System Constant 조건")]) else "",  # [3]System Constant 조건
-                            "ELEMENT_NAME": column[label.index("신호 명칭")] if pd.notna(column[label.index("신호 명칭")]) else "",  #[0]신호 명칭
-                            "DESC": column[label.index("신호 설명(영문)")] if pd.notna(column[label.index("신호 설명(영문)")]) else "",  # [1]신호 설명(영문)
-                            "DESC_KR": column[label.index("신호 설명(한글)")] if pd.notna(column[label.index("신호 설명(한글)")]) else "",  # [3]신호 설명(한글)
-                            "ELEMENT_COUNT": column[label.index("소속 신호 개수")] if pd.notna(column[label.index("소속 신호 개수")]) else "",  # [4]소속 신호 개수
-                            "MDL_INHIBIT": column[label.index("모듈 자체의 Invalid 조건 Event")] if pd.notna(column[label.index("모듈 자체의 Invalid 조건 Event")]) else "",  # [5]모듈 자체의 Invalid 조건 Event
-                            "AAA": column[label.index("모듈 자체의 Invalid 조건 Signal")] if pd.notna(column[label.index("모듈 자체의 Invalid 조건 Signal")]) else "",  # [6]AAA 값
-                            "BBB": column[label.index("모듈 자체의 진단 조건 (FID)")] if pd.notna(column[label.index("모듈 자체의 진단 조건 (FID)")]) else ""  # [7]BBB 값
-                        }
-                    ]
+            if len(table.columns) > 2:
+                df  = table.iloc[: , 1:-1]
+                for column_name, column in df.items():
+                    sig = [{
+                            "SYSCON": column[label.index("System Constant 조건")] if pd.notna(
+                                column[label.index("System Constant 조건")]) else "",  # [3]System Constant 조건
+                            "ELEMENT_NAME": column[label.index("신호 명칭")] if pd.notna(
+                                column[label.index("신호 명칭")]) else "",  # [0]신호 명칭
+                            "DESC": column[label.index("신호 설명(영문)")] if pd.notna(
+                                column[label.index("신호 설명(영문)")]) else "",  # [1]신호 설명(영문)
+                            "DESC_KR": column[label.index("신호 설명(한글)")] if pd.notna(
+                                column[label.index("신호 설명(한글)")]) else "",  # [3]신호 설명(한글)
+                            "ELEMENT_COUNT": column[label.index("소속 신호 개수")] if pd.notna(
+                                column[label.index("소속 신호 개수")]) else "",  # [4]소속 신호 개수
+                            "MDL_INHIBIT": column[label.index("모듈 자체의 Invalid 조건 Event")] if pd.notna(
+                                column[label.index("모듈 자체의 Invalid 조건 Event")]) else "",
+                            # [5]모듈 자체의 Invalid 조건 Event
+                            "AAA": column[label.index("모듈 자체의 Invalid 조건 Signal")] if pd.notna(
+                                column[label.index("모듈 자체의 Invalid 조건 Signal")]) else "",  # [6]AAA 값
+                            "BBB": column[label.index("모듈 자체의 진단 조건 (FID)")] if pd.notna(
+                                column[label.index("모듈 자체의 진단 조건 (FID)")]) else ""  # [7]BBB 값
+                        }]
 
                     sig_list.append(sig)
-                print("sig_list: ",sig_list)
+                # print("sig_list: ",sig_list)
 
-    return summary, path_list, event_list, fid_list, dtr_list, sig_list
+            else :
+                print("sig_list : Table is empty.")
+
+
+    print("summary: ", summary)
+    print("event_list: ", event_list)
+    print("path_list: ", path_list)
+    print("fid_list: ", fid_list)
+    print("dtr_list: ", dtr_list)
+    print("sig_list: ",sig_list)
+
+    return summary, event_list, path_list, fid_list, dtr_list, sig_list
+
+
+if __name__ == "__main__" :
+    tableParser(returnTables())
 
 
 
