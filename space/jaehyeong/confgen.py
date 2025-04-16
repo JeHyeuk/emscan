@@ -5,7 +5,7 @@
 
 #from Conf6_PATH_Event_FID_DTR_SIG_data2 import summary, Path_list, Fid_list, Event_list, DTR_list, Sig_list
 # XML 파일 네임 및 저장 경로 설정
-Out_path = r"D:\Confdata.xml"
+#Out_path = r"D:\Confdata.xml"
 # Filename = "aafd_confdata"
 # user_name = "JaeHyeong.Jo" #개발자의 이름 입력
 # Date = "2025.03.17" #ConfData를 생성한 날짜
