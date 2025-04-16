@@ -3,17 +3,17 @@
 
 
 
-# from Conf6_PATH_Event_FID_DTR_SIG_db2 import History, Path_list, Fid_list, Event_list, DTR_list, Sig_list
+#from Conf6_PATH_Event_FID_DTR_SIG_data2 import summary, Path_list, Fid_list, Event_list, DTR_list, Sig_list
 # XML 파일 네임 및 저장 경로 설정
-# Out_path = r"D:\Confdata.xml"
-Filename = "aafd_confdata"
-user_name = "JaeHyeong.Jo" #개발자의 이름 입력
-Date = "2025.03.17" #ConfData를 생성한 날짜
+#Out_path = r"D:\Confdata.xml"
+# Filename = "aafd_confdata"
+# user_name = "JaeHyeong.Jo" #개발자의 이름 입력
+# Date = "2025.03.17" #ConfData를 생성한 날짜
 # Variant = "1.0.0" #ConfData를 생성 버전
-Model_Name = "AAAA"#모델명
+# Model_Name = "AAAA"#모델명
 
 
-def Summary_Sheet(f, History):
+def Summary_Sheet(f, summary):
     f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
     f.write('<!DOCTYPE MSRSW PUBLIC "-//MSR//DTD MSR SOFTWARE DTD:V2.2.2:HMC:LAI:IAI:XML:MSRSW.DTD//EN" "msrsw_v222_hmc.xml.dtd">\n')
     f.write('<!-- File Format is generated for DEM_ASW_Conf_Tool version 1.2 by J.H.JO at 21:14:14, 01 Feb 2025 -->\n')
@@ -30,12 +30,12 @@ def Summary_Sheet(f, History):
     f.write('				<COMPANY-REF>HKMC</COMPANY-REF>\n')
     f.write('				<SDGS>\n')
     f.write('					<SDG GID="HKMCHead-eASEE-Keywords">\n')
-    f.write(f'						<SD GID="Filename">{Filename}.xml</SD>\n')
+    f.write(f'						<SD GID="Filename">{summary["Filename"]}.xml</SD>\n')
     f.write('						<SD GID="Author"></SD>\n')
     f.write('						<SD GID="Function">This version is created by migration tool</SD>\n')
     f.write('						<SD GID="Domain">SDOM</SD>\n')
-    f.write(f'						<SD GID="User">{user_name}</SD>\n')
-    f.write(f'						<SD GID="Date">{Date}</SD>\n')
+    f.write(f'						<SD GID="User">{summary["user_name"]}</SD>\n')
+    f.write(f'						<SD GID="Date">{summary["Date"]}</SD>\n')
     f.write('						<SD GID="Class">DEM_CONFDATA</SD>\n')
     f.write('						<SD GID="Name">Summary</SD>\n')
     f.write(f'						<SD GID="Variant">1.0.0</SD>\n')
@@ -45,7 +45,7 @@ def Summary_Sheet(f, History):
     f.write('						<SD GID="UniqueName"></SD>\n')
     f.write('						<SD GID="Component"></SD>\n')
     f.write('						<SD GID="Generated"></SD>\n')
-    f.write(f'						<SD GID="History">\n{History}\n</SD>\n')
+    f.write(f'						<SD GID="History">\n{summary["History"]}\n</SD>\n')
     f.write('					</SDG>\n')
     f.write('				</SDGS>\n')
     f.write('			</COMPANY-DOC-INFO>\n')
@@ -60,7 +60,7 @@ def Summary_Sheet(f, History):
     f.write('			<CONF-SPEC>\n')
     f.write('				<CONF-ITEMS>\n')
     f.write('					<CONF-SOURCE>\n')
-    f.write(f'						<SW-FEATURE-REF>{Model_Name}</SW-FEATURE-REF>\n')
+    f.write(f'						<SW-FEATURE-REF>{summary["Model_Name"]}</SW-FEATURE-REF>\n')
     f.write('					</CONF-SOURCE>\n')
     f.write('					<CONF-ITEM>\n')
     f.write('						<SHORT-NAME>DEM</SHORT-NAME>\n')
@@ -594,11 +594,10 @@ def REST(f):
     f.write('</MSRSW>\n')
 
 
-
 if __name__ == "__main__":
     # 파일 쓰기
     with open(Out_path, "w", encoding="utf-8") as f:
-        Summary_Sheet(f, History)
+        Summary_Sheet(f, summary)
         Path_Sheet(f, Path_list)
         Event_Sheet(f, Event_list)
         FID_Sheet(f, Fid_list)
