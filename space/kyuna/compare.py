@@ -94,9 +94,10 @@ with open("compare_log.txt", 'w', encoding = "utf-8") as log:
             if normalize(lines1[i]) != normalize(lines2[j]):
                 if not diff_found :
                     log.write(f"\n[MISMATCH] in file '{name}' (from line {i + 1} of file1, {j + 1} of file2):\n")
-                    diff_found = True
-                    log.write(f"{'File1 Line ' + str(i + 1):<25}{'File2 Line ' + str(j + 1)}\n")
-                    log.write(f"{normalize(lines1[i]):<25}{normalize(lines2[j])}\n\n")
+
+                diff_found = True
+                log.write(f"{'File1 Line ' + str(i + 1):<50}{'File2 Line ' + str(j + 1)}\n")
+                log.write(f"{normalize(lines1[i]):<50}{normalize(lines2[j])}\n")
 
 
         if diff_found :
