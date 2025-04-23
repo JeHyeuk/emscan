@@ -92,7 +92,7 @@ def read_conf(conf:str=Form(...)):
 @app.post("/download-conf")
 def download_conf(conf:str=Form(...), tables:str=Form(...)):
     # print(conf)
-    print(tables)
+    # print(tables)
 
 
 

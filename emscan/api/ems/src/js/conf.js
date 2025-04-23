@@ -1,23 +1,6 @@
 var TAB = 'Summary';
+var COL = "";
 
-function highlight() {
-	$('td:contains("배타적 FID 관계")').parent().css('border-top', '2px double grey');
-	$('td:contains("배타적 FID System Constant 조건")').parent().css('border-bottom', '2px double grey');
-	
-	$('td:contains("FID 금지 요건인 Event")').parent().css('border-top', '2px double grey');
-	$('td:contains("상기 Event 요건의 System Constant")').parent().css('border-bottom', '2px double grey');
-	
-	$('td:contains("FID 금지 요건인 Sum-Event")').parent().css('border-top', '2px double grey');
-	$('td:contains("상기 Sum-Event의 System Constant")').parent().css('border-bottom', '2px double grey');
-	
-	$('td:contains("FID 금지 요건인 Signal")').parent().css('border-top', '2px double grey');
-	$('td:contains("상기 Signal 요건의 System Constant")').parent().css('border-bottom', '2px double grey');
-	
-	$('td:contains("FID가 Mode7 조건인 Signal")').parent().css('border-top', '2px double grey');
-	$('td:contains("상기 Signal의 System Constant 조건")').parent().css('border-bottom', '2px double grey');
-	
-	$('.color-ref').css('display', 'none');
-}
 
 function openTab(evt, key) {
     var tabcontent, tablinks;
@@ -42,7 +25,7 @@ function openTab(evt, key) {
 }
 
 function addRow(button) {
-    var tr = $(button).parent();
+    var tr = $(button).parent().parent();
 	var set = [tr];
 	tr.prevAll().each(function() {
 		if ($(this).hasClass('group-top')){
@@ -53,13 +36,20 @@ function addRow(button) {
 	});
 	set.forEach(item => {
 		$(item).find("td.dem-value").text("");
+		if ($(item).hasClass('group-bottom')) {
+			$(item).find('.key').text(COL);
+		}		
 		tr.after(item[0].outerHTML);
 	});
 }
 
 function editCell(cell) {
     if (cell.querySelector("input")) return;
-
+	
+	$(cell).css({
+		'padding-right': '0',
+		'background-color': '#f5f5f5'
+	});
     let originalText = cell.innerText;
     let input = document.createElement("input");
     input.type = "text";
@@ -69,6 +59,10 @@ function editCell(cell) {
     input.focus();
 
     input.addEventListener("blur", function() {
+	  $(cell).css({
+		'padding': '8px',
+		'background-color': '#fff'
+	  });
       saveCell(cell, input.value);
 	  
 	  var col = $(cell).parent().find('td:first');
@@ -82,12 +76,8 @@ function editCell(cell) {
 		  if (originalText != input.value) {
 			  $('td[value="' + originalText +'"]').attr("value", input.value);
 		  }
-		  
-	  }
-	  
+	  }  
     });
-	
-	
 }
 
 function editParagraph(cell) {
@@ -163,39 +153,9 @@ function readConf(src) {
 			$('#' + obj).html(data[obj]);
 			$('.tab-' + obj).html(obj + "(" + data["N_" + obj] + ")");
 		});
-		$('.group-bottom').append('<button class="add-row" onclick="addRow(this);"><i class="fa fa-plus"></i></button>');
 		
-		$('.fa-trash').click(function(){
-			$('td[value="' + $(this).parent().attr('value') + '"]').remove();
-			var tds = $("#" + TAB + " thead tr td")
-			var cnt = tds.length - 2;
-			$(tds[0]).html(cnt + " ITEMS");
-			$('.tab-' + TAB).html(TAB + "(" + cnt + ")");
-		});
+		$('.conf-action').append('<div class="action-box"><i class="fa-solid fa-gear"></i></div>');
 		
-		$('.fa-plus').click(function(){
-			var n = 1;
-			var elem = "new_element";
-			
-			$(this).parent().prevAll().each(function() {
-				var val = $(this).attr("value");
-				if (typeof val === "string" && val.startsWith("new_element")) {
-					n += 1;
-				}
-			});
-			elem = elem + '_' + n;
-			
-			$(this).parent().before('<td class="conf-action" value="' + elem + '"><i class="fa fa-trash"></i></td>');
-			$("#" + TAB + " tbody tr").each(function(i, e) {
-				if (i == 0){
-					$(e).find("td:last").after('<td class="dem-value" onclick="editCell(this);" value="'+elem+'">' + elem + '</td>');
-				} else {
-					$(e).find("td:last").after('<td class="dem-value" onclick="editCell(this);" value="'+elem+'"></td>');
-				}				
-			});
-			
-			$(".table-container").scrollLeft($(".table-container")[0].scrollWidth);
-		});
 	})
 	.catch(
 		error => {
@@ -229,3 +189,90 @@ function downloadConf(conf) {
 	})
 	.catch(error => console.error("Error:", error));
 }
+
+$(document)
+.on("click", ".fa-square-minus", function() {
+	$('td[value="' + $(this).parent().parent().attr('value') + '"]').remove();
+	
+	var tds = $("#" + TAB + " thead tr td")
+	var cnt = tds.length - 1;
+	$(tds[0]).html(cnt + " ITEMS");
+	$('.tab-' + TAB).html(TAB + "(" + cnt + ")");
+})
+.on("click", '.fa-right-to-bracket', function(){
+	var n = 1;
+	var elem = "new_element";
+	
+	$(this).parent().parent().prevAll().each(function() {
+		var val = $(this).attr("value");
+		if (typeof val === "string" && val.startsWith("new_element")) {
+			n += 1;
+		}
+	});
+	elem = elem + '_' + n;
+	
+	$(this).parent().parent().after('<td class="conf-action" value="' + elem + '"><div class="action-box"><i class="fa-solid fa-gear"></i></div></td>');
+	$("#" + TAB + " tbody tr").each(function(i, e) {
+		if (i == 0){
+			$(e).find("td:last").after('<td class="dem-value" onclick="editCell(this);" value="' + elem + '">' + elem + '</td>');
+		} else {
+			$(e).find("td:last").after('<td class="dem-value" onclick="editCell(this);" value="' + elem + '"></td>');
+		}				
+	});
+	
+	var tds = $("#" + TAB + " thead tr td")
+	var cnt = tds.length - 1;
+	$(tds[0]).html(cnt + " ITEMS");
+	$('.tab-' + TAB).html(TAB + "(" + cnt + ")");
+	
+	$(".table-container").scrollLeft($(".table-container")[0].scrollWidth);
+})
+.on("click", '.fa-right-from-bracket', function(){
+	var elem = $(this).parent().parent().attr('value');
+	var _id = elem + '_copy';
+	
+	$(this).parent().parent().after('<td class="conf-action" value="' + _id + '"><div class="action-box"><i class="fa-solid fa-gear"></i></div></td>');
+	$("#" + TAB + " tbody tr").each(function(i, e) {
+		var dem = $(e).find('td[value="' + elem + '"]');
+		if (i == 0){
+			$(e).find("td:last").after('<td class="dem-value" onclick="editCell(this);" value="' + _id + '">' + _id + '</td>');
+		} else {
+			$(e).find("td:last").after(dem[0].outerHTML);
+			$(e).find("td:last").attr('value', _id);
+		}				
+	});
+	
+	var tds = $("#" + TAB + " thead tr td")
+	var cnt = tds.length - 1;
+	$(tds[0]).html(cnt + " ITEMS");
+	$('.tab-' + TAB).html(TAB + "(" + cnt + ")");
+	
+	$(".table-container").scrollLeft($(".table-container")[0].scrollWidth);
+})
+.on('mouseenter', '.group-bottom .key', function() {
+	COL = $(this).text();
+	$(this).html('<i class="fa-solid fa-diagram-next" title="아래 행에 그룹 추가" onClick="addRow(this);"></i>');
+})
+.on('mouseleave', '.group-bottom .key', function() {
+	$(this).html(COL);
+})
+.on('mouseenter', '.conf-action', function() {
+	$(this).html('<div class="action-box"><i class="fa-solid fa-right-to-bracket" title="빈 열 추가"></i><i class="fa-solid fa-right-from-bracket" title="현재 열 복사하여 추가"></i><i class="fa-solid fa-square-minus" title="현재 열 삭제"></i></div>');
+})
+.on('mouseleave', '.conf-action', function() {
+	$(this).html('<div class="action-box"><i class="fa-solid fa-gear"></i></div>');
+})
+.on('select2:select', '.confdata-list', function(e) {
+    readConf(e.params.data.id);
+})
+.on('click', '.download', function() {
+	var conf = $('.confdata-list').val();
+	if (!conf) {
+		alert("선택된 Confdata가 없습니다.");
+		return;
+	}
+	downloadConf(conf);
+})
+
+
+loadConf();

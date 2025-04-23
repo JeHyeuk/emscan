@@ -4,14 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="/src/css/select2.min.css">
   <link rel="stylesheet" href="/src/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aui/7.5.0-beta-2/aui/css/aui-iconfonts.min.css">
   <link rel="icon" href="/src/img/logo.ico" type="image/x-icon">
 
   <script type="text/javascript" src="/src/js/jquery-3.6.1.min.js"></script>
   <script type="text/javascript" src="/src/js/select2.min.js"></script>
-  <script type="text/javascript" src="/src/js/conf.js"></script>
+  <script type="text/javascript" src="/src/js/conf.js" defer></script>
+  <script src="https://kit.fontawesome.com/4f79a7cc86.js" crossorigin="anonymous"></script>
   
   <title>KE::CONF</title>
 </head>
@@ -31,12 +32,12 @@
   <main id="main">
     <section class="container config">
       <div class="exes">
-        <span class="exe edit"><i class="fa fa-cloud-download"></i></span>
+        <span class="exe edit"><i class="fa-solid fa-cloud-arrow-down"></i></span>
       </div>
       <select name="model" class="confdata-list"></select>
       <div class="exes">
-		<span class="exe reload"><i class="fa fa-refresh"></i></span>
-        <span class="exe download"><i class="fa fa-download"></i></span>
+		<span class="exe reload"><i class="fa-solid fa-rotate"></i></span>
+        <span class="exe download"><i class="fa-solid fa-download"></i></span>
       </div>
     </section>
 	
@@ -92,7 +93,7 @@
 			<thead>
 				<tr>
 					<td class="key">0 ITEMS</td>
-					<td class="conf-action"><i class="fa fa-plus"></i></td>
+					<td class="conf-action">confdata를 선택하세요. /* 신규 생성 기능 준비 중 */</td>
 				</tr>
 			</thead>
 			<tbody>
@@ -107,11 +108,12 @@
 	  </div>
 	  <div class="color-ref">
 		  <span class="color-title">* 범례 : </span>
-		  <span class="color-box" style="background-color:rgb(146, 208, 80);"></span>
-		  <span class="color-box" style="background-color:rgb(250, 191, 143);"></span>
-		  <span class="color-box" style="background-color:rgb(255, 192, 0);"></span>
-		  <span class="color-box" style="background-color:rgb(183, 222, 232);"></span>
-		  <span class="color-box" style="background-color:rgb(177, 160, 199);"></span>
+		  <span class="color-box" style="background-color:rgb(146, 208, 80);" title="색 셀은 DEMDOC에서 찾아서 입력(가능)한 항목이다."></span>
+		  <span class="color-box" style="background-color:rgb(250, 191, 143);" title="색 셀은 DEMDOC가 아닌 다른 문서에서 찾아서 입력(가능)한 항목이다."></span>
+		  <span class="color-box" style="background-color:rgb(255, 192, 0);" title="색 셀은 DEMDOC에서 찾아서 입력 가능하나, 사양서 참고용이므로 입력하지 않아도 되는 항목이다."></span>
+		  <span class="color-box" style="background-color:rgb(183, 222, 232);" title="색 셀은 사양서/XML에 명기된 사항으로 당장은 입력하지 않아도 되나, 나중에는 반드시 입력해야하는 항목이다."></span>
+		  <span class="color-box" style="background-color:rgb(177, 160, 199);" title="색 셀은 사양서/XML에 명기된 사항으로 사양서 참고용이므로 입력하지 않아도 되는 항목이다."></span>
+		  <span class="color-box" style="border: 2px double grey;" title="테두리 셀은 반드시 묶음으로 행 복사하여 추가하는 항목이다."></span>
 	  </div>
     </section>
   </main>
@@ -127,27 +129,4 @@
     </div>
   </footer>
 </body>
-<script type="text/javascript">
-
-  $(document).ready(function(){
-    loadConf();
-	highlight();
-  })
-
-  $('.confdata-list').on('select2:select', function(e) {
-    readConf(e.params.data.id);
-  });
-  
-  $('.download').on('click', function() {
-  	var conf = $('.confdata-list').val();
-	if (!conf) {
-		alert("선택된 Confdata가 없습니다.");
-		return;
-	}
-	downloadConf(conf);
-  })
-  
-
-
-</script>
 </html>

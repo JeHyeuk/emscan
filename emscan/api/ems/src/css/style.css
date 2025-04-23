@@ -25,6 +25,7 @@
 --------------------------------------------------------------*/
 * {
   box-sizing: border-box;
+  font-size: 14px;
 }
 
 .no-select {
@@ -61,7 +62,7 @@ main {
     padding: 0;
     width: 100%;
 	max-width: 100%;
-	min-height: calc(100vh - 60px - 120px);
+	min-height: calc(100dvh - 60px - 120px);
 	overflow: hidden;
 }
 
@@ -101,7 +102,11 @@ td, th {
 
 input {
 	font-family: "현대산스 Text", "현대산스Text", "Open Sans", sans-serif;
-	width: 99%;
+	font-size: 12px;
+	width: 99%;	
+	border: none;
+	outline: none;
+	background-color: #f5f5f5
 }
 
 textarea {
@@ -200,7 +205,7 @@ textarea {
 }
 
 .container {
-    margin: 0 180px;
+    margin: 0 calc(0.1 * 100vw);
     background: white;
 }
 
@@ -306,11 +311,11 @@ textarea {
 
 .confdata .tabcontent .key {
     text-align: center;
-	font-size: 14px;
+	font-size: 13px;
     font-weight: 450;
-    width: 240px;	
-	min-width: 240px;
-	max-width: 240px;
+    width: 280px;
+	min-width: 280px;
+	max-width: 280px;
 	white-space: nowrap; /* 텍스트 줄바꿈 방지 */
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -322,9 +327,17 @@ textarea {
 
 .confdata .tabcontent .conf-action {
     text-align: center;
+	background-color: #eee;
 }
 
-.confdata .tabcontent .conf-action .fa {
+.confdata .tabcontent .conf-action .action-box {
+	display: flex;
+	align-items: center;
+	justify-content:center;
+	gap: 1.5em;
+}
+
+.fa-solid {
     cursor:pointer;
 }
 
@@ -349,7 +362,7 @@ textarea {
 .confdata .tabcontent .group-bottom .add-row {
 	display: none;
     position: absolute;
-    right: calc(50% - 120px);
+    left: 240px;
     top: 100%;
     transform: translateY(-50%);
     color: black;
