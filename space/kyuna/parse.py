@@ -47,7 +47,7 @@ def tableParser(src : str) -> tuple[dict, list]:
         dataframes = []
         for i, table in enumerate(tables):
             try:
-                df = pd.read_html(StringIO(str(table)))[0]  # 항상 리스트로 반환되므로 [0]
+                df = pd.read_html(StringIO(str(table)), displayed_only = False)[0]  # 항상 리스트로 반환되므로 [0]
                 print(f"[INFO] ✅ Table {i} shape: {df.shape}")
                 dataframes.append(df)
             except Exception as e:
