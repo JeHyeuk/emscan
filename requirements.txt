@@ -3,6 +3,7 @@ fastapi
 hypercorn
 jinja2
 kaleido
+lxml
 mdfreader
 numpy
 pandas

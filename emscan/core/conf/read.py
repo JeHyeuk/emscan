@@ -404,41 +404,43 @@ class confReader(ElementTree):
                 raise AttributeError('ELEMENT_NAME이 없습니다')
 
             name = name_tag.find('VF').text
-            elements[name] = {key: [] for key in columns}
-            elements[name]['ELEMENT_NAME'] += [name]
-            elements[name]['SYSCON'] += [getV(dem, 'SW-SYSCOND')]
+            sysc = getV(dem, 'SW-SYSCOND')
+            _id = f'{name}-{sysc}'.replace(" ", "")
+            elements[_id] = {key: [] for key in columns}
+            elements[_id]['ELEMENT_NAME'] += [name]
+            elements[_id]['SYSCON'] += [getV(dem, 'SW-SYSCOND')]
 
             for item in dem.findall('CONF-ITEMS/CONF-ITEM'):
                 key = item.find('SHORT-NAME').text
 
                 if key == "IUMPR":
-                    elements[name][f'{key}_SYSCON'] += [getV(item, 'SW-SYSCOND')]
+                    elements[_id][f'{key}_SYSCON'] += [getV(item, 'SW-SYSCOND')]
                     for sub_item in item.findall('CONF-ITEMS/CONF-ITEM'):
-                        elements[name][getV(sub_item, 'SHORT-NAME')] += [getV(sub_item, 'VF')]
+                        elements[_id][getV(sub_item, 'SHORT-NAME')] += [getV(sub_item, 'VF')]
                     continue
 
                 if key == "SCHED":
                     for sub_item in item.findall('CONF-ITEMS/CONF-ITEM'):
                         sub_key = sub_item.find('SHORT-NAME').text
                         if sub_key == "EXCLUSIVE":
-                            elements[name][f'{sub_key}_SYSCON'] += [getV(sub_item, 'SW-SYSCOND')]
+                            elements[_id][f'{sub_key}_SYSCON'] += [getV(sub_item, 'SW-SYSCOND')]
                             for sub_item2 in sub_item.findall('CONF-ITEMS/CONF-ITEM'):
-                                elements[name][getV(sub_item2, 'SHORT-NAME')] += [getV(sub_item2, 'VF')]
+                                elements[_id][getV(sub_item2, 'SHORT-NAME')] += [getV(sub_item2, 'VF')]
                             continue
-                        elements[name][sub_key] += [sub_item.find('VF').text]
+                        elements[_id][sub_key] += [sub_item.find('VF').text]
                     continue
 
                 if "group" in columns[key]:
                     g_name = item.find('VF').text
                     g_mask = "" if not "(" in g_name else g_name[g_name.find("(") + 1: g_name.find(")")]
                     g_sysc = "" if item.find('SW-SYSCOND') is None else item.find('SW-SYSCOND').text
-                    elements[name][key] += [g_name.replace(f'({g_mask})', '')].copy()
+                    elements[_id][key] += [g_name.replace(f'({g_mask})', '')].copy()
                     if key != "PROVIDED":
-                        elements[name][f'{key}_MASK'] += [g_mask]
-                    elements[name][f'{key}_SYSCON'] += [g_sysc]
+                        elements[_id][f'{key}_MASK'] += [g_mask]
+                    elements[_id][f'{key}_SYSCON'] += [g_sysc]
                     continue
 
-                elements[name][key] = [getV(item, 'VF')]
+                elements[_id][key] = [getV(item, 'VF')]
         return elements
 
 
@@ -581,26 +583,26 @@ if __name__ == "__main__":
         # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\egrd_confdata.xml'
         # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\aafd_confdata.xml'
         # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\catdft_confdata.xml'
-        r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\hegordd_confdata.xml'
+        r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\egrdifps_confdata.xml'
     )
 
 
     # print(conf.admin)
     # print(conf.history)
     # ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]
-    # demType = "FIM"
-    # pprint(conf.dem(demType))
+    demType = "FIM"
+    pprint(conf.dem(demType))
     # print(conf.html(demType))
 
-    from emscan.config import PATH
-    import os
-    for n, xml in enumerate([c for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xml')]):
-        # print(f'{n+1} {os.path.join(PATH.SVN.CONF, conf)}', '*' * 50)
-        conf = os.path.join(PATH.SVN.CONF, xml)
-        read = confReader(conf)
-        for dem in ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]:
-            try:
-                test = read.html(dem)
-            except Exception as error:
-                print(f"ERROR: {dem} @{n+1}/{xml}")
-                print(error)
+    # from emscan.config import PATH
+    # import os
+    # for n, xml in enumerate([c for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xml')]):
+    #     # print(f'{n+1} {os.path.join(PATH.SVN.CONF, conf)}', '*' * 50)
+    #     conf = os.path.join(PATH.SVN.CONF, xml)
+    #     read = confReader(conf)
+    #     for dem in ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]:
+    #         try:
+    #             test = read.html(dem)
+    #         except Exception as error:
+    #             print(f"ERROR: {dem} @{n+1}/{xml}")
+    #             print(error)
