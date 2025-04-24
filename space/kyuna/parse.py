@@ -28,18 +28,20 @@ def tableParser(src : str) -> tuple[dict, list]:
         src = src.replace('<br>', '\\n').replace('<br/>', '\\n').replace('<br />', '\\n')
         src = src.replace('None', '없음')
 
-        # tables = pd.read_html(StringIO(src))
 
-        # # 기존 디버깅 방법
+
+        ## 기존 디버깅 방법
+        # tables = pd.read_html(StringIO(src))
         # print(f"tables 리스트에  {len(tables)}개의 테이블이 존재합니다.")
         # # 각 테이블을 순차적으로 확인
         # for idx, table in enumerate(tables):
         #     print(f"테이블 {idx}:", table.to_string())
 
-        # BeautifulSoup parsing 방법
+        ## BeautifulSoup parsing 방법
         soup = BeautifulSoup(src, "html.parser")
         tables = soup.find_all("table")
         print(f"tables 리스트에 총 {len(tables)}개의 <table>을 찾았습니다.")
+        # print(tables)
 
         # 각 테이블을 판다스로 파싱
         dataframes = []
@@ -69,7 +71,7 @@ def tableParser(src : str) -> tuple[dict, list]:
         table = table.map(lambda x: x.replace('\\n', '\n') if isinstance(x, str) else x)
         table = table.map(lambda x: x.replace('없음', 'None') if isinstance(x, str) else x)
 
-        ## test 용
+        ## test 용 (create.py에서 호출될 때)
         caller_frame = inspect.stack()[1]
         caller_filename = caller_frame.filename
         caller_basename = os.path.basename(caller_filename)
@@ -96,8 +98,8 @@ def tableParser(src : str) -> tuple[dict, list]:
             if len(table.columns) > 2:
                 df  = table.iloc[: , 1:-1]
                 for column_name, column in df.items():
-                    print("빈칸 : ", column[label.index("진단 Event 설명(한글)")])
-                    print("None : ", column[label.index("Debouncing 방식")])
+                    # print("빈칸 : ", column[label.index("진단 Event 설명(한글)")])
+                    # print("None : ", column[label.index("Debouncing 방식")])
 
                     event = [{
                         "SYSCON": column[label.index("System Constant 조건")] if pd.notna(column[label.index("System Constant 조건")]) else "",  # [3]System Constant 조건
@@ -127,7 +129,7 @@ def tableParser(src : str) -> tuple[dict, list]:
                     event_list.append(event)
             else :
                 print("event_list : Table is empty.")
-                # print("event_list: ", event_list)
+
 
         elif i == 2:
             if len(table.columns) > 2:
@@ -150,7 +152,7 @@ def tableParser(src : str) -> tuple[dict, list]:
                     ]
 
                     path_list.append(path)
-            # print("path_list: ", path_list)
+
             else :
                 print("path_list : Table is empty.")
 
@@ -191,7 +193,7 @@ def tableParser(src : str) -> tuple[dict, list]:
 
                     }]
                     fid_list.append(fid)
-                # print("fid_list : ",fid_list)
+
 
             else :
                 print("fid_list : Table is empty.")
@@ -246,7 +248,7 @@ def tableParser(src : str) -> tuple[dict, list]:
                         }]
 
                     sig_list.append(sig)
-                # print("sig_list: ",sig_list)
+
 
             else :
                 print("sig_list : Table is empty.")

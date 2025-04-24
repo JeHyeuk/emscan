@@ -48,6 +48,7 @@ diff_file_count = 0
 diff_files = []
 with open("compare_log.txt", 'w', encoding = "utf-8") as log:
     for name in filename :
+        print(f"comparing <{name}>...")
         file1 = os.path.join(PATH.SVN.CONF, name + ".xml")
         file2 = os.path.join(BIN_PATH, name+"_sample.xml")
 
@@ -108,9 +109,9 @@ with open("compare_log.txt", 'w', encoding = "utf-8") as log:
         #      log.write(f"\n[OK] No difference in '{name}' from matched line onward.\n")
 
     print(f"\n[Comparison complete!] Number of files with differences is : {diff_file_count}\n")
-    print(f"\n Files with differences is : ")
-    for file in diff_files:
-            print(file)
+    # print(f"\n Files with differences is : ")
+    # for file in diff_files:
+    #         print(file)
 
     log.write(f"\n[Comparison complete!] Number of files with differences is : {diff_file_count}\n")
 
