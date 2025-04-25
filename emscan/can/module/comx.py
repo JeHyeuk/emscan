@@ -11,6 +11,7 @@ except ImportError:
     from emscan.can.db.objs import MessageObj
     from emscan.can.module.core import ccode, element
 from datetime import datetime
+from typing import Dict
 import os
 
 
@@ -43,7 +44,7 @@ class ComX(Module):
         wakeup = "N/A" if not message["WakeUp"] else f"_{period}msWakeUp"
         return normal, wakeup
 
-    def _gen_process(self, database:db):
+    def _gen_process(self, database:db) -> Dict:
         model = "ComDef_HEV" if self['name'].endswith("_HEV") else "ComDef"
         objs = {method: "" for method in self.main.Process["name"]}
         for name, message in database.messages.items():
