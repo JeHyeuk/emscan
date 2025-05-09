@@ -39,6 +39,8 @@ def tableParser(src : str) -> tuple[dict, list]:
 
         ## BeautifulSoup parsing 방법
         soup = BeautifulSoup(src, "html.parser")
+        for td in soup.select("td.conf-action.new-col"):
+            td.decompose()  # 해당 <td> 완전히 삭제
         tables = soup.find_all("table")
         print(f"tables 리스트에 총 {len(tables)}개의 <table>을 찾았습니다.")
         # print(tables)
@@ -95,8 +97,8 @@ def tableParser(src : str) -> tuple[dict, list]:
 
 
         if i == 1:
-            if len(table.columns) > 2:
-                df  = table.iloc[: , 1:-1]
+            if len(table.columns) > 1:
+                df  = table.iloc[: , 1:]
                 for column_name, column in df.items():
                     # print("빈칸 : ", column[label.index("진단 Event 설명(한글)")])
                     # print("None : ", column[label.index("Debouncing 방식")])
@@ -108,8 +110,8 @@ def tableParser(src : str) -> tuple[dict, list]:
                         "DESC_KR": column[label.index("진단 Event 설명(한글)")] if pd.notna(column[label.index("진단 Event 설명(한글)")])  else "",  # [2]진단 Event 설명(한글)
                         "DEB_METHOD": column[label.index("Debouncing 방식")] if pd.notna(column[label.index("Debouncing 방식")])  else "",  # [4]Debouncing 방식
                         "DEB_PARAM_OK": column[label.index("Deb Parameter Data for OK")] if pd.notna(column[label.index("Deb Parameter Data for OK")])  else "",  # [5]Deb Parameter Data for OK
-                        "DEB_PARAM_Def": column[label.index("Deb Parameter Data for Def")] if pd.notna(column[label.index("Deb Parameter Data for OK")])  else "",  # [6]Deb Parameter Data for Def
-                        "DEB_PARAM_Ratio": column[label.index("Deb Parameter Data for Ratio")] if pd.notna(column[label.index("Deb Parameter Data for OK")])  else "",  # [7]Deb Parameter Data for Ratio
+                        "DEB_PARAM_Def": column[label.index("Deb Parameter Data for Def")] if pd.notna(column[label.index("Deb Parameter Data for Def")])  else "",  # [6]Deb Parameter Data for Def
+                        "DEB_PARAM_Ratio": column[label.index("Deb Parameter Data for Ratio")] if pd.notna(column[label.index("Deb Parameter Data for Ratio")])  else "",  # [7]Deb Parameter Data for Ratio
                         "ELEMENT_COUNT": column[label.index("소속 Event 개수")] if pd.notna(column[label.index("소속 Event 개수")])  else "",  # [8]소속 Event 개수
                         "SIMILAR_COND": column[label.index("Similar Conidtion 필요")] if pd.notna(column[label.index("Similar Conidtion 필요")])  else "",  # [9]Similar Conidtion 필요
                         "MIL": column[label.index("MIL 점등 여부")] if pd.notna(column[label.index("MIL 점등 여부")]) else "",  # [10]MIL 점등 여부
@@ -132,8 +134,8 @@ def tableParser(src : str) -> tuple[dict, list]:
 
 
         elif i == 2:
-            if len(table.columns) > 2:
-                df  = table.iloc[: , 1:-1]
+            if len(table.columns) > 1:
+                df  = table.iloc[: , 1:]
                 for column_name, column in df.items():
 
                     path = [
@@ -157,8 +159,8 @@ def tableParser(src : str) -> tuple[dict, list]:
                 print("path_list : Table is empty.")
 
         elif i == 3:
-            if len(table.columns) > 2:
-                df  = table.iloc[: , 1:-1]
+            if len(table.columns) > 1:
+                df  = table.iloc[: , 1:]
 
                 for column_name, column in df.items():    # column_name : Series, column : Series
                     fid = [{
@@ -201,8 +203,8 @@ def tableParser(src : str) -> tuple[dict, list]:
 
 
         elif i == 4:
-            if len(table.columns) > 2:
-                df  = table.iloc[: , 1:-1]
+            if len(table.columns) > 1:
+                df  = table.iloc[: , 1:]
                 for column_name, column in df.items():
 
                     dtr = [{
@@ -224,8 +226,8 @@ def tableParser(src : str) -> tuple[dict, list]:
 
         elif i == 5:
 
-            if len(table.columns) > 2:
-                df  = table.iloc[: , 1:-1]
+            if len(table.columns) > 1:
+                df  = table.iloc[: , 1:]
                 for column_name, column in df.items():
                     sig = [{
                             "SYSCON": column[label.index("System Constant 조건")] if pd.notna(
