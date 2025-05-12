@@ -12,337 +12,337 @@ COLUMNS:Dict[str, Dict] = {
     "EVENT": {
         "ELEMENT_NAME": {
             "label": "진단 Event 명칭",
-            "style": "background-color:rgb(146, 208, 80);"
+            "class": "mandatory",
         },
         "DESC": {
             "label": "진단 Event 설명(영문)",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "DESC_KR": {
             "label": "진단 Event 설명(한글)",
-            "style": "background-color:rgb(177,160,199);"
+            "class": "optional",
         },
         "SYSCON": {
             "label": "System Constant 조건",
-            "style": "background-color:rgb(183,222,232);"
+            "class": "optional-strong",
         },
         "DEB_METHOD": {
             "label": "Debouncing 방식",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "DEB_PARAM": {
             "label": "(Conf 존재 / 미사용 KEY)",
-            "style": "display:none;"
+            "class": "mandatory",
         },
         "DEB_PARAM_OK": {
             "label": "Deb Parameter Data for OK",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "DEB_PARAM_Def": {
             "label": "Deb Parameter Data for Def",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "DEB_PARAM_Ratio": {
             "label": "Deb Parameter Data for Ratio",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "ELEMENT_COUNT": {
             "label":"소속 Event 개수",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "SIMILAR_COND": {
             "label": "Similar Conidtion 필요",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "MIL": {
             "label": "MIL 점등 여부",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "DCY_TEST": {
             "label": "Multiple Driving Cycle 진단",
-            "style": "background-color:rgb(183,222,232);"
+            "class": "optional-strong",
         },
         "SHUT_OFF": {
             "label": "시동꺼짐 연관성 (REC)",
-            "style": "background-color:rgb(250,191,143);"
+            "class": "mandatory-others",
         },
         "RESET_INIT": {
             "label": "DCY 시작시 초기화",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "RESET_POSTCANCEL": {
             "label": "PostCancel 초기화",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "DTC_2B": {
             "label": "기본 DTC 설정값",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "DTC_EX": {
             "label": "확장 DTC 설정값 (UDS용)",
-            "style": "background-color:rgb(183,222,232);"
+            "class": "optional-strong",
         },
         "MDL_INHIBIT": {
             "label": "모듈 자체의 금지 조건 (Event)",
-            "style": "background-color:rgb(255,192,0);"
+            "class": "optional-demdoc",
         },
         "REQ_FID": {
             "label": "모듈 자체의 진단 조건 (FID)",
-            "style": "background-color:rgb(255,192,0);"
+            "class": "optional-demdoc",
         },
         "IUMPR_GRP": {
             "label": "IUMPR 소속",
-            "style": "background-color:rgb(177,160,199);"
+            "class": "optional",
         },
         "READY_GRP": {
             "label": "Readiness 소속",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "GRP_RPT": {
             "label": "Group Reporting Event",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         }
     },
     "PATH": {
         "ELEMENT_NAME": {
             "label": "Event Path 명칭",
-            "style": "background-color:rgb(146, 208, 80);"
+            "class": "mandatory",
         },
         "DESC": {
             "label": "진단 Event Path 설명(영문)",
-            "style": "background-color:rgb(146, 208, 80);"
+            "class": "mandatory",
         },
         "DESC_KR": {
             "label": "진단 Event Path 설명(한글)",
-            "style": "background-color:rgb(177,160,199);"
+            "class": "optional",
         },
         "SYSCON": {
             "label": "System Constant 조건",
-            "style": "background-color:rgb(183,222,232);"
+            "class": "optional-strong",
         },
         "FAULT_MAX": {
             "label": "Max 고장 Event 명칭",
-            "style": "background-color:rgb(146, 208, 80);"
+            "class": "mandatory",
         },
         "FAULT_MIN": {
             "label": "Min 고장 Event 명칭",
-            "style": "background-color:rgb(146, 208, 80);"
+            "class": "mandatory",
         },
         "FAULT_SIG": {
             "label": "Sig 고장 Event 명칭",
-            "style": "background-color:rgb(146, 208, 80);"
+            "class": "mandatory",
         },
         "FAULT_NPL" : {
             "label": "Plaus 고장 Event 명칭",
-            "style": "background-color:rgb(146, 208, 80);"
+            "class": "mandatory",
         },
         "MDL_INHIBIT": {
             "label": "모듈 자체의 금지 조건 (Event)",
-            "style": "background-color:rgb(255,192,0);"
+            "class": "optional-demdoc",
         },
         "REQ_FID": {
             "label": "모듈 자체의 진단 조건 (FID)",
-            "style": "background-color:rgb(255,192,0);"
+            "class": "optional-demdoc",
         },
     },
     "FID": {
         "ELEMENT_NAME": {
-            "style": "background-color:rgb(146, 208, 80);",
-            "label": "함수 식별자 명칭"
+            "label": "함수 식별자 명칭",
+            "class": "mandatory",
         },
         "DESC": {
-            "style": "background-color:rgb(146, 208, 80);",
-            "label": "함수 식별자 설명(영문)"
+            "label": "함수 식별자 설명(영문)",
+            "class": "mandatory",
         },
         "DESC_KR": {
-            "style": "background-color:rgb(177,160,199);",
-            "label": "함수 식별자 설명(한글)"
+            "label": "함수 식별자 설명(한글)",
+            "class": "optional",
         },
         "SYSCON": {
-            "style": "background-color:rgb(183,222,232);",
-            "label": "System Constant 조건"
+            "label": "System Constant 조건",
+            "class": "optional-strong",
         },
         "PROVIDING_EVENT": {
-            "style": "background-color:rgb(177,160,199);",
-            "label": "모듈에서 이 FID가 진단 조건인 Event"
+            "label": "모듈에서 이 FID가 진단 조건인 Event",
+            "class": "optional",
         },
         "PROVIDING_SIGNAL": {
-            "style": "background-color:rgb(177,160,199);",
-            "label": "모듈에서 이 FID가 진단 조건인 Signal"
+            "label": "모듈에서 이 FID가 진단 조건인 Signal",
+            "class": "optional",
         },
         "SCHED_MODE": {
-            "style": "background-color:rgb(146, 208, 80);",
-            "label": "Scheduling Mode"
+            "label": "Scheduling Mode",
+            "class": "mandatory",
         },
         "LOCKED": {
-            "style": "background-color:rgb(177,160,199);",
-            "label": "Sleep/Lock 사용 여부"
+            "label": "Sleep/Lock 사용 여부",
+            "class": "optional",
         },
         "SHORT_TEST": {
-            "style": "background-color:rgb(177,160,199);",
-            "label": "Short Test시 Permisson 처리 여부"
+            "label": "Short Test시 Permisson 처리 여부",
+            "class": "optional",
         },
         "FID_GROUP": {
-            "style": "background-color:rgb(146, 208, 80);",
-            "label": "IUMPR Group 할당"
+            "label": "IUMPR Group 할당",
+            "class": "mandatory",
         },
         "IUMPR_SYSCON": {
-            "style": "background-color:rgb(183,222,232);",
-            "label": "IUMPR 적용 System Constant 조건"
+            "label": "IUMPR 적용 System Constant 조건",
+            "class": "optional-strong",
         },
         "DENOM_PHYRLS": {
-            "style": "background-color:rgb(146, 208, 80);",
-            "label": "IUMPR 분모 Release 방식"
+            "label": "IUMPR 분모 Release 방식",
+            "class": "mandatory",
         },
         "NUM_RLS": {
-            "style": "background-color:rgb(146, 208, 80);",
-            "label": "IUMPR 분자 Release Event"
+            "label": "IUMPR 분자 Release Event",
+            "class": "mandatory",
         },
         "ENG_MODE": {
-            "style": "background-color:rgb(177,160,199);",
-            "label": "Ready 조건 GDI 모드"
+            "label": "Ready 조건 GDI 모드",
+            "class": "optional",
         },
         "EXCLUSION": {
-            "style": "background-color:rgb(146, 208, 80);",
             "label": "배타적 FID 관계",
+            "class": "mandatory group-top",
             "group": "EXCLUSION",
         },
         "EXCLU_PRIO": {
-            "style": "background-color:rgb(146, 208, 80);",
             "label": "배타적 FID 처리 순서",
+            "class": "mandatory group-mid",
             "group": "EXCLUSION",
         },
         "EXCLUSIVE_SYSCON": {
-            "style": "background-color:rgb(183,222,232);",
             "label": "배타적 FID System Constant 조건",
+            "class": "optional-strong group-bottom",
             "group": "EXCLUSION",
         },
         "INHIBITED_EVENT": {
-            "style": "background-color:rgb(146, 208, 80);",
             "label": "FID 금지 요건인 Event",
+            "class": "mandatory group-top",
             "group": "INHIBITED_EVENT"
         },
         "INHIBITED_EVENT_MASK": {
-            "style": "background-color:rgb(146, 208, 80);",
             "label": "상기 Event 요건의 Mask 속성",
+            "class": "mandatory group-mid",
             "group": "INHIBITED_EVENT"
         },
         "INHIBITED_EVENT_SYSCON": {
-            "style": "background-color:rgb(183,222,232);",
             "label": "상기 Event 요건의 System Constant",
+            "class": "optional-strong group-bottom",
             "group": "INHIBITED_EVENT"
         },
         "INHIBITED_SUM_EVENT": {
-            "style": "background-color:rgb(183,222,232);",
             "label": "FID 금지 요건인 Sum-Event",
+            "class": "mandatory group-top",
             "group": "INHIBITED_SUM_EVENT",
         },
         "INHIBITED_SUM_EVENT_MASK": {
-            "style": "background-color:rgb(183,222,232);",
             "label": "상기 Sum-Event 요건의 Mask 속성",
+            "class": "mandatory group-mid",
             "group": "INHIBITED_SUM_EVENT",
         },
         "INHIBITED_SUM_EVENT_SYSCON": {
-            "style": "background-color:rgb(183,222,232);",
             "label": "상기 Sum-Event의 System Constant",
+            "class": "optional-strong group-bottom",
             "group": "INHIBITED_SUM_EVENT",
         },
         "INHIBITED_SIG": {
-            "style": "background-color:rgb(146, 208, 80);",
             "label": "FID 금지 요건인 Signal",
+            "class": "mandatory group-top",
             "group": "INHIBITED_SIG",
         },
         "INHIBITED_SIG_MASK": {
-            "style": "background-color:rgb(146, 208, 80);",
             "label": "상기 Signal 요건의 Mask 속성",
+            "class": "mandatory group-mid",
             "group": "INHIBITED_SIG",
         },
         "INHIBITED_SIG_SYSCON": {
-            "style": "background-color:rgb(183,222,232);",
             "label": "상기 Signal 요건의 System Constant",
+            "class": "optional-strong group-bottom",
             "group": "INHIBITED_SIG",
         },
         "PROVIDED": {
-            "style": "background-color:rgb(146, 208, 80);",
             "label": "FID가 Mode7 조건인 Signal",
+            "class": "mandatory group-top",
             "group": "PROVIDED",
         },
         "PROVIDED_SYSCON": {
-            "style": "background-color:rgb(183,222,232);",
             "label": "상기 Signal의 System Constant 조건",
+            "class": "optional-strong group-bottom",
             "group": "PROVIDED",
         },
     },
     "DTR": {
         "ELEMENT_NAME": {
             "label": "DTR test 명칭",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "DESC" : {
             "label": "DTR test 설명(영문)",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "DESC_KR": {
             "label": "DTR test 설명(한글)",
-            "style": "background-color:rgb(177,160,199);"
+            "class": "optional",
         },
         "SYSCON": {
             "label": "System Constant 조건",
-            "style": "background-color:rgb(183,222,232);"
+            "class": "optional-strong",
         },
         "EVENT": {
             "label": "관련 Event",
-            "style": "background-color:rgb(255,192,0);"
+            "class": "optional-demdoc",
         },
         "ELEMENT_COUNT": {
             "label": "소속 DTR 개수",
-            "style": "background-color:rgb(146,208,80);"
+            "class": "mandatory",
         },
         "UASID": {
             "label": "Unit and Scaling ID",
-            "style": "background-color:rgb(250,191,143);"
+            "class": "mandatory-others",
         },
         "OBDMID": {
             "label": "OBD MID",
-            "style": "background-color:rgb(250,191,143);"
+            "class": "mandatory-others",
         },
         "TID": {
             "label": "Test ID",
-            "style": "background-color:rgb(250,191,143);"
+            "class": "mandatory-others",
         }
     },
     "SIG": {
         "ELEMENT_NAME": {
             "label": "신호 명칭",
-            "style": "background-color:rgb(146, 208, 80);"
+            "class": "mandatory",
         },
         "DESC": {
             "label": "신호 설명(영문)",
-            "style": "background-color:rgb(146, 208, 80);"
+            "class": "mandatory",
         },
         "DESC_KR": {
             "label": "신호 설명(한글)",
-            "style": "background-color:rgb(177,160,199);"
+            "class": "optional",
         },
         "SYSCON": {
             "label": "System Constant 조건",
-            "style": "background-color:rgb(183,222,232);"
+            "class": "optional-strong",
         },
         "ELEMENT_COUNT": {
             "label": "소속 신호 개수",
-            "style": "background-color:rgb(146, 208, 80);"
+            "class": "mandatory",
         },
         "NOT_LABELD1": {
             "label": "모듈 자체의 Invalid 조건 Event",
-            "style": "background-color:rgb(177,160,199);"
+            "class": "optional",
         },
         "NOT_LABELD2": {
             "label": "모듈 자체의 Invalid 조건 Signal",
-            "style": "background-color:rgb(177,160,199);"
+            "class": "optional",
         },
         "MDL_INHIBIT": {
             "label": "모듈 자체의 진단 조건 (FID)",
-            "style": "background-color:rgb(255,192,0);"
+            "class": "optional-demdoc",
         }
     }
 }
@@ -458,6 +458,8 @@ class confReader(ElementTree):
         _ELEMENTS = self.dem(kind)
         _COLUMNS = self.columns(kind)
         _GROUPS = list(set([prop['group'] for prop in _COLUMNS.values() if 'group' in prop]))
+        if not _ELEMENTS:
+            _ELEMENTS[" "] = { key: [""] for key in _COLUMNS }
 
         headers = []
         bodies = []
@@ -479,16 +481,15 @@ class confReader(ElementTree):
 
                     for m in range(n_group_row):
                         for _key, _spec in group_columns.items():
-                            tds = [f'    <td class="key" style="{_spec["style"]}">{_spec["label"]}</td>']
+                            tds = [f'    <td class="key row {_spec["class"]}">{_spec["label"]}</td>']
                             for element, prop in _ELEMENTS.items():
                                 try:
-                                    onclick = "editParagraph(this)" if "\n" in prop[_key][m] else "editCell(this)"
                                     tds.append(
-                                        f'    <td class="dem-value" onclick="{onclick};" value="{element}">{lf(prop[_key][m])}</td>'
+                                        f'    <td class="dem-value" value="{element}">{lf(prop[_key][m])}</td>'
                                     )
                                 except IndexError:
                                     tds.append(
-                                        f'    <td class="dem-value" onclick="editCell(this);" value="{lf(element)}"></td>'
+                                        f'    <td class="dem-value" value="{lf(element)}"></td>'
                                     )
 
                             tr = "<tr>"
@@ -501,10 +502,10 @@ class confReader(ElementTree):
                             bodies.append(f"  {tr}\n{td}\n  </tr>")
                     continue
 
-            tds = [f'    <td class="key" style="{spec["style"]}">{spec["label"]}</td>']
+            tds = [f'    <td class="key row {spec["class"]}">{spec["label"]}</td>']
             for element, prop in _ELEMENTS.items():
                 if not n:
-                    headers.append(f'    <td class="conf-action" value="{element}" ></td>')
+                    headers.append(f'    <td value="{element}" ></td>')
 
                 if not prop[key]:
                     value = ""
@@ -516,19 +517,22 @@ class confReader(ElementTree):
                 if value is None:
                     value = ""
 
-                onclick = "editParagraph(this)" if "\n" in value else "editCell(this)"
                 tds.append(
-                    f'    <td class="dem-value" onclick="{onclick};" value="{element}">{lf(value)}</td>'
+                    f'    <td class="dem-value" value="{element}">{lf(value)}</td>'
                 )
             td = '\n'.join(tds)
-            bodies.append(f"  <tr>\n{td}\n  </tr>")
+            if "group" in spec["class"]:
+                tr = f'<tr class="{spec["class"].split(" ")[-1]}">\n{td}\n  </tr>'
+            else:
+                tr = f"  <tr>\n{td}\n  </tr>"
+            bodies.append(tr)
 
         td_header = "\n".join(headers)
         tr_bodies = "\n".join(bodies)
         return f'''
 <thead>
   <tr>
-    <td class="key dem-count" style="background-color:white;">{len(_ELEMENTS)} ITEMS</td>
+    <td class="row dem-count"></td>
 {td_header}
 
   </tr>
@@ -588,9 +592,9 @@ if __name__ == "__main__":
 
     conf = confReader(
         # r'./template.xml'
-        r'D:\canfdabsd_confdata.xml'
+        # r'D:\canfdabsd_confdata.xml'
         # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\egrd_confdata.xml'
-        # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\aafd_confdata.xml'
+        r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\aafd_confdata.xml'
         # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\catdft_confdata.xml'
         # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\aewpd_confdata.xml'
     )
@@ -599,21 +603,21 @@ if __name__ == "__main__":
     # print(conf.admin)
     # print(conf.history)
     # ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]
-    # demType = "DEM_EVENT"
+    demType = "FIM"
     # pprint(conf.dem(demType))
-    # print(conf.html(demType))
+    print(conf.html(demType))
 
-    from emscan.config import PATH
-    import os
-    for n, xml in enumerate([c for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xml')]):
-        # print(f'{n+1} {os.path.join(PATH.SVN.CONF, conf)}', '*' * 50)
-        conf = os.path.join(PATH.SVN.CONF, xml)
-        read = confReader(conf)
-        # for dem in ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]:
-        #     try:
-        #         test = read.html(dem)
-        #     except Exception as error:
-        #         print(f"ERROR: {dem} @{n+1}/{xml}")
-        #         print(error)
-
-        read.html("DEM_EVENT")
+    # from emscan.config import PATH
+    # import os
+    # for n, xml in enumerate([c for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xml')]):
+    #     # print(f'{n+1} {os.path.join(PATH.SVN.CONF, conf)}', '*' * 50)
+    #     conf = os.path.join(PATH.SVN.CONF, xml)
+    #     read = confReader(conf)
+    #     # for dem in ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]:
+    #     #     try:
+    #     #         test = read.html(dem)
+    #     #     except Exception as error:
+    #     #         print(f"ERROR: {dem} @{n+1}/{xml}")
+    #     #         print(error)
+    #
+    #     read.html("DEM_EVENT")

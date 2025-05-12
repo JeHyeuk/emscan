@@ -60,7 +60,7 @@ async def read_conf(request:Request):
     :param request:
     :return:
     """
-    return template.TemplateResponse("conf.html", {"request": request, "columns": COLUMNS})
+    return template.TemplateResponse("conf-1.1.0.html", {"request": request, "columns": COLUMNS})
 
 @app.get("/load-conf")
 def load_conf():
@@ -127,3 +127,7 @@ if __name__ == "__main__":
     import socket
 
     uvicorn.run(app, host=socket.gethostbyname(socket.gethostname()), port=8000)
+
+    # HOW TO KILL TASK
+    # netstat -ano | findstr :8000
+    # taskkill /32516 14532 /F

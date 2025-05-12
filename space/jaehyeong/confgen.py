@@ -25,7 +25,7 @@ def Summary_Sheet(f, summary):
     f.write('				<COMPANY-REF>HKMC</COMPANY-REF>\n')
     f.write('				<SDGS>\n')
     f.write('					<SDG GID="HKMCHead-eASEE-Keywords">\n')
-    f.write(f'						<SD GID="Filename">{summary["Filename"]}.xml</SD>\n')
+    f.write(f'						<SD GID="Filename">{summary["Filename"]}</SD>\n')
     f.write('						<SD GID="Author"></SD>\n')
     f.write('						<SD GID="Function">This version is created by migration tool</SD>\n')
     f.write('						<SD GID="Domain">SDOM</SD>\n')
