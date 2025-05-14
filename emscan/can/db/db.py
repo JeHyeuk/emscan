@@ -80,6 +80,8 @@ class db(DataFrame):
 
         for col, prop in Columns.items():
             if not isinstance(self[col].dtype, prop["dtype"]):
+                if prop["dtype"] == float:
+                    self[col] = self[col].apply(lambda v: 0 if not v else v)
                 self[col] = self[col].astype(prop["dtype"])
         self.fillna("", inplace=True)
 
@@ -160,10 +162,14 @@ if __name__ == "__main__":
     # print(DB)
     # print(DB[DB['Send Type'] == 'EC'])
     # print(DB("EMS_06_100ms"))
-    print(DB("DATC_OutTempSnsrVal"))
+    # print(DB("DATC_OutTempSnsrVal"))
 
     # print(DB("ABS_ESC_01_10ms"))
     # print(DB("ABS_ESC_01_10ms", "Signal"))
 
-    # myMsg = DB("TCU_01_10ms")
-    # print(myMsg.signals)
+    myMsg = DB("HTCU_05_10ms")
+    print(myMsg)
+    print(myMsg.signals)
+    print(myMsg.hasAliveCounter())
+    print(myMsg.hasCRC())
+

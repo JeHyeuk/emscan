@@ -28,24 +28,28 @@ def tableParser(src : str) -> tuple[dict, list]:
         src = src.replace('<br>', '\\n').replace('<br/>', '\\n').replace('<br />', '\\n')
         src = src.replace('None', '없음')
 
-        # tables = pd.read_html(StringIO(src))
 
-        # # 기존 디버깅 방법
+
+        ## 기존 디버깅 방법
+        # tables = pd.read_html(StringIO(src))
         # print(f"tables 리스트에  {len(tables)}개의 테이블이 존재합니다.")
         # # 각 테이블을 순차적으로 확인
         # for idx, table in enumerate(tables):
         #     print(f"테이블 {idx}:", table.to_string())
 
-        # BeautifulSoup parsing 방법
+        ## BeautifulSoup parsing 방법
         soup = BeautifulSoup(src, "html.parser")
+        for td in soup.select("td.conf-action.new-col"):
+            td.decompose()  # 해당 <td> 완전히 삭제
         tables = soup.find_all("table")
         print(f"tables 리스트에 총 {len(tables)}개의 <table>을 찾았습니다.")
+        # print(tables)
 
         # 각 테이블을 판다스로 파싱
         dataframes = []
         for i, table in enumerate(tables):
             try:
-                df = pd.read_html(StringIO(str(table)))[0]  # 항상 리스트로 반환되므로 [0]
+                df = pd.read_html(StringIO(str(table)), displayed_only = False)[0]  # 항상 리스트로 반환되므로 [0]
                 print(f"[INFO] ✅ Table {i} shape: {df.shape}")
                 dataframes.append(df)
             except Exception as e:
@@ -69,7 +73,7 @@ def tableParser(src : str) -> tuple[dict, list]:
         table = table.map(lambda x: x.replace('\\n', '\n') if isinstance(x, str) else x)
         table = table.map(lambda x: x.replace('없음', 'None') if isinstance(x, str) else x)
 
-        ## test 용
+        ## test 용 (create.py에서 호출될 때)
         caller_frame = inspect.stack()[1]
         caller_filename = caller_frame.filename
         caller_basename = os.path.basename(caller_filename)
@@ -93,11 +97,11 @@ def tableParser(src : str) -> tuple[dict, list]:
 
 
         if i == 1:
-            if len(table.columns) > 2:
-                df  = table.iloc[: , 1:-1]
+            if len(table.columns) > 1:
+                df  = table.iloc[: , 1:]
                 for column_name, column in df.items():
-                    print("빈칸 : ", column[label.index("진단 Event 설명(한글)")])
-                    print("None : ", column[label.index("Debouncing 방식")])
+                    # print("빈칸 : ", column[label.index("진단 Event 설명(한글)")])
+                    # print("None : ", column[label.index("Debouncing 방식")])
 
                     event = [{
                         "SYSCON": column[label.index("System Constant 조건")] if pd.notna(column[label.index("System Constant 조건")]) else "",  # [3]System Constant 조건
@@ -106,8 +110,8 @@ def tableParser(src : str) -> tuple[dict, list]:
                         "DESC_KR": column[label.index("진단 Event 설명(한글)")] if pd.notna(column[label.index("진단 Event 설명(한글)")])  else "",  # [2]진단 Event 설명(한글)
                         "DEB_METHOD": column[label.index("Debouncing 방식")] if pd.notna(column[label.index("Debouncing 방식")])  else "",  # [4]Debouncing 방식
                         "DEB_PARAM_OK": column[label.index("Deb Parameter Data for OK")] if pd.notna(column[label.index("Deb Parameter Data for OK")])  else "",  # [5]Deb Parameter Data for OK
-                        "DEB_PARAM_Def": column[label.index("Deb Parameter Data for Def")] if pd.notna(column[label.index("Deb Parameter Data for OK")])  else "",  # [6]Deb Parameter Data for Def
-                        "DEB_PARAM_Ratio": column[label.index("Deb Parameter Data for Ratio")] if pd.notna(column[label.index("Deb Parameter Data for OK")])  else "",  # [7]Deb Parameter Data for Ratio
+                        "DEB_PARAM_Def": column[label.index("Deb Parameter Data for Def")] if pd.notna(column[label.index("Deb Parameter Data for Def")])  else "",  # [6]Deb Parameter Data for Def
+                        "DEB_PARAM_Ratio": column[label.index("Deb Parameter Data for Ratio")] if pd.notna(column[label.index("Deb Parameter Data for Ratio")])  else "",  # [7]Deb Parameter Data for Ratio
                         "ELEMENT_COUNT": column[label.index("소속 Event 개수")] if pd.notna(column[label.index("소속 Event 개수")])  else "",  # [8]소속 Event 개수
                         "SIMILAR_COND": column[label.index("Similar Conidtion 필요")] if pd.notna(column[label.index("Similar Conidtion 필요")])  else "",  # [9]Similar Conidtion 필요
                         "MIL": column[label.index("MIL 점등 여부")] if pd.notna(column[label.index("MIL 점등 여부")]) else "",  # [10]MIL 점등 여부
@@ -127,11 +131,11 @@ def tableParser(src : str) -> tuple[dict, list]:
                     event_list.append(event)
             else :
                 print("event_list : Table is empty.")
-                # print("event_list: ", event_list)
+
 
         elif i == 2:
-            if len(table.columns) > 2:
-                df  = table.iloc[: , 1:-1]
+            if len(table.columns) > 1:
+                df  = table.iloc[: , 1:]
                 for column_name, column in df.items():
 
                     path = [
@@ -150,13 +154,13 @@ def tableParser(src : str) -> tuple[dict, list]:
                     ]
 
                     path_list.append(path)
-            # print("path_list: ", path_list)
+
             else :
                 print("path_list : Table is empty.")
 
         elif i == 3:
-            if len(table.columns) > 2:
-                df  = table.iloc[: , 1:-1]
+            if len(table.columns) > 1:
+                df  = table.iloc[: , 1:]
 
                 for column_name, column in df.items():    # column_name : Series, column : Series
                     fid = [{
@@ -191,7 +195,7 @@ def tableParser(src : str) -> tuple[dict, list]:
 
                     }]
                     fid_list.append(fid)
-                # print("fid_list : ",fid_list)
+
 
             else :
                 print("fid_list : Table is empty.")
@@ -199,8 +203,8 @@ def tableParser(src : str) -> tuple[dict, list]:
 
 
         elif i == 4:
-            if len(table.columns) > 2:
-                df  = table.iloc[: , 1:-1]
+            if len(table.columns) > 1:
+                df  = table.iloc[: , 1:]
                 for column_name, column in df.items():
 
                     dtr = [{
@@ -222,8 +226,8 @@ def tableParser(src : str) -> tuple[dict, list]:
 
         elif i == 5:
 
-            if len(table.columns) > 2:
-                df  = table.iloc[: , 1:-1]
+            if len(table.columns) > 1:
+                df  = table.iloc[: , 1:]
                 for column_name, column in df.items():
                     sig = [{
                             "SYSCON": column[label.index("System Constant 조건")] if pd.notna(
@@ -246,7 +250,7 @@ def tableParser(src : str) -> tuple[dict, list]:
                         }]
 
                     sig_list.append(sig)
-                # print("sig_list: ",sig_list)
+
 
             else :
                 print("sig_list : Table is empty.")

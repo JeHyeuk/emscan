@@ -40,7 +40,7 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     model = "LogIf_HEV"
-    asis = rf"D:\Archive\00_프로젝트\2017 통신개발-\2025\DS0203 LCR_HEV_LDC신호개발\모델\Prev\CanFDCLUM_HEV.main.amd"
-    tobe = rf"D:\Archive\00_프로젝트\2017 통신개발-\2025\DS0203 LCR_HEV_LDC신호개발\모델\Curr\CanFDCLUM_HEV.main.amd"
+    asis = rf"D:\Archive\00_프로젝트\2017 통신개발-\2025\DS0404 BOS SBW P단 조건 신규 추가\모델\Prev\ComDef.main.amd"
+    tobe = rf"D:\Archive\00_프로젝트\2017 통신개발-\2025\DS0404 BOS SBW P단 조건 신규 추가\모델\Curr\ComDef.main.amd"
     Compare(asis, tobe)
 

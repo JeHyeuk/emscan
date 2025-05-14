@@ -5,20 +5,24 @@
   |  TABLET  |  768px <= width < 1024px
   |    PC    | 1024px <= width
 --------------------------------------------------------------*/
-/* LAPTOP CASES */
-@media screen and (max-width: 1443px) {
-
+/*--------------------------------------------------------------
+# Variable
+--------------------------------------------------------------*/
+:root {
+    scroll-behavior: smooth;
+    --mandatory-demdoc: #92D050;
+    --mandatory-others: #FABF8F;
+    --optional-demdoc: #FFC000;
+    --optional-strong: #B7DEE8;
+    --optional: #B1A0C7;
+    --fid-package: 2px double grey;
+    --font-family: "현대산스 Text", "현대산스Text", "Open Sans", sans-serif
 }
 
-/* TABLET CASES */
-@media screen and (max-width: 1023px) {
 
-}
-
-/* MOBILE CASES */
-@media screen and (max-width: 767px) {
-
-}
+/*--------------------------------------------------------------
+# CONF SPECIFIED
+--------------------------------------------------------------*/
 
 /*--------------------------------------------------------------
 # General
@@ -27,21 +31,10 @@
   box-sizing: border-box;
 }
 
-.no-select {
-  -webkit-user-select: none; /* Chrome, Safari */
-  -moz-user-select: none;    /* Firefox */
-  user-select: none;         /* 표준 */
-}
-
-
-:root {
-    scroll-behavior: smooth;
-}
-
 html, body {
 	width: 100%;
 	max-width: 100%;
-    font-family: "현대산스 Text", "현대산스Text", "Open Sans", sans-serif;
+    font-family: var(--font-family);
     color: #444444;
     margin: 0;
     padding: 0;
@@ -61,7 +54,7 @@ main {
     padding: 0;
     width: 100%;
 	max-width: 100%;
-	min-height: calc(100vh - 60px - 120px);
+	min-height: calc(100dvh - 60px - 120px);
 	overflow: hidden;
 }
 
@@ -100,15 +93,23 @@ td, th {
 }
 
 input {
-	font-family: "현대산스 Text", "현대산스Text", "Open Sans", sans-serif;
-	width: 99%;
+  font-family: var(--font-family);
+  font-size: 13px;
+  width: 99%;	
+  border: none;
+  outline: none;
+  background-color: #f5f5f5
 }
 
 textarea {
-	width: 100%;
-	height: auto;
-	font-family: "현대산스 Text", "현대산스Text", "Open Sans", sans-serif;
-	resize: none;
+  font-family: var(--font-family);
+  font-size: 13px;
+  width: 100%;
+  border: none;
+  outline: none;
+  height: auto;
+  resize: none;
+  background-color: #f5f5f5;
 }
 
 /*--------------------------------------------------------------
@@ -195,55 +196,244 @@ textarea {
 /*--------------------------------------------------------------
 # Main
 --------------------------------------------------------------*/
-#main {
-
-}
-
 .container {
-    margin: 0 180px;
-    background: white;
+  margin: 0 calc(0.05 * 100dvw);
+  margin-top: 30px;
 }
 
 .config {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: stretch;
-    padding: 30px 0 0 0;
-    gap: 4px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 30px;
+  gap: 4px;
 }
 
-.config .confdata-list {
-    flex: 1 0 auto;
-    width: 240px;
-    max-width: 600px;
-
+.config .exe > i.bi {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  cursor:pointer;
 }
 
-.config .exes {
-    flex: 0 0 auto;
-    display: flex;
-    gap: 4px;
+.config .exe > i.bi:hover {
+  background-color: #444;
+  color: #fff;
+  transition: 0.3s ease;
 }
 
-.config .exes .exe {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 28px;
-    height: 28px;
-    border: 1px solid #aaa;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 18px;
-    color: #444;
+.config .exe > select.confdata-list {
+  flex: 1 0 auto;
+  min-width: 480px;
 }
 
-.config .exes .exe:hover {
-	color: #ccc;
+.content {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* justify-content: space-between; */
 }
+
+.content .heading {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+  background-color: #f1f1f1;
+}
+
+.content .heading .toolbar {
+  flex: 0 0 auto;
+  padding: 0 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.content .heading .toolbar .tool-separator {
+  width: 2px;
+  height: 14px;
+  background-color: #a9a9a9;
+  margin: 0 12px;
+}
+
+.content .heading .toolbar .tool {
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content .heading .toolbar .tool:hover {
+  background-color: #ddd;
+  transition: 0.3s ease;
+}
+
+.content .heading .toolbar .tool::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(0%);
+  background: #333;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  margin-bottom: 6px;
+}
+
+.content .heading .toolbar .tool:hover::after {
+  opacity: 1;
+}
+
+.content .heading .toolbar .tool img {
+  width: 20px;
+  height: 20px;
+}
+
+.content .heading .tabs {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: flex-start;
+  background-color: #f1f1f1;
+}
+
+.content .heading .tabs .tab {
+  font-weight: 600;
+  background-color: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+.content .heading .tabs .tab:hover {
+  background-color: #ddd;
+}
+
+.content .heading .tabs .tab.active {
+  background-color: #ccc;
+}
+
+.mandatory {
+  background-color: var(--mandatory-demdoc);
+}
+.mandatory-others {
+  background-color: var(--mandatory-others);
+}
+.optional-strong {
+  background-color: var(--optional-strong);
+}
+.optional-demdoc {
+  background-color: var(--optional-demdoc);
+}
+.optional {
+  background-color: var(--optional);
+}
+.fid-package {
+  border: var(--fid-package);
+}
+.group-top {
+  border-top: var(--fid-package);
+}
+.group-bottom {
+    border-bottom: var(--fid-package);
+}
+
+.data-table {
+  flex: 1 0 auto;
+  width: 100%;
+  max-height: calc(70dvh);
+  overflow-x:auto;
+  overflow-y:auto;
+	
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+}
+
+.data-table td {
+  font-size: 13px;
+}
+
+.data-table .tabcontent {
+  flex: 1 0 auto;
+  display: none;
+  position: relative;
+}
+.data-table .tabcontent.active {
+  display: table;
+}
+
+.data-table .row {
+  text-align: center;
+  font-size: 14px !important;
+  font-weight: 450;
+  width: 280px;
+  min-width: 280px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+	
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+
+.data-table .read-only {
+  cursor: not-allowed !important;
+}
+
+.data-table .writable {
+  cursor: text;
+}
+
+.data-table .dem-value {
+  font-size: 12px;
+  min-width: 180px;
+}
+
+.data-table .column-selector {
+  background-color: #d9d9d9;
+  cursor: url('../img/arrow-down_16x16.png') 4 4, auto;
+}
+
+.data-table .row.group-top,
+.data-table .row.group-mid,
+.data-table .row.group-bottom {
+  cursor: url('../img/arrow-right_16x16.png') 4 4, auto;
+}
+
+
+
+
+
+
+
+
+
 
 .confdata {
     display: flex;
@@ -306,11 +496,11 @@ textarea {
 
 .confdata .tabcontent .key {
     text-align: center;
-	font-size: 14px;
+	font-size: 13px;
     font-weight: 450;
-    width: 240px;	
-	min-width: 240px;
-	max-width: 240px;
+    width: 280px;
+	min-width: 280px;
+	max-width: 280px;
 	white-space: nowrap; /* 텍스트 줄바꿈 방지 */
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -322,9 +512,17 @@ textarea {
 
 .confdata .tabcontent .conf-action {
     text-align: center;
+	background-color: #eee;
 }
 
-.confdata .tabcontent .conf-action .fa {
+.confdata .tabcontent .conf-action .action-box {
+	display: flex;
+	align-items: center;
+	justify-content:center;
+	gap: 1.5em;
+}
+
+.fa-solid {
     cursor:pointer;
 }
 
@@ -349,7 +547,7 @@ textarea {
 .confdata .tabcontent .group-bottom .add-row {
 	display: none;
     position: absolute;
-    right: calc(50% - 120px);
+    left: 240px;
     top: 100%;
     transform: translateY(-50%);
     color: black;
