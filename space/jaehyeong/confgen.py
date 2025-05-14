@@ -1,11 +1,6 @@
-#from Conf6_PATH_Event_FID_DTR_SIG_data2 import summary, Path_list, Fid_list, Event_list, DTR_list, Sig_list
-# XML 파일 네임 및 저장 경로 설정
+import re
+
 Out_path = r"D:\Confdata.xml"
-# Filename = "aafd_confdata"
-# user_name = "JaeHyeong.Jo" #개발자의 이름 입력
-# Date = "2025.03.17" #ConfData를 생성한 날짜
-# Variant = "1.0.0" #ConfData를 생성 버전
-# Model_Name = "AAAA"#모델명
 
 
 def Summary_Sheet(f, summary):
@@ -266,6 +261,51 @@ def Event_Sheet(f, Event_list):
                 f.write(f'								</CONF-ITEMS>\n')
                 f.write(f'							</CONF-ITEM>\n')
 
+    def is_valid_element_count(value):
+        return value in ("O", "X")
+
+    def is_valid_dtc2b_code(value):
+        # DTC_2B는 P/C/B/U + 4자리 16진수 (대소문자 구분 없음)
+        return bool(re.fullmatch(r"[PCBU][0-9A-Fa-f]{4}", value))
+
+    def is_valid_dtcex_code(value):
+        # DTC_EX는 2자리 16진수 (대소문자 구분 없음)
+        return bool(re.fullmatch(r"[0-9A-Fa-f]{1,2}", value))
+
+    # 검사 결과 변수 초기화
+    RESULT_EVENT = "PASS"
+
+    for Event in Event_list:
+        for element in Event:
+            if isinstance(element, dict):
+                SIMILAR_COND = element.get("SIMILAR_COND", "")
+                MIL = element.get("MIL", "")
+                DCY_TEST = element.get("DCY_TEST", "")
+                SHUT_OFF = element.get("SHUT_OFF", "")
+                RESET_INIT = element.get("RESET_INIT", "")
+                RESET_POSTCANCEL = element.get("RESET_POSTCANCEL", "")
+                DTC_2B = element.get("DTC_2B", "")
+                DTC_EX = element.get("DTC_EX", "")
+
+                if (not is_valid_element_count(SIMILAR_COND) or not is_valid_element_count(MIL) or not is_valid_element_count(DCY_TEST)
+                        or not is_valid_element_count(SHUT_OFF) or not is_valid_element_count(RESET_INIT) or not is_valid_element_count(RESET_POSTCANCEL)
+                        or not is_valid_dtc2b_code(DTC_2B) or not is_valid_dtcex_code(DTC_EX)):
+
+                    RESULT_EVENT = "FAIL"
+                    return RESULT_EVENT
+
+    return RESULT_EVENT
+
+
+
+
+
+
+
+
+
+
+
 def FID_Sheet(f, Fid_list):
     for FID in Fid_list:
         for element in FID:
@@ -478,6 +518,26 @@ def FID_Sheet(f, Fid_list):
                 f.write(f'								</CONF-ITEMS>\n')
                 f.write(f'							</CONF-ITEM>\n')
 
+    def is_valid_element_count(value):
+        return value in ("O", "X")
+
+    # 검사 결과 변수 초기화
+    RESULT_FID = "PASS"
+
+    for FID in Fid_list:
+        for element in FID:
+            if isinstance(element, dict):
+                LOCKED = element.get("LOCKED", "")
+
+                if not is_valid_element_count(LOCKED):
+
+                    RESULT_FID = "FAIL"
+                    return RESULT_FID
+
+    return RESULT_FID
+
+
+
 def DTR_Sheet(f, DTR_list):
     for DTR in DTR_list:
         for element in DTR:
@@ -535,6 +595,43 @@ def DTR_Sheet(f, DTR_list):
 
                 f.write(f'								</CONF-ITEMS>\n')
                 f.write(f'							</CONF-ITEM>\n')
+
+    # 유효성 검사 함수들
+    def is_valid_uasid_hex(uasid):
+        if not isinstance(uasid, str):
+            return False
+        if uasid.startswith("0x") and 3 <= len(uasid) <= 4:
+            try:
+                int(uasid, 16)
+                return True
+            except ValueError:
+                return False
+        return False
+
+    def is_valid_1_to_255(value):
+        try:
+            val = int(value)
+            return 1 <= val <= 255
+        except (ValueError, TypeError):
+            return False
+
+    # 검사 결과 변수 초기화
+    RESULT_DTR = "PASS"
+
+    for DTR in DTR_list:
+        for element in DTR:
+            if isinstance(element, dict):
+                UASID = element.get("UASID", "")
+                OBDMID = element.get("OBDMID", "")
+                TID = element.get("TID", "")
+                if not is_valid_uasid_hex(UASID) or not is_valid_1_to_255(OBDMID) or not is_valid_1_to_255(TID):
+
+                    RESULT_DTR = "FAIL"
+                    return RESULT_DTR
+
+    return RESULT_DTR
+
+
 
 def Sig_Sheet(f, Sig_list):
     for Sig in Sig_list:
@@ -609,8 +706,11 @@ if __name__ == "__main__":
         Path_Sheet(f, Path_list)
         Event_Sheet(f, Event_list)
         FID_Sheet(f, Fid_list)
-        DTR_Sheet(f, DTR_list)
+        DTR_Sheet(f, DTR_list)  # 반환값을 변수에 저장
         Sig_Sheet(f, Sig_list)
         REST(f)
 
         print(f"해당 XML 파일이 '{Out_path}' 경로에 저장되었습니다.")
+        print(Event_Sheet(f, Event_list))
+        print(FID_Sheet(f, Fid_list))
+        print(DTR_Sheet(f, DTR_list))
