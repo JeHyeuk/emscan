@@ -711,6 +711,6 @@ if __name__ == "__main__":
         REST(f)
 
         print(f"해당 XML 파일이 '{Out_path}' 경로에 저장되었습니다.")
-        print(Event_Sheet(f, Event_list))
-        print(FID_Sheet(f, Fid_list))
-        print(DTR_Sheet(f, DTR_list))
+        print(f"Event sheet : {Event_Sheet(f, Event_list)}")
+        print(f"FID sheet   : {FID_Sheet(f, Fid_list)}")
+        print(f"DTR sheet   : {DTR_Sheet(f, DTR_list)}")
