@@ -1,18 +1,9 @@
-var __actions__ = [];
+var __stack__ = [];
 
-function memorizeAction(addr, prev, curr) {
-/* -------------------------------------------------
-	AUTHOR      : JEHYEUK LEE
-	PUBLISHED   : 2025-05-15
-	DESCRIPTION : 
-		사용자 동작 기록 (실행 취소 용)
-------------------------------------------------- */
-	__actions__.push({
-		addr:addr,
-		prev:prev,
-		curr:curr		
-	})
+function snapShot() {
+	__stack__.push(currentTable()[0].innerHTML);
 }
+
 
 function undo() {
 /* -------------------------------------------------
@@ -21,15 +12,14 @@ function undo() {
 	DESCRIPTION : 
 		실행 취소
 ------------------------------------------------- */
-	if (!__actions__.length) {
-		return;
-	}
-	var action = __actions__.pop();
-	if (action.addr.is('select')) {
-		action.addr.val(action.prev);
-	} else {
-		action.addr.html(action.prev);
-	}
+	if (__stack__.length) {
+		currentTable()
+		.empty()
+		.html(__stack__.pop())
+		.find('select').each(function() {
+			$(this).val($(this).attr('data-selected'));
+		});
+	}	
 }
 
 function loadConf() {
@@ -116,7 +106,7 @@ function readConf(src) {
 					$val = $(this).html();
 			  		$(this).addClass(objMeta["write"]);
 			  		if (objMeta["write"] === "selectable") {
-						let $select = $('<select></select>');
+						let $select = $('<select></select>').attr('data-selected', $val);
 						JSON.parse(objMeta["option"]).forEach(function(item) {
 				  			$select.append($(`<option value="${item}">${item}</option>`));
 				  		});
@@ -126,7 +116,8 @@ function readConf(src) {
 				})
 		  	})
 		});
-		
+		__stack__ = [];
+		snapShot();
 	})
 	.catch(
 		error => {
@@ -178,7 +169,7 @@ function editCell(cell) {
 ------------------------------------------------- */
 	var $cell = $(cell);
 	if ($cell.find("input").length) return;
-  
+  	$(`td[value="${$cell.attr("value")}"`).addClass('column-selected');
 	$('<input type="text">')
 	.val($cell.text())
 	.appendTo(
@@ -186,13 +177,13 @@ function editCell(cell) {
 	)
 	.on('keydown', function(e) {
 		if (e.key == 'Enter') {
-			updateKey($cell, $(this).val());
 			$cell.text($(this).val()).removeClass('on-edit');		
+			updateKey($cell, $(this).val());
 		}		
 	})
 	.on('blur', function() {
-		updateKey($cell, $(this).val());
 		$cell.text($(this).val()).removeClass('on-edit');
+		updateKey($cell, $(this).val());
 	})
 	.focus();
 }
@@ -220,6 +211,16 @@ function editParagraph(cell) {
 	})
 	.focus();
 }
+
+function currentTable() {
+/* -------------------------------------------------
+	AUTHOR      : JEHYEUK LEE
+	PUBLISHED   : 2025-05-14
+	DESCRIPTION : 
+		현재 테이블
+------------------------------------------------- */
+	return $(`#${$('.tab.active').attr('data-label')}`);
+}
   
 function updateKey(cell, newVal) {
 /* -------------------------------------------------
@@ -233,239 +234,289 @@ function updateKey(cell, newVal) {
 	if (!["ELEMENT_NAME", "SYSCON"].includes(cls)) {
 		return;
 	}
-	
+	updateEventCounter();
 	if (cls === "ELEMENT_NAME") {
 		let keyName = newVal;
-		let keySysc = $(`#${$('.tab.active').attr('data-label')} tbody tr.SYSCON td[value="${uid}"]`).text();
+		let keySysc = currentTable().find(`tbody tr.SYSCON td[value="${uid}"]`).text();
 		$(`td[value="${uid}"]`).attr("value", `${keyName}-${keySysc}`.replaceAll(" ", ""));
 	} else{
-		let keyName = $(`#${$('.tab.active').attr('data-label')} tbody tr.ELEMENT_NAME td[value="${uid}"]`).text();
+		let keyName = currentTable().find(`tbody tr.ELEMENT_NAME td[value="${uid}"]`).text();
 		let keySysc = newVal;
 		$(`td[value="${uid}"]`).attr("value", `${keyName}-${keySysc}`.replaceAll(" ", ""));
 	}
-	updateEventCounter(); 
 }
   
 function appendColumn(pos) {
+/* -------------------------------------------------
+	AUTHOR      : JEHYEUK LEE
+	PUBLISHED   : 2025-05-14
+	DESCRIPTION : 
+		열 추가
+------------------------------------------------- */
 	let uid = Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
-	let $selected = pos == "left" ? $('td.column-selected').first() : $('td.column-selected').last();
-	let $cellIndex = $selected.index();
+	let $cellIndex = (pos == "left" ? $('td.column-selected').first() : $('td.column-selected').last()).index();
 	let $copied = $('td.column-copied-top');
-	let copy = false;
 	if ($copied.length) {
-	  $cellIndex = $copied.first().index();
-	  copy = true;
+		$cellIndex = $copied.first().index();
 	}
 	if (($cellIndex === -1) && (pos === "left")) {
-	   $cellIndex = 1;
+		$cellIndex = 1;
 	}
-	clearOperation();
-	$(`#${$('.tab.active').attr('data-label')} tr`).each(function() {
-	  const $refCell = $(this).children().eq($cellIndex);
-	  const $cellCls = $refCell.attr('class');
-	  let $newCell = $(`<td value="${uid}">`).addClass($cellCls);
-	  if (copy) {
-		if ($refCell.find('select').length) {
-		  $newCell.html($refCell.html());	
-		  $newCell.find('select').val($refCell.find('select').val());
-		} else {
-		  if ($refCell.parent().hasClass('ELEMENT_NAME')) {
-			$newCell.html(`${$refCell.text()}-Copy`);
-		  }
-		  else {
-			$newCell.html($refCell.html());
-		  }		
-		}
-	  } else {
-		if ($refCell.find('select').length) {
-		  $newCell.html($refCell.html());	
-		}
-	  }
-	  $newCell.attr('value', uid);
-	  
-	  if (pos == "left") {
-		$refCell.before($newCell);
-	  } else if (pos == "right") {
-		$refCell.after($newCell);
-	  }   
-	});
-	updateEventCounter();
-  }
 
-  function appendRow(pos) {
+	currentTable().find('tr').each(function() {
+		const $refCell = $(this).children().eq($cellIndex);
+		const $cellCls = $refCell.attr('class');
+		let $newCell = $(`<td value="${uid}">`).addClass($cellCls);
+		if ($copied.length) {
+			if ($refCell.find('select').length) {
+				$newCell
+				.html($refCell.html())
+				.find('select')
+				.val($refCell.find('select').val());
+			} else {
+		  		if ($refCell.parent().hasClass('ELEMENT_NAME')) {
+					$newCell.html(`${$refCell.text()}-Copy`);
+		  		} else {
+					$newCell.html($refCell.html());
+		  		}		
+			} 
+		} else {
+			if ($refCell.find('select').length) {
+		  		$newCell.html($refCell.html());	
+			}
+	  	}
+	  	$newCell.attr('value', uid);
+	  
+		if (pos == "left") {
+			$refCell.before($newCell);
+	  	} else {
+			$refCell.after($newCell);
+	  	}
+	});
+	clearOperation();
+	updateEventCounter();
+}
+
+function appendRow(pos) {
+/* -------------------------------------------------
+	AUTHOR      : JEHYEUK LEE
+	PUBLISHED   : 2025-05-14
+	DESCRIPTION : 
+		행 추가(FID group 요소 대상)
+------------------------------------------------- */
 	let $selected = $('tr.row-selected');
 	if (!$selected.length) {
-	  return;
+		return;
 	}
 	let $selectedHtml = $selected.map(function() {
-	  const $clone = $(this).clone();
-	  if (!$clone.find('select').length) {
-		$clone.find('td:not(.row)').text('');	
-	  }	  
-	  return $clone[0].outerHTML;
+		const $_row = $(this).clone();
+		if (!$_row.find('select').length) {
+			$_row.find('td:not(.row)').text('');	
+	  	}	  
+	  	return $_row[0].outerHTML;
 	}).get().join('');
+
 	if (pos === "after") {
-	  $selected.last().after($selectedHtml);
+		$selected.last().after($selectedHtml);
 	} else {
-	  $selected.first().before($selectedHtml);
+		$selected.first().before($selectedHtml);
 	}
 	clearOperation();
-  }
+}
   
-  function deleteColumn() {
+function deleteColumn() {
+/* -------------------------------------------------
+	AUTHOR      : JEHYEUK LEE
+	PUBLISHED   : 2025-05-14
+	DESCRIPTION : 
+		선택된 열 삭제
+------------------------------------------------- */
 	while ($('td.column-selected').length > 0) {
-	  const $selected = $('td.column-selected').first().attr('value');
-	  $(`td[value="${$selected}"]`).remove();
+		const $selected = $('td.column-selected').first().attr('value');
+		$(`td[value="${$selected}"]`).remove();
 	}
 	updateEventCounter();
   }
 
-  function deleteRow() {
+function deleteRow() {
+/* -------------------------------------------------
+	AUTHOR      : JEHYEUK LEE
+	PUBLISHED   : 2025-05-14
+	DESCRIPTION : 
+		선택된 행 삭제
+------------------------------------------------- */
 	$('.row-selected').remove();
-  }
+}
   
-  function copyColumn() {
+function copyColumn() {
+/* -------------------------------------------------
+	AUTHOR      : JEHYEUK LEE
+	PUBLISHED   : 2025-05-14
+	DESCRIPTION : 
+		열 복사
+------------------------------------------------- */
 	let $selected = $('td.column-selected').first().attr('value');
 	clearOperation();
 	$selected = $(`td[value="${$selected}"]`);
 	$selected.each(function(i) {
-	  const len = $selected.length;
-	  $(this).removeClass('column-selected');
-	  if (i == 0) {
-		$(this).addClass('column-copied-top');
-	  } else if (i === len - 1) {
-		$(this).addClass('column-copied-bottom');
-	  } else {
-		$(this).addClass('column-copied-middle');
-	  }
+		if (i == 0) {
+			$(this).addClass('column-copied-top');
+		} else if (i === $selected.length - 1) {
+			$(this).addClass('column-copied-bottom');
+		} else {
+			$(this).addClass('column-copied-middle');
+		}
 	})
-  }
+}
   
-  function clearOperation() {
+function clearOperation() {
+/* -------------------------------------------------
+	AUTHOR      : JEHYEUK LEE
+	PUBLISHED   : 2025-05-14
+	DESCRIPTION : 
+		열 복사
+------------------------------------------------- */
 	$('td')
 	.removeClass('column-selected')
+	.removeClass('emphasis')
 	.removeClass('column-copied-top')
 	.removeClass('column-copied-middle')
 	.removeClass('column-copied-bottom');
 	$('tr')
 	.removeClass('row-selected');
-  }
+}
   
-  function updateEventCounter() {
-	var $table = $('.tab.active').attr('data-label');
-	var $count = $(`#${$table} tr`)
-	  .first()
-	  .find('td')
-	  .filter(function() {
-		return $(this).attr('value') !== ' ';
-	  }).length - 1;
+function updateEventCounter() {
+/* -------------------------------------------------
+	AUTHOR      : JEHYEUK LEE
+	PUBLISHED   : 2025-05-14
+	DESCRIPTION : 
+		현재 테이블의 DEM 요소 개수 업데이트
+------------------------------------------------- */
+	let $currentTable = currentTable();
+	let $tabName = $currentTable.attr('id');
+	let $count = $currentTable.find('tr').eq(1).find('td').filter(function() {
+		return $(this).text() !== '';
+	}).length - 1;
+
+	$(`.tab[data-label="${$tabName}"]`).html(`${$tabName}(${$count})`);
+	$currentTable.find('.dem-count').html(`${$count} ITEMS`);
+	currentTable().find('.column-selector').each(function(i){
+		$(this).text(i + 1);
+	})
+}
   
-	$(`.tab[data-label="${$table}"]`).html(`${$table}(${$count})`);
-	$(`#${$table} thead .dem-count`).html(`${$count} ITEMS`);
-  }
-  
-  $(document)
-  // .on("contextmenu", function(e) {
-  //   e.preventDefault();
-  // })
-  .on('select2:select', '.confdata-list', function(e) {
+
+$(document)
+//   .on("contextmenu", function(e) {
+//     e.preventDefault();
+//   })
+.on('select2:select', '.confdata-list', function(e) {
+/* =============================================================
+	[EVENT BINDER]
+	CONFDATA READ
+============================================================= */
 	readConf(e.params.data.id);
-  })
-  .on('click', '.reload', function() {
+})
+.on('click', '.reload', function() {
 	readConf($('.confdata-list').val());
-  })
-  .on('click', '.download', function() {
+})
+.on('click', '.download', function() {
 	var conf = $('.confdata-list').val();
 	if (!conf) {
-	  alert("선택된 Confdata가 없습니다.");
+		alert("선택된 Confdata가 없습니다.");
 	} else {
-	  downloadConf(conf);
+		downloadConf(conf);
 	}	
-  })
-  .on("click", "td:not(.column-selector)", function() {
-	$('td').each(function(){
-	  if ($(this).hasClass('column-selected')) {
-		$(this).removeClass('column-selected');
-	  }
-	})
-  })
-  .on("click", "td.group", function() {
+})
+.on("click", "td.group", function() {
 	var $row = $(this).parent();
 	var $rowN = $row.index();
 	var $tbody = $row.parent();	
 	
 	for (var i = $rowN; i >= 14; i--) {
-	  let $_row = $tbody.children().eq(i);
-	  if ($_row.attr('class').replace(' row-selected', '') === $_row.attr('data-group')) {
-		$_row.toggleClass('row-selected');
-		$tbody.children().eq(i + 1).toggleClass('row-selected');
-		$tbody.children().eq(i + 2).toggleClass('row-selected');
-		break;
-	  }
+		let $_row = $tbody.children().eq(i);
+		if ($_row.attr('class').replace(' row-selected', '') === $_row.attr('data-group')) {
+			$_row.toggleClass('row-selected');
+			$tbody.children().eq(i + 1).toggleClass('row-selected');
+			$tbody.children().eq(i + 2).toggleClass('row-selected');
+			break;
+		}
 	}
-  })
-  .on("click", ".roll-back", function() {
+})
+.on("click", ".roll-back", function() {
 	undo();
-  })
-  .on("click", ".add-column-left", function() {
+})
+.on('keydown', function (e) {
+  	if (e.ctrlKey && (e.key === 'z' || e.key === 'Z')) {
+		e.preventDefault();
+		undo();
+  	}
+})
+.on("click", ".add-column-left", function() {
+	snapShot();
 	appendColumn("left");
-  })
-  .on("click", ".add-column-right", function() {
+})
+.on("click", ".add-column-right", function() {
+	snapShot();
 	appendColumn("right");
-  })
-  .on("click", ".delete-column", function() {
+})
+.on("click", ".delete-column", function() {
+	snapShot();
 	deleteColumn();
-  })
-  .on("click", ".copy-column", function() {
+})
+.on("click", ".copy-column", function() {
+	snapShot();
 	copyColumn();
-  })
-  .on("click", ".add-row-bottom", function() {
+})
+.on("click", ".add-row-bottom", function() {
+	snapShot();
 	appendRow('after');
-  })
-  .on("click", ".add-row-top", function() {
+})
+.on("click", ".add-row-top", function() {
+	snapShot();
 	appendRow('before');
-  })
-  .on("click", ".delete-row", function() {
+})
+.on("click", ".delete-row", function() {
+	snapShot();
 	deleteRow();
-  })
-  .on("click", ".tab", function(){
+})
+.on("click", ".tab", function(){
 	var tab = $(this).attr('data-label');
 	$('.tabcontent').removeClass('active');
 	$('.tab').removeClass('active');
 	$('#' + tab).addClass('active');
 	$(this).addClass('active');
-  })
-  .on("click", ".column-selector", function() {
-	$(`td[value="${$(this).attr("value")}"]`).toggleClass('column-selected');
-  })
-  .on("click", ".writable", function() {
+	
+	currentTable().find('.column-selector').each(function(i){
+		$(this).text(i + 1);
+	})
+	__stack__ = [];
+	snapShot();
+})
+.on("click", ".column-selector", function() {
+	$(`td[value="${$(this).attr("value")}"]`).toggleClass('column-selected emphasis');
+})
+.on("click", ".writable", function() {
+	clearOperation();
+	snapShot();
 	if ($(this).attr("class").includes("paragraph")) {
-		let $prev = $(this).html();
 		editParagraph(this);
-		if ($prev !== $(this).html()) {
-			memorizeAction($(this), $prev, $(this).html());
-		}
 	} else {
-		let $prev = $(this).text()
 		editCell(this);
-		if ($prev !== $(this).text()) {
-			memorizeAction($(this), $prev, $(this).text());
-		}
 	}	
-  })
-  .on("focus", ".selectable select", function() {
-	let $prev = $(this).val();
+})
+.on("focus", ".selectable select", function() {
+	snapShot();
 	$(this).on('change', function() {
-		if ($prev !== $(this).val()){
-			memorizeAction($(this), $prev, $(this).val());
-		}		
+		$(this).attr('data-selected', $(this).val());
 	})	
-  })
-  .on('keydown', function(e) {
+})
+.on('keydown', function(e) {
 	if (e.key === 'Escape') {
-	  clearOperation();
+		clearOperation();
 	}
-  })
+})
   
-  loadConf();
+loadConf();
   
