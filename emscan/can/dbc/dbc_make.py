@@ -6,13 +6,6 @@ import re
 # Pandas 설정
 set_option('display.expand_frame_repr', False)
 
-# JSON 파일에서 DataFrame 생성
-data = pd.read_json(r"D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dev\KEFICO-EMS_CANFD_V25.03.04.json", orient="index")
-
-# 마지막 행 삭제
-data = data.iloc[:-1]  # 마지막 행을 제외한 나머지 행을 선택
-#data = data.iloc[:3]  # 마지막 행을 제외한 나머지 행을 선택
-print(data)
 
 #----------------------------------------------------------------------------------------------------------------------
 
@@ -441,15 +434,29 @@ def edit_dbc_file(dbc_file_path, df, CanSTDDB_filters, Cvvd_filters, MeptSys_fil
         print(f"Error: {dbc_file_path} 파일을 찾을 수 없습니다.")
 
 
-# 사용 예시
-dbc_file_path = r'D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dbc\HEV_CAN-FD_P_STDDB1p0.dbc'
-edit_dbc_file(dbc_file_path, data, CanSTDDB_filters=[0], Cvvd_filters=[0], MeptSys_filters=[0])
+if __name__ == "__main__":
+    from emscan.can.db.db import DB
+    from emscan.config import PATH
+    import os
+
+    SPEC = "ICE"
+
+    EXCLUDE = {
+        'ICE': ["EMS", "CVVD", "MHSG", "NOx", "BMS", "LDC"],
+        'HEV': ["EMS", "CVVD", "MHSG", "NOx"]
+    }
+    DB.dev_mode(SPEC)
+    DB.constraint(~DB["ECU"].isin(EXCLUDE[SPEC]))
+
+    file = os.path.join(PATH.DOWNLOADS, f'{SPEC}.dbc')
+
+    edit_dbc_file(file, DB, CanSTDDB_filters=[0], Cvvd_filters=[0], MeptSys_filters=[0])
 
 
 
-#BCM_02_200ms  0x3E0                           Cfg_CanSTDDB_C == 0
-#CVVD1  0x300                                      Cfg_Vvd_C > 0
-#HU_OTA_01_500ms  0x3B9                        Cfg_CanSTDDB_C == 2
-#HU_OTA_PE_00  0x3B9                             Cfg_CanSTDDB_C == 0
-#PDC_FD_01_200ms  0x3E0                         Cfg_CanSTDDB_C == 2
-#EMS_15_00ms  0x300
+    #BCM_02_200ms  0x3E0                           Cfg_CanSTDDB_C == 0
+    #CVVD1  0x300                                      Cfg_Vvd_C > 0
+    #HU_OTA_01_500ms  0x3B9                        Cfg_CanSTDDB_C == 2
+    #HU_OTA_PE_00  0x3B9                             Cfg_CanSTDDB_C == 0
+    #PDC_FD_01_200ms  0x3E0                         Cfg_CanSTDDB_C == 2
+    #EMS_15_00ms  0x300

@@ -83,24 +83,17 @@ def read_conf(conf:str=Form(...)):
         "admin": admin.to_json(),
         "history": read.history.replace("\n", "<br>"),
         "meta": dumps(read.TABS),
+        "keys": dumps(read.COLUMNS)
     }
     for tab, key in read.TABS.items():
         data[key] = read.html(tab)
-        data[f'N_{key}'] = len(read.dem(tab))
+        data[f'N{key}'] = len(read.dem(tab))
     return JSONResponse(content=jsonable_encoder(data))
 
 @app.post("/download-conf")
 def download_conf(conf:str=Form(...), tables:str=Form(...)):
     # print(conf)
     # print(tables)
-
-
-
-
-    # TODO
-    # @조규나 연구원
-    # 1. {tables} Parse
-    # 2. Deliver {tables} to write function
     summary, event_list, path_list, fid_list, dtr_list, sig_list = tableParser(tables)
 
     file = os.path.join(os.path.dirname(__file__), rf"bin/{conf}")

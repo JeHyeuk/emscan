@@ -33,27 +33,26 @@
 
     <section class="container">
       <div class="config">
-        <div class="exe edit"><i class="bi bi-cloud-arrow-down-fill"></i></div>
+        <div class="exe edit"><i class="bi bi-cloud-arrow-down-fill" data-tooltip="리스트 다운로드"></i></div>
         <div class="exe search"><select name="model" class="confdata-list"></select></div>
-        <div class="exe reload"><i class="bi bi-arrow-clockwise"></i></div>
-        <div class="exe download"><i class="bi bi-download"></i></div>
+        <div class="exe reload"><i class="bi bi-arrow-clockwise" data-tooltip="파일 리로드"></i></div>
+        <div class="exe download"><i class="bi bi-download" data-tooltip="파일 다운로드"></i></div>
       </div>
     
       <div class="content">
         
         <div class="heading">
           <div class="toolbar">
-            <button class="tool" data-tooltip="실행 취소"><img src="/src/img/roll-back.png" alt=""></button>
+            <button class="tool roll-back" data-tooltip="실행 취소"><img src="/src/img/roll-back.png" alt=""></button>
             <span class="tool-separator"></span>
-            <button class="tool" data-tooltip="왼쪽 열 추가"><img src="/src/img/add-column-left.png" alt=""></button>
-            <button class="tool" data-tooltip="오른쪽 열 추가"><img src="/src/img/add-column-right.png" alt=""></button>
-            <button class="tool" data-tooltip="열 삭제"><img src="/src/img/delete-column.png" alt=""></button>
-            <button class="tool" data-tooltip="열 삭제"><img src="/src/img/copy-column.png" alt=""></button>
+            <button class="tool add-column-left" data-tooltip="왼쪽 열 추가"><img src="/src/img/add-column-left.png" alt=""></button>
+            <button class="tool add-column-right" data-tooltip="오른쪽 열 추가"><img src="/src/img/add-column-right.png" alt=""></button>
+            <button class="tool delete-column" data-tooltip="열 삭제"><img src="/src/img/delete-column.png" alt=""></button>
+            <button class="tool copy-column" data-tooltip="열 복사"><img src="/src/img/copy-column.png" alt=""></button>
             <span class="tool-separator"></span>
-            <button class="tool" data-tooltip="아래 행 추가"><img src="/src/img/add-row-bottom.png" alt=""></button>
-            <button class="tool" data-tooltip="위 행 추가"><img src="/src/img/add-row-top.png" alt=""></button>
-            <button class="tool" data-tooltip="행 삭제"><img src="/src/img/delete-row.png" alt=""></button>
-            <button class="tool" data-tooltip="행 복사"><img src="/src/img/copy-row.png" alt=""></button>
+            <button class="tool add-row-bottom" data-tooltip="아래 행 추가"><img src="/src/img/add-row-bottom.png" alt=""></button>
+            <button class="tool add-row-top" data-tooltip="위 행 추가"><img src="/src/img/add-row-top.png" alt=""></button>
+            <button class="tool delete-row" data-tooltip="행 삭제"><img src="/src/img/delete-row.png" alt=""></button>
           </div>
           <div class="tabs">
             <button class="tab active" data-label="SUMMARY">SUMMARY</button>
@@ -78,7 +77,7 @@
               </tr>
               <tr>
                 <td class="key row optional-strong">작성자 (영문)</td>
-                <td class="user writable cell"></td>
+                <td class="user writable"></td>
               </tr>
               <tr>
                 <td class="key row optional-strong" title="자동 생성 항목">최근 생성일</td>
@@ -106,19 +105,15 @@
           <table id="{{ _id }}" class="tabcontent conf-items">
               <thead>
                   <tr>
-                      <td class="key row">* confdata를 선택하세요.</td>
+                      <td class="row">* confdata를 선택하세요.</td>
                       <td class="read-only"></td>
                   </tr>
               </thead>
               <tbody>
               {% for key, col in cols.items() %}{% if key != "DEB_PARAM" %}
-                  <tr>
-                    <td class="key row {{ col['class'] }}">{{ col['label'] }}</td>
-                    {% if "group" in col %}
-                      <td class="{{ col['class'].replace('mandatory ', '').replace('optional-strong', '') }}"></td>
-                    {% else %}
-                      <td></td>
-                    {% endif %}
+                  <tr class="{{ key }}">
+                    <td class="row {{ col['class'] }}">{{ col['label'] }}</td>
+                    <td></td>
                   </tr>{% endif %}{% endfor %}
               </tbody>
           </table>{% endfor %}
@@ -129,12 +124,12 @@
       
 	  <div class="color-ref">
         <span class="color-title">* 범례 : </span>
-        <span class="color-box mandatory" title="색 셀은 DEMDOC에서 찾아서 입력(가능)한 항목이다."></span>
-        <span class="color-box mandatory-others" title="색 셀은 DEMDOC가 아닌 다른 문서에서 찾아서 입력(가능)한 항목이다."></span>
-        <span class="color-box optional-demdoc" title="색 셀은 DEMDOC에서 찾아서 입력 가능하나, 사양서 참고용이므로 입력하지 않아도 되는 항목이다."></span>
-        <span class="color-box optional-strong" title="색 셀은 사양서/XML에 명기된 사항으로 당장은 입력하지 않아도 되나, 나중에는 반드시 입력해야하는 항목이다."></span>
-        <span class="color-box optional" title="색 셀은 사양서/XML에 명기된 사항으로 사양서 참고용이므로 입력하지 않아도 되는 항목이다."></span>
-        <span class="color-box fid-package" title="테두리 셀은 반드시 묶음으로 행 복사하여 추가하는 항목이다."></span>
+        <span class="color-box mandatory" data-tooltip="색 셀은 DEMDOC에서 찾아서 입력(가능)한 항목이다."></span>
+        <span class="color-box mandatory-others" data-tooltip="색 셀은 DEMDOC가 아닌 다른 문서에서 찾아서 입력(가능)한 항목이다."></span>
+        <span class="color-box optional-demdoc" data-tooltip="색 셀은 DEMDOC에서 찾아서 입력 가능하나, 사양서 참고용이므로 입력하지 않아도 되는 항목이다."></span>
+        <span class="color-box optional-strong" data-tooltip="색 셀은 사양서/XML에 명기된 사항으로 당장은 입력하지 않아도 되나, 나중에는 반드시 입력해야하는 항목이다."></span>
+        <span class="color-box optional" data-tooltip="색 셀은 사양서/XML에 명기된 사항으로 사양서 참고용이므로 입력하지 않아도 되는 항목이다."></span>
+        <span class="color-box fid-package" data-tooltip="테두리 셀은 반드시 묶음으로 행 복사하여 추가하는 항목이다."></span>
       </div>
       
     </section>
