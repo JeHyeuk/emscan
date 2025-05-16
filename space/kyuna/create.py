@@ -29,17 +29,12 @@ except ImportError:
         REST
     )
 
-from fastapi import FastAPI, Form, Request
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import FileResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from json import dumps
+
 import os, uvicorn
 import csv
 
 
-# conf 전체 test
+## ==================================conf 전체 test
 
 conf = [c for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xml')]
 paths = [os.path.join(PATH.SVN.CONF, filename) for filename in conf]
@@ -69,7 +64,9 @@ for path in paths:
         # tableParser(src)
         summary, event_list, path_list, fid_list, dtr_list, sig_list = tableParser(src)
 
-        file = os.path.join(os.path.dirname(__file__), rf"bin/{filename}_sample.xml")
+        # file = os.path.join(os.path.dirname(__file__), rf"bin/{filename}_sample.xml")
+        file = os.path.join( rf"E:\바탕화면\Conf_관리\Test\{filename}_sample.xml")
+
         with open(file, "w", encoding="utf-8") as f:
             Path_Sheet(f, path_list)
             Event_Sheet(f, event_list)
@@ -103,7 +100,7 @@ else:
 
 
 
-## ====================conf 파일 한개 test
+# # ====================conf 파일 한개 test
 # path  = r"E:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\afimd_confdata.xml"
 # try:
 #

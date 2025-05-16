@@ -44,7 +44,7 @@ def tableParser(src : str) -> tuple[dict, list]:
             td.decompose()  # 해당 <td> 완전히 삭제
 
         tables = soup.find_all("table")
-        print(f"tables 리스트에 총 {len(tables)}개의 <table>을 찾았습니다.")
+        # print(f"tables 리스트에 총 {len(tables)}개의 <table>을 찾았습니다.")
         # print(tables)
 
         # 각 테이블을 판다스로 파싱
@@ -52,10 +52,14 @@ def tableParser(src : str) -> tuple[dict, list]:
         for i, table in enumerate(tables):
             try:
                 df = pd.read_html(StringIO(str(table)), displayed_only = False)[0]  # 항상 리스트로 반환되므로 [0]
-                print(f"[INFO] ✅ Table {i} shape: {df.shape}")
+                # print(f"[INFO] ✅ Table {i} shape: {df.shape}")
                 dataframes.append(df)
+
             except Exception as e:
                 print(f"[ERROR] ❌ Table {i} 파싱 실패: {e}")
+
+
+        # print(f"HTML read successfully: table {i}, shape: {df.shape}")
 
     except Exception as e:
         print(f"Error occured while reading HTML : {e}")
@@ -84,17 +88,20 @@ def tableParser(src : str) -> tuple[dict, list]:
 
         if i == 0:
             df  = table.iloc[: , 1:]
-            if df.empty :
-                print("summary : Table is empty.")
-            else :
+            if not df.empty :
                 for column_name, column in df.items():
                     summary = {
-                        "Filename" : column[label.index("파일명")],
-                        "user_name" : column[label.index("작성자 (영문)")],
-                        "Date" : column[label.index("최근 생성일")],
-                        "Model_Name" : column[label.index("모듈명")],
-                        "History" :  column[label.index("이력")] ,
+                        "Filename": column[label.index("파일명")],
+                        "user_name": column[label.index("작성자 (영문)")],
+                        "Date": column[label.index("최근 생성일")],
+                        "Model_Name": column[label.index("모듈명")],
+                        "History": column[label.index("이력")],
                     }
+
+
+            # else :
+            #     print("summary : Table is empty.")
+
 
 
 
@@ -159,8 +166,8 @@ def tableParser(src : str) -> tuple[dict, list]:
 
                         path_list.append(path)
 
-            else :
-                print("path_list : Table is empty.")
+            # else :
+            #     print("path_list : Table is empty.")
 
         elif i == 3:
             if len(table.columns) > 1:
@@ -204,8 +211,8 @@ def tableParser(src : str) -> tuple[dict, list]:
                         fid_list.append(fid)
 
 
-            else :
-                print("fid_list : Table is empty.")
+            # else :
+            #     print("fid_list : Table is empty.")
 
 
 
@@ -229,8 +236,8 @@ def tableParser(src : str) -> tuple[dict, list]:
                         }]
                         dtr_list.append(dtr)
 
-            else :
-                print("dtr_list : Table is empty.")
+            # else :
+            #     print("dtr_list : Table is empty.")
 
 
         elif i == 5:
@@ -264,16 +271,16 @@ def tableParser(src : str) -> tuple[dict, list]:
                         sig_list.append(sig)
 
 
-            else :
-                print("sig_list : Table is empty.")
+            # else :
+            #     print("sig_list : Table is empty.")
 
 
-    print("summary: ", summary)
-    print("event_list: ", event_list)
-    print("path_list: ", path_list)
-    print("fid_list: ", fid_list)
-    print("dtr_list: ", dtr_list)
-    print("sig_list: ",sig_list)
+    # print("summary: ", summary)
+    # print("event_list: ", event_list)
+    # print("path_list: ", path_list)
+    # print("fid_list: ", fid_list)
+    # print("dtr_list: ", dtr_list)
+    # print("sig_list: ",sig_list)
 
     return summary, event_list, path_list, fid_list, dtr_list, sig_list
 
