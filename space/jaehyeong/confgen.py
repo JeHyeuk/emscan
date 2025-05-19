@@ -20,7 +20,7 @@ def Summary_Sheet(f, summary):
     f.write('				<COMPANY-REF>HKMC</COMPANY-REF>\n')
     f.write('				<SDGS>\n')
     f.write('					<SDG GID="HKMCHead-eASEE-Keywords">\n')
-    f.write(f'						<SD GID="Filename">{summary["Filename"]}</SD>\n')
+    f.write(f'						<SD GID="Filename">{summary["Filename"]}.xml</SD>\n')
     f.write('						<SD GID="Author"></SD>\n')
     f.write('						<SD GID="Function">This version is created by migration tool</SD>\n')
     f.write('						<SD GID="Domain">SDOM</SD>\n')
@@ -122,6 +122,13 @@ def Path_Sheet(f, Path_list):
 
                 f.write(f'								</CONF-ITEMS>\n')
                 f.write(f'							</CONF-ITEM>\n')
+
+
+    # 검사 결과 변수 초기화
+    RESULT_PATH = "PASS"
+    COMMENT_PATH = "Data 검사를 완료하였습니다"
+    return RESULT_PATH, COMMENT_PATH
+
 
 def Event_Sheet(f, Event_list):
     last_valid_element = None  # 이전 이벤트 요소를 저장할 변수(DEB_METHOD)
@@ -274,6 +281,7 @@ def Event_Sheet(f, Event_list):
 
     # 검사 결과 변수 초기화
     RESULT_EVENT = "PASS"
+    COMMENT_EVENT = "Data 검사를 완료하였습니다"
 
     for Event in Event_list:
         for element in Event:
@@ -287,23 +295,23 @@ def Event_Sheet(f, Event_list):
                 DTC_2B = element.get("DTC_2B", "")
                 DTC_EX = element.get("DTC_EX", "")
 
-                if (not is_valid_element_count(SIMILAR_COND) or not is_valid_element_count(MIL) or not is_valid_element_count(DCY_TEST)
-                        or not is_valid_element_count(SHUT_OFF) or not is_valid_element_count(RESET_INIT) or not is_valid_element_count(RESET_POSTCANCEL)
-                        or not is_valid_dtc2b_code(DTC_2B) or not is_valid_dtcex_code(DTC_EX)):
+                # if (not is_valid_element_count(SIMILAR_COND) or not is_valid_element_count(MIL) or not is_valid_element_count(DCY_TEST)
+                #         or not is_valid_element_count(SHUT_OFF) or not is_valid_element_count(RESET_INIT) or not is_valid_element_count(RESET_POSTCANCEL)):
+                #         RESULT_EVENT = "FAIL"
+                #         COMMENT_EVENT = "오류 : O 또는 X 값 입력 필요"
+                #         return RESULT_EVENT, COMMENT_EVENT
 
+                if not is_valid_dtc2b_code(DTC_2B):
                     RESULT_EVENT = "FAIL"
-                    return RESULT_EVENT
+                    COMMENT_EVENT = "Event Sheet의 '기본 DTC 설정값' 값을 P/C/B/U + 4자리 16진수 값으로 입력하세요."
+                    return RESULT_EVENT, COMMENT_EVENT
 
-    return RESULT_EVENT
+                elif not is_valid_dtcex_code(DTC_EX):
+                    RESULT_EVENT = "FAIL"
+                    COMMENT_EVENT = "Event Sheet의 '확장 DTC 설정값 (UDS용)' 값을 0~FF 사이의 값으로 입력하세요."
+                    return RESULT_EVENT, COMMENT_EVENT
 
-
-
-
-
-
-
-
-
+    return RESULT_EVENT, COMMENT_EVENT
 
 
 def FID_Sheet(f, Fid_list):
@@ -523,18 +531,19 @@ def FID_Sheet(f, Fid_list):
 
     # 검사 결과 변수 초기화
     RESULT_FID = "PASS"
+    COMMENT_FID = "Data 검사를 완료하였습니다"
 
-    for FID in Fid_list:
-        for element in FID:
-            if isinstance(element, dict):
-                LOCKED = element.get("LOCKED", "")
+    # for FID in Fid_list:
+    #     for element in FID:
+    #         if isinstance(element, dict):
+    #             LOCKED = element.get("LOCKED", "")
+    #
+    #             if not is_valid_element_count(LOCKED):
+    #                 RESULT_FID = "FAIL"
+    #                 COMMENT_FID = "오류 : O 또는 X 값 입력 필요"
+    #                 return RESULT_FID, COMMENT_FID
 
-                if not is_valid_element_count(LOCKED):
-
-                    RESULT_FID = "FAIL"
-                    return RESULT_FID
-
-    return RESULT_FID
+    return RESULT_FID, COMMENT_FID
 
 
 
@@ -617,6 +626,7 @@ def DTR_Sheet(f, DTR_list):
 
     # 검사 결과 변수 초기화
     RESULT_DTR = "PASS"
+    COMMENT_DTR = "Data 검사를 완료하였습니다"
 
     for DTR in DTR_list:
         for element in DTR:
@@ -624,12 +634,25 @@ def DTR_Sheet(f, DTR_list):
                 UASID = element.get("UASID", "")
                 OBDMID = element.get("OBDMID", "")
                 TID = element.get("TID", "")
-                if not is_valid_uasid_hex(UASID) or not is_valid_1_to_255(OBDMID) or not is_valid_1_to_255(TID):
+
+                if not is_valid_uasid_hex(UASID):
+                    RESULT_DTR = "FAIL"
+                    COMMENT_DTR = "DTR Sheet의 'Unit and Scaling ID' 값을 0x5, 0x06, 0x85 와 같이 3~4 자리 hex 값으로 입력하세요."
+                    return RESULT_DTR, COMMENT_DTR
+
+                elif not is_valid_1_to_255(OBDMID):
 
                     RESULT_DTR = "FAIL"
-                    return RESULT_DTR
+                    COMMENT_DTR = "DTR Sheet의 'OBD MID' 값을 1 ~ 255 사이의 정수로 입력하세요."
+                    return RESULT_DTR, COMMENT_DTR
 
-    return RESULT_DTR
+                elif not is_valid_1_to_255(TID):
+
+                    RESULT_DTR = "FAIL"
+                    COMMENT_DTR = "DTR Sheet의 'Test ID' 값을 1 ~ 255 사이의 정수로 입력하세요."
+                    return RESULT_DTR, COMMENT_DTR
+
+    return RESULT_DTR, COMMENT_DTR
 
 
 
@@ -683,6 +706,13 @@ def Sig_Sheet(f, Sig_list):
                 f.write(f'								</CONF-ITEMS>\n')
                 f.write(f'							</CONF-ITEM>\n')
 
+    # 검사 결과 변수 초기화
+    RESULT_SIG = "PASS"
+    COMMENT_SIG = "Data 검사를 완료하였습니다."
+
+    return RESULT_SIG, COMMENT_SIG
+
+
 def REST(f):
     f.write('						</CONF-ITEMS>\n')
     f.write('					</CONF-ITEM>\n')
@@ -701,16 +731,48 @@ def REST(f):
 
 if __name__ == "__main__":
     # 파일 쓰기
-    with open(Out_path, "w", encoding="utf-8") as f:
-        Summary_Sheet(f, summary)
-        Path_Sheet(f, Path_list)
-        Event_Sheet(f, Event_list)
-        FID_Sheet(f, Fid_list)
-        DTR_Sheet(f, DTR_list)  # 반환값을 변수에 저장
-        Sig_Sheet(f, Sig_list)
+    with (open(Out_path, "w", encoding="utf-8") as f):
+        path_result = Path_Sheet(f, Path_list)
+        event_result = Event_Sheet(f, Event_list)
+        fid_result = FID_Sheet(f, Fid_list)
+        dtr_result = DTR_Sheet(f, DTR_list)
+        sig_result = Sig_Sheet(f, Sig_list)
         REST(f)
 
         print(f"해당 XML 파일이 '{Out_path}' 경로에 저장되었습니다.")
-        print(f"Event sheet : {Event_Sheet(f, Event_list)}")
-        print(f"FID sheet   : {FID_Sheet(f, Fid_list)}")
-        print(f"DTR sheet   : {DTR_Sheet(f, DTR_list)}")
+
+        # 상태 확인
+        if (path_result[0] == "PASS" and
+            event_result[0] == "PASS" and
+            fid_result[0] == "PASS" and
+            dtr_result[0] == "PASS" and
+            sig_result[0] == "PASS"):
+
+            all_result = "PASS"
+            all_comment = "Data 검사를 완료하였습니다."
+            print(all_result, all_comment)
+
+        elif path_result[0] == "FAIL":
+            all_result = "FAIL"
+            all_comment = path_result[1]
+            print(all_result, all_comment)
+
+        elif event_result[0] == "FAIL":
+            all_result = "FAIL"
+            all_comment = event_result[1]
+            print(all_result, all_comment)
+
+        elif fid_result[0] == "FAIL":
+            all_result = "FAIL"
+            all_comment = path_result[1]
+            print(all_result, all_comment)
+
+        elif dtr_result[0] == "FAIL":
+            all_result = "FAIL"
+            all_comment = dtr_result[1]
+            print(all_result, all_comment)
+
+        elif sig_result[0] == "FAIL":
+            all_result = "FAIL"
+            all_comment = sig_result[1]
+            print(all_result, all_comment)
