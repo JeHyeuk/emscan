@@ -41,7 +41,8 @@ import csv
 # test_paths = [os.path.join("D:\emscan\space\kyuna\bin", filename) for filename in test_conf]
 
 
-BIN_PATH = r"D:\emscan\space\kyuna\bin"
+# BIN_PATH = r"D:\emscan\space\kyuna\bin"
+TEST_PATH = r"E:\바탕화면\Conf_관리\Test"
 filename = [os.path.splitext(c)[0] for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xml')]
 
 diff_file_count = 0
@@ -50,7 +51,7 @@ with open("compare_log.txt", 'w', encoding = "utf-8") as log:
     for name in filename :
         print(f"comparing <{name}>...")
         file1 = os.path.join(PATH.SVN.CONF, name + ".xml")
-        file2 = os.path.join(BIN_PATH, name+"_sample.xml")
+        file2 = os.path.join(TEST_PATH, name+"_sample.xml")
 
         try :
             with open(file1, 'r', encoding = 'utf-8') as f1, open(file2, 'r', encoding = 'utf-8') as f2:
