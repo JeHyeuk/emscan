@@ -680,7 +680,7 @@ if __name__ == "__main__":
         # r'./template.xml'
         # r'D:\canfdabsd_confdata.xml'
         # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\egrd_confdata.xml'
-        r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\aafd_confdata.xml'
+        r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\vehslop_confdata.xml'
         # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\catdft_confdata.xml'
         # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\aewpd_confdata.xml'
     )
@@ -690,7 +690,7 @@ if __name__ == "__main__":
     # print(conf.history)
     # ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]
     demType = "FIM"
-    # pprint(conf.dem(demType))
+    pprint(conf.dem(demType))
     print(conf.html(demType))
 
     # from emscan.config import PATH

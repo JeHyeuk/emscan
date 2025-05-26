@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MSRSW PUBLIC "-//MSR//DTD MSR SOFTWARE DTD:V2.2.2:HMC:LAI:IAI:XML:MSRSW.DTD//EN" "msrsw_v222_hmc.xml.dtd">
+<!-- File Format is generated for DEM_ASW_Conf_Tool version 1.2 by J.H.JO at 21:14:14, 01 Feb 2025 -->
+<MSRSW>
+	<CATEGORY>ConfData</CATEGORY>
+	<ADMIN-DATA>
+		<LANGUAGE>en</LANGUAGE>
+		<USED-LANGUAGES>
+			<L-10 L="en">en</L-10>
+			<L-10 L="kr">kr</L-10>
+		</USED-LANGUAGES>
+		<COMPANY-DOC-INFOS>
+			<COMPANY-DOC-INFO>
+				<COMPANY-REF>HKMC</COMPANY-REF>
+				<SDGS>
+					<SDG GID="HKMCHead-eASEE-Keywords">
+						<SD GID="Filename">vehslop_confdata.xml.xml</SD>
+						<SD GID="Author"></SD>
+						<SD GID="Function">This version is created by migration tool</SD>
+						<SD GID="Domain">SDOM</SD>
+						<SD GID="User">Kang.Jiwon</SD>
+						<SD GID="Date">2025-05-22</SD>
+						<SD GID="Class">DEM_CONFDATA</SD>
+						<SD GID="Name">Summary</SD>
+						<SD GID="Variant">1.0.0</SD>
+						<SD GID="Revision">0</SD>
+						<SD GID="Type">XML</SD>
+						<SD GID="State">AVAILABLE</SD>
+						<SD GID="UniqueName"></SD>
+						<SD GID="Component"></SD>
+						<SD GID="Generated"></SD>
+						<SD GID="History">
+1.0.0; 0 2025.05.22 Kang Jiwon
+ Initial Release
+</SD>
+					</SDG>
+				</SDGS>
+			</COMPANY-DOC-INFO>
+		</COMPANY-DOC-INFOS>
+	</ADMIN-DATA>
+	<SW-SYSTEMS>
+		<SW-SYSTEM>
+			<LONG-NAME>
+				<L-4 L="for-all">HNB</L-4>
+			</LONG-NAME>
+			<SHORT-NAME>HNB</SHORT-NAME>
+			<CONF-SPEC>
+				<CONF-ITEMS>
+					<CONF-SOURCE>
+						<SW-FEATURE-REF>VehSlop</SW-FEATURE-REF>
+					</CONF-SOURCE>
+					<CONF-ITEM>
+						<SHORT-NAME>DEM</SHORT-NAME>
+						<CONF-ITEMS>
+							<CONF-ITEM>
+								<SHORT-NAME>FIM</SHORT-NAME>
+								<CONF-ITEMS>
+									<CONF-ITEM>
+										<SHORT-NAME>ELEMENT_NAME</SHORT-NAME>
+										<VF>VehSlopCalc</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DESC</SHORT-NAME>
+										<VF>Function identifier for vehicle slop calculation</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>SCHED_MODE</SHORT-NAME>
+										<VF>Inhibit_Only</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VehVMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VehVMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VehVPlaus</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VehVRatyOverrun</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VehVSnsrErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VehVStuck</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CanBusOff</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 0</SW-SYSCOND>
+										<VF>CanWhlSpd11Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 0</SW-SYSCOND>
+										<VF>CanWhlSpd11Chks</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 0</SW-SYSCOND>
+										<VF>CanWhlSpd11Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 1</SW-SYSCOND>
+										<VF>FDWhl01Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 1</SW-SYSCOND>
+										<VF>FDWhl01Crc</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 1</SW-SYSCOND>
+										<VF>FDWhl01Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 0</SW-SYSCOND>
+										<VF>CanEsp2Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 0</SW-SYSCOND>
+										<VF>CanEsp2Chks</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 0</SW-SYSCOND>
+										<VF>CanEsp2Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 1</SW-SYSCOND>
+										<VF>FDImu01Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 1</SW-SYSCOND>
+										<VF>FDImu01Crc</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 1</SW-SYSCOND>
+										<VF>FDImu01Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 0</SW-SYSCOND>
+										<VF>CanSas1Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 0</SW-SYSCOND>
+										<VF>CanSas1Chks</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 0</SW-SYSCOND>
+										<VF>CanSas1Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 1</SW-SYSCOND>
+										<VF>FDSas01Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 1</SW-SYSCOND>
+										<VF>FDSas01Crc</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>CANFD_SC == 1</SW-SYSCOND>
+										<VF>FDSas01Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>PSteerPMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>PSteerPMin</VF>
+									</CONF-ITEM>
+								</CONF-ITEMS>
+							</CONF-ITEM>
+						</CONF-ITEMS>
+					</CONF-ITEM>
+				</CONF-ITEMS>
+			</CONF-SPEC>
+		</SW-SYSTEM>
+	</SW-SYSTEMS>
+	<MATCHING-DCIS>
+		<MATCHING-DCI>
+			<SHORT-LABEL>ConfData</SHORT-LABEL>
+			<URL></URL>
+		</MATCHING-DCI>
+	</MATCHING-DCIS>
+</MSRSW>
