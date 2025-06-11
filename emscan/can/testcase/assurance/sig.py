@@ -14,7 +14,7 @@ class UnitAssurance(Workspace):
         super().__init__(_dir=workspace_path)
         self.spec = spec
         self.db = db
-        comm = self.modules[self.modules["BC"].str.startswith("_29")].copy()
+        comm = self.modulesByBC(29).copy()
         self.cModules = code = comm[
             comm["type"] == "cCode"
         ]
@@ -27,7 +27,7 @@ class UnitAssurance(Workspace):
 
 
     def txSignalList(self) -> DataFrame:
-        tx = self.collectElements(
+        tx = self.elementsByModules(
             self.cModules[self.cModules["name"].str.contains("EMS")].copy()
         )
         tx = tx[
@@ -50,7 +50,7 @@ class UnitAssurance(Workspace):
         return merge[["Message", "StartBit", "Signal", "Sig Receivers", "Definition", "apply"]]
 
     def rxSignalList(self):
-        rx = self.collectElements(
+        rx = self.elementsByModules(
             self.cModules[
                 self.cModules["name"].str.startswith("ComDef") | \
                 self.cModules["name"].str.endswith("_48V") | \

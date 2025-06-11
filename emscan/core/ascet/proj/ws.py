@@ -3,7 +3,8 @@ try:
 except ImportError:
     from emscan.core.ascet.module.module import Module
 from lxml import etree
-from pandas import DataFrame, concat
+from pandas import concat, DataFrame
+from typing import Union
 import os
 
 
@@ -20,45 +21,105 @@ class Workspace:
         _aws = [f for f in items if f.endswith('.aws')]
         if not (("HMC_ECU_Library" in items) and ("HNB_GASOLINE" in items) and len(_aws)):
             raise FormatError
+        _aws = os.path.join(_dir, _aws[0])
 
-        self.tree = tree = etree.parse(os.path.join(_dir, _aws[0]))
-        self.modules = DataFrame(self._modules(tree.getroot(), []))
+        _tsk = ''
+        for root, folder, files in os.walk(os.path.join(_dir, 'HNB_GASOLINE/Project')):
+            for file in files:
+                if file.endswith('.project.amd'):
+                    _tsk = os.path.join(root, file)
+        if not _tsk:
+            raise FormatError
+
+        self._x_proj = etree.parse(_aws)
+        self._x_task = etree.parse(_tsk)
         return
 
-    def _modules(self, tag, path) -> list:
-        modules = []
-        if tag.tag == "folder":
-            path.append(tag.get("name"))
-        if tag.tag == "itemWithSpec":
-            spec = tag.find("publicSpecs/spec")
-            mtype = ""
-            tasks = ""
-            if not spec is None:
-                mtype = spec.get("type")
-                tasks = ", ".join([task.get("name") for task in spec.findall("method")])
-            modules.append({
-                "name": tag.get("name"),
-                "OID": tag.get("OID"),
-                "BC": path[1] if path[0] == "HNB_GASOLINE" else "Library",
-                "path": "/".join(path),
-                "type": mtype,
-                "task": tasks
-            })
-
-        for child in tag:
-            modules.extend(self._modules(child, path))
-        if tag.tag == "folder":
-            path.pop()
-        return modules
-
-    def collectElements(self, frame: DataFrame) -> DataFrame:
+    @staticmethod
+    def elementsByModules(modules:DataFrame):
         objs = []
-        for n, row in frame.iterrows():
-            path = os.path.join(self._root, f'{row["path"]}/{row["name"]}.main.amd')
-            unit = Module(path).Elements
+        for n, row in modules.iterrows():
+            unit = Module(row["fpath"]).Elements
             unit["BC"] = row["BC"]
             objs.append(unit)
-        return concat(objs=objs)
+        return concat(objs=objs, axis=0)
+
+    def modulesByBC(self, *bc_number:Union[int, str]):
+        modules = self.Modules.copy()
+        numbers = [str(n).replace("_", "") for n in bc_number]
+        bc = []
+        for _bc in modules['BC'].drop_duplicates():
+            for n in numbers:
+                if _bc.startswith(f'_{n}'):
+                    bc.append(_bc)
+                    break
+        return modules[modules["BC"].isin(bc)]
+
+    def taskTable(self, *bc_number):
+        models = self.modulesByBC(*bc_number)
+        tasks = self.Tasks.copy()
+        tasks = tasks[tasks['element'].isin(models['name'])].copy()
+        objs = []
+        for task, frm in tasks.groupby(by='task'):
+            order = (frm['method'] + ': ' + frm['element']).reset_index(drop=True)
+            order.name = task
+            objs.append(order)
+
+        orderTable = concat(objs=objs, axis=1)
+        return orderTable
+
+    @property
+    def Modules(self) -> DataFrame:
+        def _modules(tag, path) -> list:
+            modules = []
+            if tag.tag == "folder":
+                path.append(tag.get("name"))
+            if tag.tag == "itemWithSpec":
+                spec = tag.find("publicSpecs/spec")
+                mtype = ""
+                tasks = ""
+                if not spec is None:
+                    mtype = spec.get("type")
+                    tasks = ", ".join([task.get("name") for task in spec.findall("method")])
+                modules.append({
+                    "name": tag.get("name"),
+                    "OID": tag.get("OID"),
+                    "BC": path[1] if path[0] == "HNB_GASOLINE" else "Library",
+                    "path": "/".join(path),
+                    "fpath": os.path.join(self._root, "/".join(path)),
+                    "type": mtype,
+                    "task": tasks
+                })
+
+            for child in tag:
+                modules.extend(_modules(child, path))
+            if tag.tag == "folder":
+                path.pop()
+            return modules
+        return DataFrame(_modules(self._x_proj.getroot(), []))
+
+    @property
+    def Tasks(self) -> DataFrame:
+        objs = []
+        for tag in self._x_task.findall('OsLogic/OsEntry'):
+            target = tag.find('TargetKey')
+            if target is None or target.get("name") != "G_HMCEMS.GENERIC_OSEK":
+                continue
+
+            for task in tag.findall('OsDescription/Tasks/Task'):
+                name = task.get('name')
+                for proc in task.findall('Process'):
+                    objs.append({
+                        'task': name,
+                        'index': proc.get('index'),
+                        'element': proc.get('elementName'),
+                        'elementOID': proc.get('elementOID'),
+                        'method': proc.get('methodName'),
+                        'methodOID': proc.get('methodOID')
+                    })
+        return DataFrame(objs)
+
+
 
 if __name__ == "__main__":
     from pandas import set_option
@@ -66,7 +127,9 @@ if __name__ == "__main__":
 
     set_option('display.expand_frame_repr', False)
 
-    WS = Workspace(r"D:\ETASData\ASCET6.1\Workspaces\2G_MPI_4Cyl_MG6_OTA_V0A0_PB1")
-    print(WS.modules)
-    # print(WS.modules[WS.modules["BC"].str.startswith("_29")])
-    WS.collectElements(WS.modules[WS.modules["BC"].str.startswith("_29")])
+    WS = Workspace(r"D:\ETASData\ASCET6.1\Workspaces\TX4T9MTNDLQT@F80_WS50987")
+    # print(WS.Tasks)
+    # print(WS.Modules)
+    # print(WS.modulesByBC())
+    print(WS.taskTable(33))
+    WS.taskTable(33).to_clipboard()
