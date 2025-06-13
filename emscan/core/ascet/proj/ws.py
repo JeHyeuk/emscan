@@ -39,7 +39,7 @@ class Workspace:
     def elementsByModules(modules:DataFrame):
         objs = []
         for n, row in modules.iterrows():
-            unit = Module(row["fpath"]).Elements
+            unit = Module(row["file"]).Elements
             unit["BC"] = row["BC"]
             objs.append(unit)
         return concat(objs=objs, axis=0)
@@ -55,7 +55,7 @@ class Workspace:
                     break
         return modules[modules["BC"].isin(bc)]
 
-    def taskTable(self, *bc_number):
+    def taskOrder(self, *bc_number):
         models = self.modulesByBC(*bc_number)
         tasks = self.Tasks.copy()
         tasks = tasks[tasks['element'].isin(models['name'])].copy()
@@ -86,7 +86,7 @@ class Workspace:
                     "OID": tag.get("OID"),
                     "BC": path[1] if path[0] == "HNB_GASOLINE" else "Library",
                     "path": "/".join(path),
-                    "fpath": os.path.join(self._root, "/".join(path)),
+                    "file": os.path.join(self._root, "/".join(path)) + f"/{tag.get('name')}.main.amd",
                     "type": mtype,
                     "task": tasks
                 })
@@ -131,5 +131,6 @@ if __name__ == "__main__":
     # print(WS.Tasks)
     # print(WS.Modules)
     # print(WS.modulesByBC())
-    print(WS.taskTable(33))
-    WS.taskTable(33).to_clipboard()
+    # print(WS.taskOrder(33))
+    # WS.taskOrder(33).to_clipboard()
+    print(WS.elementsByModules(WS.modulesByBC(33)))

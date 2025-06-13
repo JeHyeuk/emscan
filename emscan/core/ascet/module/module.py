@@ -109,9 +109,9 @@ class Module:
             elem = self.main.Element.set_index(keys="OID").copy()
             elem_i = self.impl.Element.set_index(keys="elementOID").copy()
             elem = elem.join(elem_i.drop(columns=[c for c in elem_i.columns if c in elem.columns.values]))
-
-            elem_d = self.data.Element.set_index(keys="elementOID")
-            elem = elem.join(elem_d.drop(columns=[c for c in elem_d.columns if c in elem.columns.values]))
+            if "elementOID" in self.data.Element:
+                elem_d = self.data.Element.set_index(keys="elementOID")
+                elem = elem.join(elem_d.drop(columns=[c for c in elem_d.columns if c in elem.columns.values]))
             elem["module"] = self['name']
             self.__setattr__("__elem__", elem)
         return self.__getattribute__("__elem__")
