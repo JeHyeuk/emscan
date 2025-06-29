@@ -18,7 +18,7 @@ element = ws.elementsByModules(model)
 # print(order)
 # print(element)
 
-target = "EpmOM_StM"
+target = "EpmOM"
 module = element[element["module"] == target]
 module = module.sort_values(by="scope")
 print(module)

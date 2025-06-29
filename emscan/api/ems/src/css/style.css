@@ -431,6 +431,10 @@ textarea {
   z-index: 2;
 }
 
+.data-table .dem-count {
+  background-color: #fff;
+}
+
 .data-table .read-only {
   cursor: not-allowed !important;
 }

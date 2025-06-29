@@ -439,13 +439,13 @@ if __name__ == "__main__":
     from emscan.config import PATH
     import os
 
-    SPEC = "ICE"
+    SPEC = "HEV"
 
     EXCLUDE = {
-        'ICE': ["EMS", "CVVD", "MHSG", "NOx", "BMS", "LDC"],
-        'HEV': ["EMS", "CVVD", "MHSG", "NOx"]
+        'ICE': ["CVVD", "MHSG", "NOx", "BMS", "LDC"],
+        'HEV': ["CVVD", "MHSG", "NOx"]
     }
-    DB.dev_mode(SPEC)
+    # DB.dev_mode(SPEC)
     DB.constraint(~DB["ECU"].isin(EXCLUDE[SPEC]))
 
     file = os.path.join(PATH.DOWNLOADS, f'{SPEC}.dbc')

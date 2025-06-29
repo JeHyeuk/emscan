@@ -35,7 +35,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from json import dumps
-import os, uvicorn
+import os, uvicorn, logging
 
 
 

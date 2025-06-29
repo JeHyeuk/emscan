@@ -113,19 +113,24 @@ if __name__ == "__main__":
     from emscan.config import PATH
     from datetime import datetime
     import os
+
     option = {
         "Requirement - Traceability": ".".join(os.path.basename(DB.source).split(".")[:-1]),
-        "Test Conductor": "{member name} @KVHS",
-        "Test SW": "MG6JQESW9L0N@0A0 TSW",
-        "Test HW": "G4III MPI OTA",
-        "Test Vehicle / Engine / HIL": "BENCH",
-        "Test Environment": "Static",
-        "Remark / Comment": f"AUTOMATIC TEST CASE V{datetime.today().strftime('%Y-%m-%d')}",
+        "Test Conductor": "LEE JEHYEUK, JO JAEHYEUNG, JO KYUNA",
+        "Test SW": "TX4T9MTN9L1N@D10",
+        "Test HW": "G4III TGDI OTA",
+        "Test Vehicle / Engine / HIL": "NQ5e",
+        "Test Environment": "Engine Stall",
+        "Remark / Comment": f"TEST CASE V{datetime.today().strftime('%Y-%m-%d')}",
         "Measure / Log File (.dat)": "",
         "MDA Configuration File (.xda)": "",
         "Experiment File (.exp)": "",
     }
-    myTC = testCaseRxDecode(DB("TCU_01_10ms"), **option)
+    myTC = testCaseRxDecode(
+        DB("FPCM_01_100ms"),
+
+        **option
+    )
     myTC.generate()
     myTC.saveToTestReport()
 

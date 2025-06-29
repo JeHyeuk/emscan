@@ -179,7 +179,8 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    model = Module(r"D:\ETASData\ASCET6.1\Export\CanFDEMSM01\CanFDEMSM01.main.amd")
+    model = Module(r"D:\SVN\model\ascet\trunk\HMC_ECU_Library\HMC_DiagLibrary\DSM_Types\Fid_Typ\Fid_Typ.main.amd")
     # print(model.spec.Element)
-    print(model.hierarchyIO)
-    model.hierarchyIO.to_clipboard()
+    print(model.impl.Element)
+    # print(model.hierarchyIO)
+    # model.hierarchyIO.to_clipboard()

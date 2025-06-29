@@ -50,7 +50,6 @@ class IntegrationRequest(DataFrame):
     def __init__(self, *models, **kwargs):
         super().__init__(columns=self._column, index=[n for n in range(len(models))])
         for n, model in enumerate(models):
-            print(model)
             self.Unit(n, PATH.SVN.MD.CAN.file(f"{model}.zip"))
 
         for key, value in kwargs.items():
@@ -62,7 +61,7 @@ class IntegrationRequest(DataFrame):
         model = Module(amd)
         self._update_func(index, model)
         self._update_conf(index, model)
-        # self._update_sdd(index, model)
+        self._update_sdd(index, model)
         self._update_poly(index, model)
         return
 
@@ -93,12 +92,14 @@ class IntegrationRequest(DataFrame):
         note = PATH.SDD.path(model["OID"][1:]).file("FunctionDefinition.rtf")
         try:
             text = pypandoc.convert_file(note, 'plain')
-        except OSError:
-            pypandoc.pandoc_download.download_pandoc()
-            text = pypandoc.convert_file(note, 'plain')
-        svn = self._sdb.file(sdd)
-        self.loc[index, "FunctionVersion"] = "".join([c for c in text.split("\n")[0] if c.isdigit() or c == "."])
-        self.loc[index, "SDDRev"] = svn["Revision"]
+            svn = self._sdb.file(sdd)
+            self.loc[index, "FunctionVersion"] = "".join([c for c in text.split("\n")[0] if c.isdigit() or c == "."])
+            self.loc[index, "SDDRev"] = svn["Revision"]
+        except Exception as reason:
+            print(model['name'], "unable to read sdd", reason)
+            # pypandoc.pandoc_download.download_pandoc()
+            # text = pypandoc.convert_file(note, 'plain')
+
         return
 
     def _update_poly(self, index:int, model:Module):
@@ -117,10 +118,10 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     ir = IntegrationRequest(
-        "CanFDEPB",
-        ChangeHistoryName='8296_MPI_EPB_BOS신호개발_구사양대응.pptx',
-        ChangeHistoryRev=35929,
-        Comment="[LCRPT240710001-1] BOS 신호 추가 (구모델 대응)",
+        "CanNOX", "CanNOXM",
+        ChangeHistoryName='8408_EU7_NOx센서_MODE5신호추가.pptx',
+        ChangeHistoryRev=37282,
+        Comment="CR10779285 NOx 센서 SPEC 개정 6.0S21 -> 6.0S22 (추가 개정)",
         User="이제혁",
         Date=datetime.now().strftime("%Y-%m-%d")
     )

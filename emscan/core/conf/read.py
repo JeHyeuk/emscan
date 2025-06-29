@@ -34,7 +34,7 @@ COLUMNS:Dict[str, Dict] = {
             "label": "Debouncing 방식",
             "class": "mandatory",
             "write": "selectable",
-            "option": '["", "EVENT_UP_DOWN", "EVENT_IN_ROW", "TIME_UP_DOWN", "TIME_IN_ROW"]',
+            "option": '["", "None", "EVENT_UP_DOWN", "EVENT_IN_ROW", "TIME_UP_DOWN", "TIME_IN_ROW"]',
         },
         "DEB_PARAM": {
             "label": "(Conf 존재 / 미사용 KEY)",
@@ -122,7 +122,7 @@ COLUMNS:Dict[str, Dict] = {
             "label": "IUMPR 소속",
             "class": "optional",
             "write": "selectable",
-            "option": '["", "Catalyst_Bank1", "Catalyst_Bank2" , "OxygenSensor_Bank1", "OxygenSensor_Bank2", "EGR_VVT", "SecAirSys", "EvpSys", "SecOxySens_Bank1", "SecOxySens_Bank2", "Fuel_Bank1", "Fuel_Bank2", "GPF_Bank1", "GPF_Bank2", "NMHCCatalyst", "NOxSCRCatalyst", "NOxAdsorber", "PMFilter", "BoostPressure", "ExhaustGasSensor", "Fuel", "Private", "Unused"]',
+            "option": '["", "Catalyst_Bank1", "Catalyst_Bank2" , "OxygenSensor_Bank1", "OxygenSensor_Bank2", "EGR_VVT", "SecAirSys", "EvpSys", "SecOxySens_Bank1", "SecOxySens_Bank2", "Fuel_Bank1", "Fuel_Bank2", "GPF_Bank1", "GPF_Bank2", "NMHCCatalyst", "NOxSCRCatalyst", "NOxAdsorber", "PMFilter", "BoostPressure", "ExhaustGasSensor", "Fuel", "Private", "OEM", "Unused", "X"]',
         },
         "READY_GRP": {
             "label": "Readiness 소속",
@@ -241,7 +241,7 @@ COLUMNS:Dict[str, Dict] = {
             "label": "IUMPR Group 할당",
             "class": "mandatory",
             "write": "selectable",
-            "option": '["", "Catalyst_Bank1", "Catalyst_Bank2" , "OxygenSensor_Bank1", "OxygenSensor_Bank2", "EGR_VVT", "SecAirSys", "EvpSys", "SecOxySens_Bank1", "SecOxySens_Bank2", "Fuel_Bank1", "Fuel_Bank2", "GPF_Bank1", "GPF_Bank2", "NMHCCatalyst", "NOxSCRCatalyst", "NOxAdsorber", "PMFilter", "BoostPressure", "ExhaustGasSensor", "Fuel", "Private", "Unused"]',
+            "option": '["", "Catalyst_Bank1", "Catalyst_Bank2" , "OxygenSensor_Bank1", "OxygenSensor_Bank2", "EGR_VVT", "SecAirSys", "EvpSys", "SecOxySens_Bank1", "SecOxySens_Bank2", "Fuel_Bank1", "Fuel_Bank2", "GPF_Bank1", "GPF_Bank2", "NMHCCatalyst", "NOxSCRCatalyst", "NOxAdsorber", "PMFilter", "BoostPressure", "ExhaustGasSensor", "Fuel", "Private", "OEM", "Unused"]',
         },
         "IUMPR_SYSCON": {
             "label": "IUMPR 적용 System Constant 조건",
@@ -444,6 +444,25 @@ COLUMNS:Dict[str, Dict] = {
     }
 }
 
+IUMPR_RENAME = {
+    "촉매 Bank1": "Catalyst_Bank1",
+    "촉매 Bank2": "Catalyst_Bank2",
+    "산소센서_Bank1": "OxygenSensor_Bank1",
+    "산소센서_Bank2": "OxygenSensor_Bank2",
+    "EGR/VVT": "EGR_VVT",
+    "2차공기": "SecAirSys",
+    "증발가스": "EvpSys",
+    "산소센서2_Bank1": "SecOxySens_Bank1",
+    "산소센서2_Bank2": "SecOxySens_Bank2",
+    "NMHC": "NMHCCatalyst",
+    "NOx촉매": "NOxSCRCatalyst",
+    "NOx흡장": "NOxAdsorber",
+    "Boost": "BoostPressure",
+    "PM_Filter": "PMFilter",
+    "배기센서": "ExhaustGasSensor",
+    "연료시스템": "Fuel"
+}
+
 
 class confReader(ElementTree):
     """
@@ -523,6 +542,10 @@ class confReader(ElementTree):
                     elements[_id][f'{key}_SYSCON'] += [getV(item, 'SW-SYSCOND')]
                     for sub_item in item.findall('CONF-ITEMS/CONF-ITEM'):
                         elements[_id][getV(sub_item, 'SHORT-NAME')] += [getV(sub_item, 'VF')]
+                        if getV(sub_item, 'SHORT-NAME') == "FID_GROUP":
+                            if getV(sub_item, 'VF') in IUMPR_RENAME:
+                                del elements[_id]["FID_GROUP"][-1]
+                                elements[_id]["FID_GROUP"] += [IUMPR_RENAME[getV(sub_item, 'VF')]]
                     continue
 
                 if key == "SCHED":
@@ -676,13 +699,11 @@ if __name__ == "__main__":
     from pprint import pprint
     set_option('display.expand_frame_repr', False)
 
+    csrc = lambda file: rf'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\{file}_confdata.xml'
     conf = confReader(
         # r'./template.xml'
         # r'D:\canfdabsd_confdata.xml'
-        # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\egrd_confdata.xml'
-        r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\vehslop_confdata.xml'
-        # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\catdft_confdata.xml'
-        # r'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\aewpd_confdata.xml'
+        csrc('pcvmond')
     )
 
 
@@ -691,7 +712,7 @@ if __name__ == "__main__":
     # ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]
     demType = "FIM"
     pprint(conf.dem(demType))
-    print(conf.html(demType))
+    # print(conf.html(demType))
 
     # from emscan.config import PATH
     # import os

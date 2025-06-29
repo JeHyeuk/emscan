@@ -44,3 +44,4 @@ if __name__ == "__main__":
     tobe = rf"D:\Archive\00_프로젝트\2017 통신개발-\2025\DS0512 NOx센서 스펙 개정\모델\Curr\CanNOXM.main.amd"
     Compare(asis, tobe)
 
+    # 0x320

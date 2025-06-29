@@ -178,7 +178,7 @@ class _SVN(Path):
 
     @memorize
     def POLY(self) -> Path:
-        poly = self.path(r'Autron_CoWork\사이버보안\Module_Test_Results')
+        poly = Path(r'E:\SVN\Autron_CoWork\사이버보안\Module_Test_Results')
         return poly
 
     @memorize
