@@ -1,11 +1,8 @@
-try:
-    from .style import Style
-    from ...config import PATH
-except ImportError:
-    from emscan.core.testcase.style import Style
-    from emscan.config import PATH
+
+from emscan.core.testcase.style import Style
+from emscan.env import PATH
 from numpy import nan
-from pandas import DataFrame, Series
+from pandas import Series
 from typing import Any, Union
 from xlsxwriter import Workbook
 import os
@@ -55,14 +52,13 @@ LABEL = {
 }
 
 
-class Case(Series):
+class UnitTestCase(Series):
 
     __wb__ = None
-    __fg__ = DataFrame()
 
     def __init__(self, **kwargs):
         self.__wb__ = None
-        self.__fg__ = DataFrame()
+
         super().__init__({k: kwargs[k] if k in kwargs else v for k, v in LABEL.items()})
         if 'workbook' in kwargs:
             self.__wb__ = kwargs['workbook']
@@ -75,14 +71,6 @@ class Case(Series):
     @workbook.setter
     def workbook(self, workbook: Workbook):
         self.__wb__ = workbook
-
-    # @property
-    # def plot(self) -> Union[DataFrame, Plotter]:
-    #     return self.__fg__
-
-    # @plot.setter
-    # def plot(self, plot:Plotter):
-    #     self.__fg__ = plot
 
     @property
     def variable(self) -> list:
@@ -101,18 +89,18 @@ class Case(Series):
         self[key] += value
         return
 
-    def to_report(self, row:int=1):
-        if not isinstance(self.workbook, Workbook):
-            wb = self.workbook = Workbook(filename=os.path.join(PATH.DOWNLOADS, f"{self['Test Case Name']}.xlsx"))
+    def to_report(self, row:int=1, attach:str=None):
+        if isinstance(self.workbook, Workbook):
+            wb = self.workbook
+            ws = wb.worksheets_objs[0]
+        else:
+            wb = self.workbook = Workbook(filename=PATH.DOWNLOADS.makefile(f"{self['Test Case Name']}.xlsx"))
             ws = wb.add_worksheet(name="Test Report")
             ws.set_column('A:A', 1.63)
             for col in ["C", "F", "I", "L", "O"]:
                 ws.set_column(f'{col}:{col}', 3.13)
             for col in ["B", "D", "E", "G", "H", "J", "K", "M", "N", "P"]:
                 ws.set_column(f'{col}:{col}', 13)
-        else:
-            wb = self.workbook
-            ws = wb.worksheets_objs[0]
 
         styler = Style(wb=wb, ws=ws)
         ws.merge_range(f'B{row}:C{row}', 'Test Category', styler.report_label["Category"])
@@ -156,6 +144,13 @@ class Case(Series):
         ws.write(f'M{row + 4}', self['ER-Value'], styler.report_value["ER-Value"])
         ws.merge_range(f'N{row + 3}:P{row + 4}', self['Test Result'], styler.report_value["Test Result"])
         ws.merge_range(f'B{row + 6}:L{row + 26}', '', styler.report_value["Test Result Graph"])
+        if attach:
+            ws.insert_image(row + 5, 1, attach, {
+                'x_offset': 0,
+                'y_offset': 0,
+                'x_scale': 0.4,
+                'y_scale': 0.4
+            })
         ws.merge_range(f'M{row + 6}:P{row + 26}', self['Test Result Description'], styler.report_value['Test Result Description'])
         ws.merge_range(f'B{row + 28}:D{row + 28}', self['Test Conductor'], styler.report_value['Test Conductor'])
         ws.merge_range(f'E{row + 28}:G{row + 28}', self['Test SW'], styler.report_value['Test SW'])
@@ -173,3 +168,6 @@ class Case(Series):
             wb.close()
         return
 
+if __name__ == "__main__":
+    unit = UnitTestCase()
+    print(unit)

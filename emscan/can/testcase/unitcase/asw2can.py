@@ -1,13 +1,9 @@
-try:
-    from ....core.testcase.case import Case
-    from ...rule import naming
-except ImportError:
-    from emscan.core.testcase.case import Case
-    from emscan.can.rule import naming
+from emscan.core.testcase.unitcase import UnitTestCase
+from emscan.can.rule import naming
 from pandas import DataFrame, Series
 
 
-class TxInterface(Case):
+class Asw2CanUnit(UnitTestCase):
 
     def __init__(self, sig:Series, io:DataFrame, **override):
         nm = naming(sig)

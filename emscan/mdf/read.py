@@ -4,7 +4,7 @@ import pandas as pd
 import os
 
 
-class Reader(DataFrame):
+class MdfReader(DataFrame):
 
     _mdf:Mdf = None
     _src:str = ""
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    rd = Reader(r"D:\J.H.LEE\02. OFFICE\2024\2024.01. HMC CAN 이슈대응\24.10.21. SP3i BS6 운전성\241021_SP3i_정상주행1차_ECO_EMSTX1-2.dat")
+    rd = MdfReader(r"D:\J.H.LEE\02. OFFICE\2024\2024.01. HMC CAN 이슈대응\24.10.21. SP3i BS6 운전성\241021_SP3i_정상주행1차_ECO_EMSTX1-2.dat")
     print(rd)
     print(rd.columns)
 

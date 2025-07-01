@@ -1,29 +1,21 @@
-try:
-    from .case import Case
-    from .style import Style
-    # from .plot import TestCasePlot
-    from ...config import PATH
-except ImportError:
-    # from pyems.apps.docu.testcase.plot import TestCasePlot
-    from emscan.core.testcase.case import Case
-    from emscan.core.testcase.style import Style
-    from emscan.config import PATH
+from emscan.core.testcase.unitcase import UnitTestCase
+from emscan.core.testcase.style import Style
+from emscan.env import PATH
 from datetime import datetime
 from pandas import DataFrame, ExcelWriter, Series
-from typing import List, Hashable, Union
+from typing import Dict, List, Hashable, Union
 import xlsxwriter as xlsx
 import os, time
 
 
-class Cases:
+class TestCase:
 
-    def __init__(self, *args):
-        self._units: List[Case] = []
-        self._template: str = PATH.SVN.CAN.TC.file("TESTCASE_TEMPLATE.xlsm")
+    def __init__(self, *args:UnitTestCase):
+        self._units: List[UnitTestCase] = []
+        self._template: str = PATH.SVN.CANTC("TESTCASE_TEMPLATE.xlsm")
         self._filename: str = f'TESTCASE @{str(datetime.now()).replace(" ", "_").replace(":", ";").split(".")[0]}'
         for arg in args:
-            if isinstance(arg, (Case, Series)):
-                self._units.append(arg)
+            self._units.append(arg)
         return
 
     def __repr__(self) -> repr:
@@ -32,11 +24,11 @@ class Cases:
     def __len__(self) -> int:
         return len(self._units)
 
-    def __iter__(self) -> Case:
+    def __iter__(self) -> UnitTestCase:
         for unit in self._units:
             yield unit
 
-    def __getitem__(self, item: Union[int, str]) -> Case:
+    def __getitem__(self, item: Union[int, str]) -> UnitTestCase:
         if isinstance(item, int):
             return self._units[item - 1]
         elif isinstance(item, str):
@@ -67,12 +59,9 @@ class Cases:
     def cases(self) -> DataFrame:
         return DataFrame(self._units)
 
-    def append(self, case: Case):
+    def append(self, case: UnitTestCase):
         self._units.append(case)
         return
-
-    # def plot(self, mdf:str) -> TestCasePlot:
-    #     return TestCasePlot(mdf, self.cases)
 
     def to_testcase(self, filename: Union[str, Hashable] = ""):
         if filename:
@@ -98,7 +87,7 @@ class Cases:
                 ws.set_column(n, n, lens + 2)
         return
 
-    def to_report(self, filename: Union[str, Hashable] = ""):
+    def to_report(self, filename: Union[str, Hashable] = "", attachment:Dict=None):
         if filename:
             self.filename = filename
         file = f"{self.directory.replace('TestCase', 'TestReport')}.xlsx"
@@ -111,8 +100,13 @@ class Cases:
         styler = Style(tc, ws)
         styler.adjust_width()
         for n, testcase in enumerate(self):
+            _id = testcase["Test Case - ID"]
+            if _id in attachment:
+                attach = attachment[_id]
+            else:
+                attach = None
             testcase.workbook = tc
-            testcase.to_report(1 + (n * 32))
+            testcase.to_report(1 + (n * 32), attach=attach)
         tc.close()
         return
 
@@ -146,3 +140,9 @@ class Cases:
     def to_clipboard(self):
         self.cases.to_clipboard(index=False)
         return
+
+
+if __name__ == "__main__":
+    from emscan.core.testcase.unitcase import UnitTestCase
+    tc = TestCase(UnitTestCase())
+    tc.to_report()

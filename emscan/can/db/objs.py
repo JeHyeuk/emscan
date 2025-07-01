@@ -86,11 +86,13 @@ class SignalObj(Series):
         return
 
     def isCrc(self) -> bool:
-        return ("crc" in str(self.name).lower()) and (self["StartBit"] == 0)
+        return (("crc" in str(self.name).lower()) and (self["StartBit"] == 0)) or \
+               ("checksum" in str(self.name).lower())
 
     def isAliveCounter(self) -> bool:
         return ((self["Message"] == "TMU_01_200ms") and (str(self.name) == "VSVI_AlvCntVal")) or \
-               (("alv" in str(self.name).lower() or "alivec" in str(self.name).lower()) and self["StartBit"] <= 16)
+               (("alv" in str(self.name).lower() or "alivec" in str(self.name).lower()) and self["StartBit"] <= 16) or \
+               ("alive" in str(self.name).lower() and "count" in str(self.name).lower())
 
     @property
     def implSize(self) -> int:

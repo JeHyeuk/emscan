@@ -114,7 +114,7 @@ if __name__ == "__main__":
     # capture()
 
     from emscan.can.db.db import DB
-    from emscan.can.testcase.generic import TestCase_TxInterface
+
     from emscan.can.rule import naming
     from emscan.config import PATH
     from emscan.mdf.read import Reader

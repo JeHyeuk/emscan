@@ -14,8 +14,20 @@ class naming(object):
         else:
             raise TypeError(f"Unknown type for message; {message}")
 
+        """
+        [예외 처리]
+        DB 상 이름이 매우 길거나 구 DB상 이름으로 개발되었으나 신 DB에서 이름이 바뀐 경우
+        """
         if self.message.startswith("EGSNXUpStream"):
             self.message = self.message.replace("UpStream", "")
+        if self.message == "SCU_DIAG":
+            self.message = "MHSG_STATE3"
+        if self.message == "SCU_DIAG2":
+            self.message = "MHSG_STATE4"
+        if self.message == "SCU_FUNCTIONAL":
+            self.message = "MHSG_STATE2"
+        if self.message == "SCU_STATUS":
+            self.message = "MHSG_STATE1"
 
         """
         [Message Name to Element Name : Base]
@@ -42,6 +54,8 @@ class naming(object):
         self.number = ''.join(re.findall(r'\d+', base))
         if "Htcu" in base:
             self.base = base = base.replace("Htcu", "HTcu")
+        if "MHSG" in self.message:
+            self.base = base = f"StMhsg{self.message[-1]}"
 
         self.root = root = ''.join([char for char in base if char.isalpha()])
         if "Fd" in root:
