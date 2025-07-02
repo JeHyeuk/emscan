@@ -3,6 +3,17 @@ from typing import Dict, Union
 import re
 
 
+MESSAGE_RENAME = {
+    # NEW NAME: OLD NAME #
+    "SCU_DIAG": 'MHSG_STATE3',
+    "SCU_DIAG2": "MHSG_STATE4",
+    "SCU_FUNCTIONAL": "MHSG_STATE2",
+    "SCU_STATUS": "MHSG_STATE1",
+    "MASTER_CTRL_REQ": "EMS_MHSG1",
+    "MASTER_EXT_REQ": "EMS_MHSG2",
+    "MASTER_SPEED_REQ": "EMS_MHSG_SPEED",
+    "MASTER_STARTER_REQ": "EMS_MHSG_STARTER"
+}
 class naming(object):
 
     def __init__(self, message: Union[str, Dict, Series]):
@@ -20,14 +31,11 @@ class naming(object):
         """
         if self.message.startswith("EGSNXUpStream"):
             self.message = self.message.replace("UpStream", "")
-        if self.message == "SCU_DIAG":
-            self.message = "MHSG_STATE3"
-        if self.message == "SCU_DIAG2":
-            self.message = "MHSG_STATE4"
-        if self.message == "SCU_FUNCTIONAL":
-            self.message = "MHSG_STATE2"
-        if self.message == "SCU_STATUS":
-            self.message = "MHSG_STATE1"
+        if self.message.startswith("LEMS"):
+            self.message = f"L_{self.message[1:]}"
+        if self.message in MESSAGE_RENAME:
+            self.message = MESSAGE_RENAME[self.message]
+
 
         """
         [Message Name to Element Name : Base]
@@ -54,8 +62,10 @@ class naming(object):
         self.number = ''.join(re.findall(r'\d+', base))
         if "Htcu" in base:
             self.base = base = base.replace("Htcu", "HTcu")
-        if "MHSG" in self.message:
-            self.base = base = f"StMhsg{self.message[-1]}"
+        if self.message.startswith("L_EMS"):
+            self.base = base = f"L_EMS{splits[-1]}"
+        if self.message == "EMS_LDCBMS1":
+            self.base = base = "EmsLdcBms1"
 
         self.root = root = ''.join([char for char in base if char.isalpha()])
         if "Fd" in root:
@@ -139,6 +149,8 @@ class naming(object):
           3) DB 메시지 이름의 오타, 오탈 또는 길이 등의 사유로 인해 임의로 Naming을 변경한 경우
           4) 상기 사유 외 예외 처리가 인정되는 경우 
         """
+        if self.message.startswith("EMS_CVVD"):
+            self.buffer = f"Can_{base}_Buf_A"
         return
 
     def __str__(self) -> str:

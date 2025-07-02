@@ -62,19 +62,3 @@ class SignalDecodingUnit(UnitTestCase):
         if (end_bit / 8) > end_byte:
             end_byte += 1
         return range(start_byte, end_byte, 1)
-
-    @property
-    def length(self) -> int:
-        return self._sig_.Length
-
-    @property
-    def address(self) -> int:
-        return self._sig_.StartBit
-
-    @property
-    def factor(self) -> float:
-        return self._sig_.Factor
-
-    @property
-    def offset(self) -> float:
-        return self._sig_.Offset

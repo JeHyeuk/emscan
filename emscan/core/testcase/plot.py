@@ -1,3 +1,5 @@
+import warnings
+
 from emscan.core.testcase.testcase import TestCase
 from emscan.mdf.read import MdfReader
 from emscan.env import PATH
@@ -6,7 +8,10 @@ from plotly.graph_objs import Figure, Layout, Scatter
 from warnings import warn
 from typing import Dict, List
 
+def custom_format(message, category, filename, lineno, line=None):
+    return f"{message}\n"
 
+warnings.formatwarning = custom_format
 class TestCasePlot:
 
     layout:Layout = Layout(

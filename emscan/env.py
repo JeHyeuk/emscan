@@ -1,4 +1,4 @@
-from emscan.dtype import mem, path
+from emscan.dtype import path
 import os, psutil
 
 
