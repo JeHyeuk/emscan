@@ -112,7 +112,7 @@
               <tbody>
               {% for key, col in cols.items() %}{% if key != "DEB_PARAM" %}
                   <tr class="{{ key }}">
-                    <td class="row {{ col['class'] }}">{{ col['label'] }}</td>
+                    <td class="row {{ col['class'] }}" title="[테스트 중] Tooltip 위치">{{ col['label'] }}</td>
                     <td></td>
                   </tr>{% endif %}{% endfor %}
               </tbody>

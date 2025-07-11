@@ -51,7 +51,7 @@ if __name__ == "__main__":
     import os
     set_option('display.expand_frame_repr', False)
 
-    testfile = r'\\kefico\keti\ENT\Softroom\Temp\JoJH\CAN\CAN_IC_변경\CAN2_EMS송신_Data\CAN2_tX_0627_REV1.dat'
+    testfile = r'\\kefico\keti\ENT\Softroom\Temp\JoJH\CAN\CAN_IC_변경\CAN3_EMS송신_Data\CAN3_TX_0627A_REV1.dat'
     option = {
         "Requirement - Traceability": ".".join(os.path.basename(DB.source).split(".")[:-1]),
         "Test Result": 'PASS',
@@ -67,7 +67,7 @@ if __name__ == "__main__":
     }
 
 
-    tester = SignalEncoding('EMS_LDCBMS1', **option)
+    tester = SignalEncoding('LEMS_04_10ms', **option)
     print(tester)
 
     # 보고 자료용 적합 Parameter

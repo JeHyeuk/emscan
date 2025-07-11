@@ -1,4 +1,7 @@
-from collections import defaultdict
+try:
+    from . import enum
+except ImportError:
+    from emscan.core.conf import enum
 from pandas import concat, DataFrame, Series
 from typing import Dict, List
 from xml.etree.ElementTree import Element, ElementTree
@@ -34,7 +37,7 @@ COLUMNS:Dict[str, Dict] = {
             "label": "Debouncing 방식",
             "class": "mandatory",
             "write": "selectable",
-            "option": '["", "None", "EVENT_UP_DOWN", "EVENT_IN_ROW", "TIME_UP_DOWN", "TIME_IN_ROW"]',
+            "option": str(enum.EVENT_DEBOUNCE_METHOD).replace("'", '"'),
         },
         "DEB_PARAM": {
             "label": "(Conf 존재 / 미사용 KEY)",
@@ -55,7 +58,7 @@ COLUMNS:Dict[str, Dict] = {
             "label": "Deb Parameter Data for Ratio",
             "class": "mandatory",
             "write": "selectable",
-            "option": '["", "1", "2", "3", "4"]',
+            "option": str(enum.DEB_RATIO).replace("'", '"'),
         },
         "ELEMENT_COUNT": {
             "label":"소속 Event 개수",
@@ -66,37 +69,37 @@ COLUMNS:Dict[str, Dict] = {
             "label": "Similar Conidtion 필요",
             "class": "mandatory",
             "write": "selectable",
-            "option": '["", "O", "X"]',
+            "option": str(enum.OX).replace("'", '"'),
         },
         "MIL": {
             "label": "MIL 점등 여부",
             "class": "mandatory",
             "write": "selectable",
-            "option": '["", "O", "X"]',
+            "option": str(enum.OX).replace("'", '"'),
         },
         "DCY_TEST": {
             "label": "Multiple Driving Cycle 진단",
             "class": "optional-strong",
             "write": "selectable",
-            "option": '["", "O", "X"]',
+            "option": str(enum.OX).replace("'", '"'),
         },
         "SHUT_OFF": {
             "label": "시동꺼짐 연관성 (REC)",
             "class": "mandatory-others",
             "write": "selectable",
-            "option": '["", "O", "X"]',
+            "option": str(enum.OX).replace("'", '"'),
         },
         "RESET_INIT": {
             "label": "DCY 시작시 초기화",
             "class": "mandatory",
             "write": "selectable",
-            "option": '["", "O", "X"]',
+            "option": str(enum.OX).replace("'", '"'),
         },
         "RESET_POSTCANCEL": {
             "label": "PostCancel 초기화",
             "class": "mandatory",
             "write": "selectable",
-            "option": '["", "O", "X"]',
+            "option": str(enum.OX).replace("'", '"'),
         },
         "DTC_2B": {
             "label": "기본 DTC 설정값",
@@ -122,13 +125,13 @@ COLUMNS:Dict[str, Dict] = {
             "label": "IUMPR 소속",
             "class": "optional",
             "write": "selectable",
-            "option": '["", "Catalyst_Bank1", "Catalyst_Bank2" , "OxygenSensor_Bank1", "OxygenSensor_Bank2", "EGR_VVT", "SecAirSys", "EvpSys", "SecOxySens_Bank1", "SecOxySens_Bank2", "Fuel_Bank1", "Fuel_Bank2", "GPF_Bank1", "GPF_Bank2", "NMHCCatalyst", "NOxSCRCatalyst", "NOxAdsorber", "PMFilter", "BoostPressure", "ExhaustGasSensor", "Fuel", "Private", "OEM", "Unused", "X"]',
+            "option": str(enum.IUMPR).replace("'", '"'),
         },
         "READY_GRP": {
             "label": "Readiness 소속",
             "class": "mandatory",
             "write": "selectable",
-            "option": '["", "Misf", "FlSys", "ComprCmpnt", "Cat", "HeatdCat", "EvapSys", "SecAirSys", "AirCdnr", "O2Snsr", "Exhaustgassensor", "O2SnsrHeatr", "EGR/VVT", "NMHCcatalyst", "NOx", "Resv", "Boostpressuresystem", "PMFilter", "X"]',
+            "option": str(enum.READINESS).replace("'", '"'),
         },
         "GRP_RPT": {
             "label": "Group Reporting Event",
@@ -223,25 +226,25 @@ COLUMNS:Dict[str, Dict] = {
             "label": "Scheduling Mode",
             "class": "mandatory",
             "write": "selectable",
-            "option": '["with_acknowledge", "without_acknowledge", "Inhibit_Only"]',
+            "option": str(enum.FID_SCHED_MODE).replace("'", '"'),
         },
         "LOCKED": {
             "label": "Sleep/Lock 사용 여부",
             "class": "optional",
             "write": "selectable",
-            "option": '["", "O", "X"]',
+            "option": str(enum.OX).replace("'", '"'),
         },
         "SHORT_TEST": {
             "label": "Short Test시 Permisson 처리 여부",
             "class": "optional",
             "write": "selectable",
-            "option": '["No", "Short_Test_Only", "Both"]',
+            "option": str(enum.FID_SHORTTEST).replace("'", '"'),
         },
         "FID_GROUP": {
             "label": "IUMPR Group 할당",
             "class": "mandatory",
             "write": "selectable",
-            "option": '["", "Catalyst_Bank1", "Catalyst_Bank2" , "OxygenSensor_Bank1", "OxygenSensor_Bank2", "EGR_VVT", "SecAirSys", "EvpSys", "SecOxySens_Bank1", "SecOxySens_Bank2", "Fuel_Bank1", "Fuel_Bank2", "GPF_Bank1", "GPF_Bank2", "NMHCCatalyst", "NOxSCRCatalyst", "NOxAdsorber", "PMFilter", "BoostPressure", "ExhaustGasSensor", "Fuel", "Private", "OEM", "Unused"]',
+            "option": str(enum.IUMPR).replace("'", '"'),
         },
         "IUMPR_SYSCON": {
             "label": "IUMPR 적용 System Constant 조건",
@@ -252,7 +255,7 @@ COLUMNS:Dict[str, Dict] = {
             "label": "IUMPR 분모 Release 방식",
             "class": "mandatory",
             "write": "selectable",
-            "option": '["API", "Auto"]',
+            "option": str(enum.IUMPR_DENUM_RELS).replace("'", '"'),
         },
         "NUM_RLS": {
             "label": "IUMPR 분자 Release Event",
@@ -275,7 +278,7 @@ COLUMNS:Dict[str, Dict] = {
             "class": "mandatory",
             "group": "EXCLUSION",
             "write": "selectable",
-            "option": '["", "선행", "후행"]',
+            "option": str(enum.FID_EXCLUSION_PRIO).replace("'", '"'),
         },
         "EXCLUSIVE_SYSCON": {
             "label": "배타적 FID System Constant 조건",
@@ -294,7 +297,7 @@ COLUMNS:Dict[str, Dict] = {
             "class": "mandatory",
             "group": "INHIBITED_EVENT",
             "write": "selectable",
-            "option": '["", "No_Inhibit", "Def50_Deb100", "Def100_Deb100", "Def50_Deb100_Tst", "Def100_Deb100_Tst", "Def50_Deb100_or_NTst", "Def100_Deb100_or_NTst", "Tested", "NotTested", "Def100_Deb0", "Def50_Deb0", "Def25_Deb0", "Def0_Deb0", "Def50_Deb100_Tst_Trip", "Def100_Deb100_Tst_Trip", "Def50_Deb100_MILOn"]',
+            "option": str(enum.MASK_ATTRIBUTES).replace("'", '"'),
         },
         "INHIBITED_EVENT_SYSCON": {
             "label": "상기 Event 요건의 System Constant",
@@ -313,7 +316,7 @@ COLUMNS:Dict[str, Dict] = {
             "class": "mandatory",
             "group": "INHIBITED_SUM_EVENT",
             "write": "selectable",
-            "option": '["", "No_Inhibit", "Def50_Deb100", "Def100_Deb100", "Def50_Deb100_Tst", "Def100_Deb100_Tst", "Def50_Deb100_or_NTst", "Def100_Deb100_or_NTst", "Tested", "NotTested", "Def100_Deb0", "Def50_Deb0", "Def25_Deb0", "Def0_Deb0", "Def50_Deb100_Tst_Trip", "Def100_Deb100_Tst_Trip", "Def50_Deb100_MILOn"]',
+            "option": str(enum.MASK_ATTRIBUTES).replace("'", '"'),
         },
         "INHIBITED_SUM_EVENT_SYSCON": {
             "label": "상기 Sum-Event의 System Constant",
@@ -332,7 +335,7 @@ COLUMNS:Dict[str, Dict] = {
             "class": "mandatory",
             "group": "INHIBITED_SIG",
             "write": "selectable",
-            "option": '["", "Qual_AllOk_0", "Qual_1", "Qaul_Meas_2", "Qual_PremFrozen_3", "Qual_Model_4", "Qual_5", "Qual_6", "Qual_7", "Qual_Frozen_8", "Qual_9", "Qual_10", "Qual_Tester_11", "Qual_Default_12", "Qual_13", "Qual_14", "Qual_Invalid_15"]',
+            "option": str(enum.MASK_SIG_ATTRIBUTES).replace("'", '"'),
         },
         "INHIBITED_SIG_SYSCON": {
             "label": "상기 Signal 요건의 System Constant",
@@ -444,25 +447,6 @@ COLUMNS:Dict[str, Dict] = {
     }
 }
 
-IUMPR_RENAME = {
-    "촉매 Bank1": "Catalyst_Bank1",
-    "촉매 Bank2": "Catalyst_Bank2",
-    "산소센서_Bank1": "OxygenSensor_Bank1",
-    "산소센서_Bank2": "OxygenSensor_Bank2",
-    "EGR/VVT": "EGR_VVT",
-    "2차공기": "SecAirSys",
-    "증발가스": "EvpSys",
-    "산소센서2_Bank1": "SecOxySens_Bank1",
-    "산소센서2_Bank2": "SecOxySens_Bank2",
-    "NMHC": "NMHCCatalyst",
-    "NOx촉매": "NOxSCRCatalyst",
-    "NOx흡장": "NOxAdsorber",
-    "Boost": "BoostPressure",
-    "PM_Filter": "PMFilter",
-    "배기센서": "ExhaustGasSensor",
-    "연료시스템": "Fuel"
-}
-
 
 class confReader(ElementTree):
     """
@@ -542,10 +526,6 @@ class confReader(ElementTree):
                     elements[_id][f'{key}_SYSCON'] += [getV(item, 'SW-SYSCOND')]
                     for sub_item in item.findall('CONF-ITEMS/CONF-ITEM'):
                         elements[_id][getV(sub_item, 'SHORT-NAME')] += [getV(sub_item, 'VF')]
-                        if getV(sub_item, 'SHORT-NAME') == "FID_GROUP":
-                            if getV(sub_item, 'VF') in IUMPR_RENAME:
-                                del elements[_id]["FID_GROUP"][-1]
-                                elements[_id]["FID_GROUP"] += [IUMPR_RENAME[getV(sub_item, 'VF')]]
                     continue
 
                 if key == "SCHED":

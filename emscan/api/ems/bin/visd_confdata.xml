@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MSRSW PUBLIC "-//MSR//DTD MSR SOFTWARE DTD:V2.2.2:HMC:LAI:IAI:XML:MSRSW.DTD//EN" "msrsw_v222_hmc.xml.dtd">
+<!-- File Format is generated for DEM_ASW_Conf_Tool version 1.2 by J.H.JO at 21:14:14, 01 Feb 2025 -->
+<MSRSW>
+	<CATEGORY>ConfData</CATEGORY>
+	<ADMIN-DATA>
+		<LANGUAGE>en</LANGUAGE>
+		<USED-LANGUAGES>
+			<L-10 L="en">en</L-10>
+			<L-10 L="kr">kr</L-10>
+		</USED-LANGUAGES>
+		<COMPANY-DOC-INFOS>
+			<COMPANY-DOC-INFO>
+				<COMPANY-REF>HKMC</COMPANY-REF>
+				<SDGS>
+					<SDG GID="HKMCHead-eASEE-Keywords">
+						<SD GID="Filename">visd_confdata.xml</SD>
+						<SD GID="Author"></SD>
+						<SD GID="Function">This version is created by migration tool</SD>
+						<SD GID="Domain">SDOM</SD>
+						<SD GID="User">WonMinkyu</SD>
+						<SD GID="Date">2014-08-27</SD>
+						<SD GID="Class">DEM_CONFDATA</SD>
+						<SD GID="Name">Summary</SD>
+						<SD GID="Variant">1.0.0</SD>
+						<SD GID="Revision">0</SD>
+						<SD GID="Type">XML</SD>
+						<SD GID="State">AVAILABLE</SD>
+						<SD GID="UniqueName"></SD>
+						<SD GID="Component"></SD>
+						<SD GID="Generated"></SD>
+						<SD GID="History">
+1.1.0; 0 2014.02.01 I.S.Park
+ Add Data
+
+1.0.0; 0 2014.01.31 I.S.Park
+ Initial Release
+</SD>
+					</SDG>
+				</SDGS>
+			</COMPANY-DOC-INFO>
+		</COMPANY-DOC-INFOS>
+	</ADMIN-DATA>
+	<SW-SYSTEMS>
+		<SW-SYSTEM>
+			<LONG-NAME>
+				<L-4 L="for-all">HNB</L-4>
+			</LONG-NAME>
+			<SHORT-NAME>HNB</SHORT-NAME>
+			<CONF-SPEC>
+				<CONF-ITEMS>
+					<CONF-SOURCE>
+						<SW-FEATURE-REF>VisD</SW-FEATURE-REF>
+					</CONF-SOURCE>
+					<CONF-ITEM>
+						<SHORT-NAME>DEM</SHORT-NAME>
+						<CONF-ITEMS>
+							<CONF-ITEM>
+								<SHORT-NAME>DEM_PATH</SHORT-NAME>
+								<SW-SYSCOND>VGIS_SC&gt;0</SW-SYSCOND>
+								<CONF-ITEMS>
+									<CONF-ITEM>
+										<SHORT-NAME>ELEMENT_NAME</SHORT-NAME>
+										<VF>VisvPs</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DESC</SHORT-NAME>
+										<VF>Power stage Intake manifold valve</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DESC_KR</SHORT-NAME>
+										<VF>VIS의 Power Stage 진단</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>FAULT_MAX</SHORT-NAME>
+										<VF>VisvPsMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>FAULT_MIN</SHORT-NAME>
+										<VF>VisvPsMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>FAULT_SIG</SHORT-NAME>
+										<VF>VisvPsSig</VF>
+									</CONF-ITEM>
+								</CONF-ITEMS>
+							</CONF-ITEM>
+							<CONF-ITEM>
+								<SHORT-NAME>DEM_EVENT</SHORT-NAME>
+								<SW-SYSCOND>VGIS_SC&gt;0</SW-SYSCOND>
+								<CONF-ITEMS>
+									<CONF-ITEM>
+										<SHORT-NAME>ELEMENT_NAME</SHORT-NAME>
+										<VF>VisvPsMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DESC</SHORT-NAME>
+										<VF>Max error of DEP_VisvPs: Power stage Intake manifold valve</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DEB_METHOD</SHORT-NAME>
+										<VF>None</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>SIMILAR_COND</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>MIL</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DCY_TEST</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>SHUT_OFF</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>RESET_INIT</SHORT-NAME>
+										<VF></VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>RESET_POSTCANCEL</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>IUMPR_GRP</SHORT-NAME>
+										<VF></VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>READY_GRP</SHORT-NAME>
+										<VF>Boostpressuresystem</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>GRP_RPT</SHORT-NAME>
+										<VF></VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DTC_2B</SHORT-NAME>
+										<VF>P0662</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DTC_EX</SHORT-NAME>
+										<VF>0</VF>
+									</CONF-ITEM>
+								</CONF-ITEMS>
+							</CONF-ITEM>
+							<CONF-ITEM>
+								<SHORT-NAME>DEM_EVENT</SHORT-NAME>
+								<SW-SYSCOND>VGIS_SC&gt;0</SW-SYSCOND>
+								<CONF-ITEMS>
+									<CONF-ITEM>
+										<SHORT-NAME>ELEMENT_NAME</SHORT-NAME>
+										<VF>VisvPsMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DESC</SHORT-NAME>
+										<VF>Min error of DEP_VisvPs: Power stage Intake manifold valve</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DEB_METHOD</SHORT-NAME>
+										<VF>None</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>SIMILAR_COND</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>MIL</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DCY_TEST</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>SHUT_OFF</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>RESET_INIT</SHORT-NAME>
+										<VF></VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>RESET_POSTCANCEL</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>IUMPR_GRP</SHORT-NAME>
+										<VF></VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>READY_GRP</SHORT-NAME>
+										<VF></VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>GRP_RPT</SHORT-NAME>
+										<VF></VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DTC_2B</SHORT-NAME>
+										<VF>P0661</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DTC_EX</SHORT-NAME>
+										<VF>0</VF>
+									</CONF-ITEM>
+								</CONF-ITEMS>
+							</CONF-ITEM>
+							<CONF-ITEM>
+								<SHORT-NAME>DEM_EVENT</SHORT-NAME>
+								<SW-SYSCOND>VGIS_SC&gt;0</SW-SYSCOND>
+								<CONF-ITEMS>
+									<CONF-ITEM>
+										<SHORT-NAME>ELEMENT_NAME</SHORT-NAME>
+										<VF>VisvPsSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DESC</SHORT-NAME>
+										<VF>Signal error of DEP_VisvPs: Power stage Intake manifold valve</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DEB_METHOD</SHORT-NAME>
+										<VF>None</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>SIMILAR_COND</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>MIL</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DCY_TEST</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>SHUT_OFF</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>RESET_INIT</SHORT-NAME>
+										<VF></VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>RESET_POSTCANCEL</SHORT-NAME>
+										<VF>X</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>IUMPR_GRP</SHORT-NAME>
+										<VF></VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>READY_GRP</SHORT-NAME>
+										<VF></VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>GRP_RPT</SHORT-NAME>
+										<VF></VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DTC_2B</SHORT-NAME>
+										<VF>P0660</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DTC_EX</SHORT-NAME>
+										<VF>0</VF>
+									</CONF-ITEM>
+								</CONF-ITEMS>
+							</CONF-ITEM>
+						</CONF-ITEMS>
+					</CONF-ITEM>
+				</CONF-ITEMS>
+			</CONF-SPEC>
+		</SW-SYSTEM>
+	</SW-SYSTEMS>
+	<MATCHING-DCIS>
+		<MATCHING-DCI>
+			<SHORT-LABEL>ConfData</SHORT-LABEL>
+			<URL></URL>
+		</MATCHING-DCI>
+	</MATCHING-DCIS>
+</MSRSW>

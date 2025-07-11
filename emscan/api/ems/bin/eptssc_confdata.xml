@@ -1,0 +1,1848 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MSRSW PUBLIC "-//MSR//DTD MSR SOFTWARE DTD:V2.2.2:HMC:LAI:IAI:XML:MSRSW.DTD//EN" "msrsw_v222_hmc.xml.dtd">
+<!-- File Format is generated for DEM_ASW_Conf_Tool version 1.2 by J.H.JO at 21:14:14, 01 Feb 2025 -->
+<MSRSW>
+	<CATEGORY>ConfData</CATEGORY>
+	<ADMIN-DATA>
+		<LANGUAGE>en</LANGUAGE>
+		<USED-LANGUAGES>
+			<L-10 L="en">en</L-10>
+			<L-10 L="kr">kr</L-10>
+		</USED-LANGUAGES>
+		<COMPANY-DOC-INFOS>
+			<COMPANY-DOC-INFO>
+				<COMPANY-REF>HKMC</COMPANY-REF>
+				<SDGS>
+					<SDG GID="HKMCHead-eASEE-Keywords">
+						<SD GID="Filename">eptssc_confdata.xml</SD>
+						<SD GID="Author"></SD>
+						<SD GID="Function">This version is created by migration tool</SD>
+						<SD GID="Domain">SDOM</SD>
+						<SD GID="User">1000481</SD>
+						<SD GID="Date">2020-05-13</SD>
+						<SD GID="Class">DEM_CONFDATA</SD>
+						<SD GID="Name">Summary</SD>
+						<SD GID="Variant">1.0.0</SD>
+						<SD GID="Revision">0</SD>
+						<SD GID="Type">XML</SD>
+						<SD GID="State">AVAILABLE</SD>
+						<SD GID="UniqueName"></SD>
+						<SD GID="Component"></SD>
+						<SD GID="Generated"></SD>
+						<SD GID="History">
+1.6.0; 0 2022.12.06 YoonJungmin
+ Add VGT System
+1.5.0; 0 2020.05.13 HyunJae.Cho
+ Inhibit Source of FID EngOffCoast, EngRunngCoast is Changed(DEve_USnsrSply2 is added)
+
+1.4.0; 0 2020.03.10 HyunJae.Cho
+ Not required inhibit source of FID EngOffCoast, EngRunngCoast is deleted
+
+1.3.0; 0 2020.02.28 HyunJae.Cho
+ Not required inhibit source of FID EngOffCoast, EngRunngCoast is deleted
+
+1.2.0; 0 2020.01.10 HyunJae.Cho
+ Inhibit Source of FID EngOffCoast, EngRunngCoast is Changed
+
+1.1.0; 0 2019.12.30 HyunJae.Cho
+ Inhibit Source of FID EngOffCoast, EngRunngCoast is Changed
+
+1.0.0; 0 2019.11.18 HyunJae.Cho
+ Initial Release
+</SD>
+					</SDG>
+				</SDGS>
+			</COMPANY-DOC-INFO>
+		</COMPANY-DOC-INFOS>
+	</ADMIN-DATA>
+	<SW-SYSTEMS>
+		<SW-SYSTEM>
+			<LONG-NAME>
+				<L-4 L="for-all">HNB</L-4>
+			</LONG-NAME>
+			<SHORT-NAME>HNB</SHORT-NAME>
+			<CONF-SPEC>
+				<CONF-ITEMS>
+					<CONF-SOURCE>
+						<SW-FEATURE-REF>EptSsc</SW-FEATURE-REF>
+					</CONF-SOURCE>
+					<CONF-ITEM>
+						<SHORT-NAME>DEM</SHORT-NAME>
+						<CONF-ITEMS>
+							<CONF-ITEM>
+								<SHORT-NAME>FIM</SHORT-NAME>
+								<CONF-ITEMS>
+									<CONF-ITEM>
+										<SHORT-NAME>ELEMENT_NAME</SHORT-NAME>
+										<VF>EngOffCoast</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DESC</SHORT-NAME>
+										<VF>FID for engine off coasting enable</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>SCHED_MODE</SHORT-NAME>
+										<VF>Inhibit_Only</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TPS1Max</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TPS1Min</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TPS1Npl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TPS2Max</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TPS2Min</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TPS2Npl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(ETC_OPNGSPRGCHK_SC &gt; 0)</SW-SYSCOND>
+										<VF>ETCOpnSprgChkMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPRngSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPRngNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPRngMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPRngMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPUNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPUMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPUMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPStuck</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPStallPrevnSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPDeMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPDeMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPDeCatHMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPDeCatHMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPCtrlMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPCtrlMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuHiPDrop</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>InCAM1ErrSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>InCAM1NoSigMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>InCAM1NoSigMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>USnsrSply1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>ExCAM1ErrSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>ExCAM1NoSigMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>ExCAM1NoSigMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(HKMC_ECUTYPE_SC==3)</SW-SYSCOND>
+										<VF>USnsrSply2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CKPSigNoSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CKPSigErrSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgSnsrValMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgSnsrValMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgCtrlVlvMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgCtrlVlvMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgCtrlVlvNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgCtrlVlvSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgAdpMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgAdpMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgDiagSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>BoostPCtrlMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>DumpVlvMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuLoPMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuLoPMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPmpRly2PsSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPmpRly2PsMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPmpRly2PsMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPmpRlyPsSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPmpRlyPsMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPmpRlyPsMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoPSnsrSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoPSnsrSho</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoPSnsrOpen</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoPSnsrHi</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoFuPmpSys</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoFuPmpSho</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoFuPmpOverCurr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoFuPmpCtrlr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoPSnsrStuck</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoPSnsrRngMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoPSnsrRngMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoFuPmpSyCtl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>App1UMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>App2UMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>App1UMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>App2UMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>AppSync</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>HfmMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>MAPSumFlt</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInCANBusOff</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInCANLostCom</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInCANInvld</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInOverTemp</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInOverVolt</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInUndrVolt</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInOverCurr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInHallSnsrErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInAgSnsrErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInIntFlt</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInPosStrErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInAdpnStrErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CanBusOff</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CanBusOff2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CanBusOff3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd1Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd2Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd3Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd1CRC</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd1Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd2CRC</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd2Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd3CRC</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd3Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInAdpMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInAdpMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInAdpJmpErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInAdpTiErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInSyncErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInRngErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInCSSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtExCSMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtExNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtExPsMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtExPsMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtExPsSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtExSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtInCSMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtInNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtInPsMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtInPsMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtInPsSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtInSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2Strt</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2InjCutOffLvl2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>MoXWDAMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>MoXWDAActv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>MoXWDACom</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2InjCutOffLvl1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo3AdcTstPls</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo3AdcTstU</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2IgnTmng</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2TqComp</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2EngSpd</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2AirFuCyl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2ModComp</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2MixChk</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2Rlc</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2AirFuCutOff</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2AirMPred</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2App</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrOpen0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrOpen1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrOpen2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrOpen3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiMax0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiMax1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiMax2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrPsHiMax3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiMin0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiMin1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiMin2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrPsHiMin3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiNpl0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiNpl1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiNpl2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrPsHiNpl3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoMax0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoMax1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoMax2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrPsLoMax3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoMin0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoMin1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoMin2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrPsLoMin3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoNpl0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoNpl1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoNpl2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrPsLoNpl3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoSig0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoSig1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoSig2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrPsLoSig3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsOpen0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsOpen1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CaneCL3Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CaneCL3Chks</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CaneCL3Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>iBattSMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CanTcu16Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CanTcu16Chks</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CanTcu16Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FDTcu02Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FDTcu02Crc</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FDTcu02Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2SumTqComp</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>USnsrSply2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTAdpMaxErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTAdpMinErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTCtrlVlvMaxErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTCtrlVlvMinErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTCtrlVlvNplErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTCtrlVlvSigErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTDiagSigErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTDiagNplErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTSnsrValMax(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTSnsrValMin(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTElecSig(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTElecNpl(Def50_Deb100)</VF>
+									</CONF-ITEM>
+								</CONF-ITEMS>
+							</CONF-ITEM>
+							<CONF-ITEM>
+								<SHORT-NAME>FIM</SHORT-NAME>
+								<CONF-ITEMS>
+									<CONF-ITEM>
+										<SHORT-NAME>ELEMENT_NAME</SHORT-NAME>
+										<VF>EngRunngCoast</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>DESC</SHORT-NAME>
+										<VF>FID for engine running coasting enable</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>SCHED_MODE</SHORT-NAME>
+										<VF>Inhibit_Only</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TPS1Max</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TPS1Min</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TPS1Npl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TPS2Max</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TPS2Min</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TPS2Npl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(ETC_OPNGSPRGCHK_SC &gt; 0)</SW-SYSCOND>
+										<VF>ETCOpnSprgChkMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPRngSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPRngNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPRngMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPRngMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPUNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPUMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPUMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuRailPStuck</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPStallPrevnSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPDeMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPDeMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPDeCatHMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPDeCatHMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPCtrlMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPCtrlMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuHiPDrop</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>InCAM1ErrSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>InCAM1NoSigMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>InCAM1NoSigMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>USnsrSply1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>ExCAM1ErrSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>ExCAM1NoSigMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>ExCAM1NoSigMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(HKMC_ECUTYPE_SC==3)</SW-SYSCOND>
+										<VF>USnsrSply2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CKPSigNoSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CKPSigErrSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgSnsrValMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgSnsrValMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgCtrlVlvMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgCtrlVlvMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgCtrlVlvNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgCtrlVlvSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgAdpMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgAdpMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>TurChrgDiagSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>BoostPCtrlMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>DumpVlvMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuLoPMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuLoPMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPmpRly2PsSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPmpRly2PsMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPmpRly2PsMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPmpRlyPsSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPmpRlyPsMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FuPmpRlyPsMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoPSnsrSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoPSnsrSho</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoPSnsrOpen</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoPSnsrHi</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoFuPmpSys</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoFuPmpSho</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoFuPmpOverCurr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoFuPmpCtrlr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoPSnsrStuck</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoPSnsrRngMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoPSnsrRngMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>LoFuPmpSyCtl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>App1UMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>App2UMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>App1UMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>App2UMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>AppSync</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>HfmMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>MAPSumFlt</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInCANBusOff</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInCANLostCom</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInCANInvld</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInOverTemp</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInOverVolt</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInUndrVolt</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInOverCurr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInHallSnsrErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInAgSnsrErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInIntFlt</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInPosStrErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInAdpnStrErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CanBusOff</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CanBusOff2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CanBusOff3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd1Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd2Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd3Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd1CRC</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd1Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd2CRC</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd2Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd3CRC</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>CanCvvd3Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInAdpMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInAdpMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInAdpJmpErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInAdpTiErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInSyncErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInRngErr</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VVD_SC &gt; 0</SW-SYSCOND>
+										<VF>VvdInCSSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtExCSMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtExNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtExPsMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtExPsMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtExPsSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtExSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtInCSMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtInNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtInPsMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtInPsMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtInPsSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>VvtInSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2Strt</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2InjCutOffLvl2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>MoXWDAMax</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>MoXWDAActv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>MoXWDACom</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2InjCutOffLvl1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo3AdcTstPls</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo3AdcTstU</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2IgnTmng</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2TqComp</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2EngSpd</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2AirFuCyl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2ModComp</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2MixChk</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2Rlc</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2AirFuCutOff</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2AirMPred</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2App</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsNpl</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsSig</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrOpen0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrOpen1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrOpen2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrOpen3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiMax0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiMax1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiMax2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrPsHiMax3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiMin0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiMin1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiMin2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrPsHiMin3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiNpl0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiNpl1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsHiNpl2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrPsHiNpl3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoMax0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoMax1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoMax2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrPsLoMax3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoMin0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoMin1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoMin2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrPsLoMin3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoNpl0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoNpl1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoNpl2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrPsLoNpl3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoSig0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoSig1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsLoSig2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0) &amp;&amp; (CYL_NR_SC &gt; 3)</SW-SYSCOND>
+										<VF>InjrPsLoSig3</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsOpen0</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>(GDI_SC &gt; 0)</SW-SYSCOND>
+										<VF>InjrPsOpen1</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CaneCL3Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CaneCL3Chks</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CaneCL3Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>iBattSMin</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CanTcu16Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CanTcu16Chks</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>CanTcu16Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FDTcu02Msg</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FDTcu02Crc</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>FDTcu02Alv</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>Mo2SumTqComp</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<VF>USnsrSply2</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTAdpMaxErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTAdpMinErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTCtrlVlvMaxErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTCtrlVlvMinErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTCtrlVlvNplErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTCtrlVlvSigErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTDiagSigErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTDiagNplErr(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTSnsrValMax(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTSnsrValMin(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTElecSig(Def50_Deb100)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>
+										<SW-SYSCOND>VGTTYP_SC == 1</SW-SYSCOND>
+										<VF>VGTElecNpl(Def50_Deb100)</VF>
+									</CONF-ITEM>
+								</CONF-ITEMS>
+							</CONF-ITEM>
+						</CONF-ITEMS>
+					</CONF-ITEM>
+				</CONF-ITEMS>
+			</CONF-SPEC>
+		</SW-SYSTEM>
+	</SW-SYSTEMS>
+	<MATCHING-DCIS>
+		<MATCHING-DCI>
+			<SHORT-LABEL>ConfData</SHORT-LABEL>
+			<URL></URL>
+		</MATCHING-DCI>
+	</MATCHING-DCIS>
+</MSRSW>

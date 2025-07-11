@@ -102,12 +102,16 @@ function readConf(src) {
 					.attr('data-group', objMeta['group'])
 					.find('.row').addClass('group');
 				}
+				$(this).find('.row').attr('title', '[테스트 중] Tooltip 위치');
 				$(this).find('td:not(.row)').each(function() {
 					$val = $(this).html();
 			  		$(this).addClass(objMeta["write"]);
 			  		if (objMeta["write"] === "selectable") {
 						let $select = $('<select></select>').attr('data-selected', $val);
-						JSON.parse(objMeta["option"]).forEach(function(item) {
+						if (typeof objMeta.option === 'string') {
+						    objMeta.option = JSON.parse(objMeta.option);
+						}
+                        objMeta.option.forEach(function(item) {
 				  			$select.append($(`<option value="${item}">${item}</option>`));
 				  		});
 						$select.val($val);
