@@ -1,452 +1,20 @@
 try:
-    from . import enum
+    import KEYS as COLUMNS
+    from ...config.deco import vargs
 except ImportError:
-    from emscan.core.conf import enum
+    from emscan.core.conf import KEYS as COLUMNS
+    from emscan.config.deco import vargs
 from pandas import concat, DataFrame, Series
+from re import search
 from typing import Dict, List
 from xml.etree.ElementTree import Element, ElementTree
 
 
-T_ADMIN: str = 'ADMIN-DATA/COMPANY-DOC-INFOS/COMPANY-DOC-INFO/SDGS/SDG/SD'
-T_MODEL: str = 'SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-SOURCE/SW-FEATURE-REF'
-T_ITEMS: str = 'SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-ITEM/CONF-ITEMS/CONF-ITEM'
-
-COLUMNS:Dict[str, Dict] = {
-    "EVENT": {
-        "ELEMENT_NAME": {
-            "label": "진단 Event 명칭",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "DESC": {
-            "label": "진단 Event 설명(영문)",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "DESC_KR": {
-            "label": "진단 Event 설명(한글)",
-            "class": "optional",
-            "write": "writable",
-        },
-        "SYSCON": {
-            "label": "System Constant 조건",
-            "class": "optional-strong",
-            "write": "writable",
-        },
-        "DEB_METHOD": {
-            "label": "Debouncing 방식",
-            "class": "mandatory",
-            "write": "selectable",
-            "option": str(enum.EVENT_DEBOUNCE_METHOD).replace("'", '"'),
-        },
-        "DEB_PARAM": {
-            "label": "(Conf 존재 / 미사용 KEY)",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "DEB_PARAM_OK": {
-            "label": "Deb Parameter Data for OK",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "DEB_PARAM_Def": {
-            "label": "Deb Parameter Data for Def",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "DEB_PARAM_Ratio": {
-            "label": "Deb Parameter Data for Ratio",
-            "class": "mandatory",
-            "write": "selectable",
-            "option": str(enum.DEB_RATIO).replace("'", '"'),
-        },
-        "ELEMENT_COUNT": {
-            "label":"소속 Event 개수",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "SIMILAR_COND": {
-            "label": "Similar Conidtion 필요",
-            "class": "mandatory",
-            "write": "selectable",
-            "option": str(enum.OX).replace("'", '"'),
-        },
-        "MIL": {
-            "label": "MIL 점등 여부",
-            "class": "mandatory",
-            "write": "selectable",
-            "option": str(enum.OX).replace("'", '"'),
-        },
-        "DCY_TEST": {
-            "label": "Multiple Driving Cycle 진단",
-            "class": "optional-strong",
-            "write": "selectable",
-            "option": str(enum.OX).replace("'", '"'),
-        },
-        "SHUT_OFF": {
-            "label": "시동꺼짐 연관성 (REC)",
-            "class": "mandatory-others",
-            "write": "selectable",
-            "option": str(enum.OX).replace("'", '"'),
-        },
-        "RESET_INIT": {
-            "label": "DCY 시작시 초기화",
-            "class": "mandatory",
-            "write": "selectable",
-            "option": str(enum.OX).replace("'", '"'),
-        },
-        "RESET_POSTCANCEL": {
-            "label": "PostCancel 초기화",
-            "class": "mandatory",
-            "write": "selectable",
-            "option": str(enum.OX).replace("'", '"'),
-        },
-        "DTC_2B": {
-            "label": "기본 DTC 설정값",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "DTC_EX": {
-            "label": "확장 DTC 설정값 (UDS용)",
-            "class": "optional-strong",
-            "write": "writable",
-        },
-        "MDL_INHIBIT": {
-            "label": "모듈 자체의 금지 조건 (Event)",
-            "class": "optional-demdoc",
-            "write": "writable",
-        },
-        "REQ_FID": {
-            "label": "모듈 자체의 진단 조건 (FID)",
-            "class": "optional-demdoc",
-            "write": "writable",
-        },
-        "IUMPR_GRP": {
-            "label": "IUMPR 소속",
-            "class": "optional",
-            "write": "selectable",
-            "option": str(enum.IUMPR).replace("'", '"'),
-        },
-        "READY_GRP": {
-            "label": "Readiness 소속",
-            "class": "mandatory",
-            "write": "selectable",
-            "option": str(enum.READINESS).replace("'", '"'),
-        },
-        "GRP_RPT": {
-            "label": "Group Reporting Event",
-            "class": "mandatory",
-            "write": "writable",
-        }
-    },
-    "PATH": {
-        "ELEMENT_NAME": {
-            "label": "Event Path 명칭",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "DESC": {
-            "label": "진단 Event Path 설명(영문)",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "DESC_KR": {
-            "label": "진단 Event Path 설명(한글)",
-            "class": "optional",
-            "write": "writable",
-        },
-        "SYSCON": {
-            "label": "System Constant 조건",
-            "class": "optional-strong",
-            "write": "writable",
-        },
-        "FAULT_MAX": {
-            "label": "Max 고장 Event 명칭",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "FAULT_MIN": {
-            "label": "Min 고장 Event 명칭",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "FAULT_SIG": {
-            "label": "Sig 고장 Event 명칭",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "FAULT_NPL" : {
-            "label": "Plaus 고장 Event 명칭",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "MDL_INHIBIT": {
-            "label": "모듈 자체의 금지 조건 (Event)",
-            "class": "optional-demdoc",
-            "write": "writable",
-        },
-        "REQ_FID": {
-            "label": "모듈 자체의 진단 조건 (FID)",
-            "class": "optional-demdoc",
-            "write": "writable",
-        },
-    },
-    "FID": {
-        "ELEMENT_NAME": {
-            "label": "함수 식별자 명칭",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "DESC": {
-            "label": "함수 식별자 설명(영문)",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "DESC_KR": {
-            "label": "함수 식별자 설명(한글)",
-            "class": "optional",
-            "write": "writable",
-        },
-        "SYSCON": {
-            "label": "System Constant 조건",
-            "class": "optional-strong",
-            "write": "writable",
-        },
-        "PROVIDING_EVENT": {
-            "label": "모듈에서 이 FID가 진단 조건인 Event",
-            "class": "optional",
-            "write": "writable",
-        },
-        "PROVIDING_SIGNAL": {
-            "label": "모듈에서 이 FID가 진단 조건인 Signal",
-            "class": "optional",
-            "write": "writable",
-        },
-        "SCHED_MODE": {
-            "label": "Scheduling Mode",
-            "class": "mandatory",
-            "write": "selectable",
-            "option": str(enum.FID_SCHED_MODE).replace("'", '"'),
-        },
-        "LOCKED": {
-            "label": "Sleep/Lock 사용 여부",
-            "class": "optional",
-            "write": "selectable",
-            "option": str(enum.OX).replace("'", '"'),
-        },
-        "SHORT_TEST": {
-            "label": "Short Test시 Permisson 처리 여부",
-            "class": "optional",
-            "write": "selectable",
-            "option": str(enum.FID_SHORTTEST).replace("'", '"'),
-        },
-        "FID_GROUP": {
-            "label": "IUMPR Group 할당",
-            "class": "mandatory",
-            "write": "selectable",
-            "option": str(enum.IUMPR).replace("'", '"'),
-        },
-        "IUMPR_SYSCON": {
-            "label": "IUMPR 적용 System Constant 조건",
-            "class": "optional-strong",
-            "write": "writable",
-        },
-        "DENOM_PHYRLS": {
-            "label": "IUMPR 분모 Release 방식",
-            "class": "mandatory",
-            "write": "selectable",
-            "option": str(enum.IUMPR_DENUM_RELS).replace("'", '"'),
-        },
-        "NUM_RLS": {
-            "label": "IUMPR 분자 Release Event",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "ENG_MODE": {
-            "label": "Ready 조건 GDI 모드",
-            "class": "optional",
-            "write": "writable",
-        },
-        "EXCLUSION": {
-            "label": "배타적 FID 관계",
-            "class": "mandatory",
-            "group": "EXCLUSION",
-            "write": "writable",
-        },
-        "EXCLU_PRIO": {
-            "label": "배타적 FID 처리 순서",
-            "class": "mandatory",
-            "group": "EXCLUSION",
-            "write": "selectable",
-            "option": str(enum.FID_EXCLUSION_PRIO).replace("'", '"'),
-        },
-        "EXCLUSIVE_SYSCON": {
-            "label": "배타적 FID System Constant 조건",
-            "class": "optional-strong",
-            "group": "EXCLUSION",
-            "write": "writable",
-        },
-        "INHIBITED_EVENT": {
-            "label": "FID 금지 요건인 Event",
-            "class": "mandatory",
-            "group": "INHIBITED_EVENT",
-            "write": "writable",
-        },
-        "INHIBITED_EVENT_MASK": {
-            "label": "상기 Event 요건의 Mask 속성",
-            "class": "mandatory",
-            "group": "INHIBITED_EVENT",
-            "write": "selectable",
-            "option": str(enum.MASK_ATTRIBUTES).replace("'", '"'),
-        },
-        "INHIBITED_EVENT_SYSCON": {
-            "label": "상기 Event 요건의 System Constant",
-            "class": "optional-strong",
-            "group": "INHIBITED_EVENT",
-            "write": "writable",
-        },
-        "INHIBITED_SUM_EVENT": {
-            "label": "FID 금지 요건인 Sum-Event",
-            "class": "mandatory",
-            "group": "INHIBITED_SUM_EVENT",
-            "write": "writable",
-        },
-        "INHIBITED_SUM_EVENT_MASK": {
-            "label": "상기 Sum-Event 요건의 Mask 속성",
-            "class": "mandatory",
-            "group": "INHIBITED_SUM_EVENT",
-            "write": "selectable",
-            "option": str(enum.MASK_ATTRIBUTES).replace("'", '"'),
-        },
-        "INHIBITED_SUM_EVENT_SYSCON": {
-            "label": "상기 Sum-Event의 System Constant",
-            "class": "optional-strong",
-            "group": "INHIBITED_SUM_EVENT",
-            "write": "writable",
-        },
-        "INHIBITED_SIG": {
-            "label": "FID 금지 요건인 Signal",
-            "class": "mandatory",
-            "group": "INHIBITED_SIG",
-            "write": "writable",
-        },
-        "INHIBITED_SIG_MASK": {
-            "label": "상기 Signal 요건의 Mask 속성",
-            "class": "mandatory",
-            "group": "INHIBITED_SIG",
-            "write": "selectable",
-            "option": str(enum.MASK_SIG_ATTRIBUTES).replace("'", '"'),
-        },
-        "INHIBITED_SIG_SYSCON": {
-            "label": "상기 Signal 요건의 System Constant",
-            "class": "optional-strong",
-            "group": "INHIBITED_SIG",
-            "write": "writable",
-        },
-        "PROVIDED": {
-            "label": "FID가 Mode7 조건인 Signal",
-            "class": "mandatory",
-            "group": "PROVIDED",
-            "write": "writable",
-        },
-        "PROVIDED_SYSCON": {
-            "label": "상기 Signal의 System Constant 조건",
-            "class": "optional-strong",
-            "group": "PROVIDED",
-            "write": "writable",
-        },
-    },
-    "DTR": {
-        "ELEMENT_NAME": {
-            "label": "DTR test 명칭",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "DESC" : {
-            "label": "DTR test 설명(영문)",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "DESC_KR": {
-            "label": "DTR test 설명(한글)",
-            "class": "optional",
-            "write": "writable",
-        },
-        "SYSCON": {
-            "label": "System Constant 조건",
-            "class": "optional-strong",
-            "write": "writable",
-        },
-        "EVENT": {
-            "label": "관련 Event",
-            "class": "optional-demdoc",
-            "write": "writable",
-        },
-        "ELEMENT_COUNT": {
-            "label": "소속 DTR 개수",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "UASID": {
-            "label": "Unit and Scaling ID",
-            "class": "mandatory-others",
-            "write": "writable",
-        },
-        "OBDMID": {
-            "label": "OBD MID",
-            "class": "mandatory-others",
-            "write": "writable",
-        },
-        "TID": {
-            "label": "Test ID",
-            "class": "mandatory-others",
-            "write": "writable",
-        }
-    },
-    "SIG": {
-        "ELEMENT_NAME": {
-            "label": "신호 명칭",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "DESC": {
-            "label": "신호 설명(영문)",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "DESC_KR": {
-            "label": "신호 설명(한글)",
-            "class": "optional",
-            "write": "writable",
-        },
-        "SYSCON": {
-            "label": "System Constant 조건",
-            "class": "optional-strong",
-            "write": "writable",
-        },
-        "ELEMENT_COUNT": {
-            "label": "소속 신호 개수",
-            "class": "mandatory",
-            "write": "writable",
-        },
-        "NOT_LABELD1": {
-            "label": "모듈 자체의 Invalid 조건 Event",
-            "class": "optional",
-            "write": "writable",
-        },
-        "NOT_LABELD2": {
-            "label": "모듈 자체의 Invalid 조건 Signal",
-            "class": "optional",
-            "write": "writable",
-        },
-        "MDL_INHIBIT": {
-            "label": "모듈 자체의 진단 조건 (FID)",
-            "class": "optional-demdoc",
-            "write": "writable",
-        }
-    }
-}
-
+TAGS = Series({
+    "ADMIN":'ADMIN-DATA/COMPANY-DOC-INFOS/COMPANY-DOC-INFO/SDGS/SDG/SD',
+    "MODEL":'SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-SOURCE/SW-FEATURE-REF',
+    "ITEMS":'SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-ITEM/CONF-ITEMS/CONF-ITEM'
+})
 
 class confReader(ElementTree):
     """
@@ -460,145 +28,175 @@ class confReader(ElementTree):
     ----------------------------------------------------------------------------------------------------
     |   V00.1   | 24th, Jan, 2025  | JEHYEUK LEE |  Initial Release
     |   V00.2   | 11th, Feb, 2025  | JEHYEUK LEE |  Inheritance Type Changed: DataFrame -> ElementTree
+    |   V00.2   | 16th, Jul, 2025  | JEHYEUK LEE |  J1979, Guide note for each key-row
     ----------------------------------------------------------------------------------------------------
     """
-    COLUMNS = COLUMNS.copy()
-    TABS:Dict = {
-        "DEM_EVENT": "EVENT",
-        "DEM_PATH": "PATH",
-        "FIM": "FID",
-        "DEM_DTR": "DTR",
-        "DEM_SIG": "SIG"
-    }
-
     def __init__(self, conf:str):
         super().__init__(file=conf)
-        self._admin = {"Model": self.find(T_MODEL).text}
-        self._admin.update({tag.attrib["GID"]: tag.text for tag in self.findall(T_ADMIN)})
+        self._admin = {"Model": self.find(TAGS.MODEL).text}
+        self._admin.update({tag.attrib["GID"]: tag.text for tag in self.findall(TAGS.ADMIN)})
         return
 
-    def columns(self, kind:str):
-        return COLUMNS[self.TABS[kind]]
+    # def columns(self, kind:str):
+    #     return COLUMNS[self.TABS[kind]]
 
+    @vargs("EVENT", "PATH", "FID", "DTR", "SIG")
     def dem(self, kind:str) -> Dict[str, Dict[str, List]]:
         """
-        :param kind: One of ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]
-        :return:
+        confdata 에서 사용자가 입력한 탭:EVENT, PATH, FID, DTR, SIG에 대한 정보를 읽는다.
+
+        :param kind[str]: One of ["EVENT", "PATH", "FID", "DTR", "SIG"]
+        :return: [dict]
+
         """
-        def getV(_o, _t):
-            v = _o.find(_t).text if _o.find(_t) is not None else ''
-            return '' if not v else v
+        def _get_text(_obj:Element, _tag_name:str):
+            """
+            xml 요소(Object)에 대한 태그의 Text 값을 읽는다.
+            """
+            if _obj.find(_tag_name) is None:
+                return ''
+            _text = _obj.find(_tag_name).text
+            if (not _text) or (_text is None):
+                return ''
+            return _text
 
-        if not kind.upper() in self.TABS:
-            raise KeyError()
-        columns = self.columns(kind.upper())
 
-        elements:Dict[str, Dict[str, List]] = {}
-        for dem in self.findall(T_ITEMS):
+        # 입력 탭에 대한 KEY 정보 호출:
+        # KEY 정보는 동일 경로 KEYS.py 내 정의되어 있음
+        KEYS = getattr(COLUMNS, kind)
+        NAME = {"EVENT": "DEM_EVENT", "PATH":"DEM_PATH", "FID":"FIM", "DTR":"DEM_DTR", "SIG": "DEM_SIG"}[kind]
 
-            dem_type = dem.find('SHORT-NAME').text # DEM 이름
-            if not kind.upper() in dem_type:
+        # PARSING 되어 읽어온 DEM 정보에 대한 결과 변수
+        read:Dict[str, Dict[str, List]] = {}
+
+        for item in self.findall(TAGS.ITEMS):
+
+            # 사용자가 입력한 탭이 아닌 경우 읽지 않음
+            if not item.find('SHORT-NAME').text == NAME:
                 continue
 
-            name_tag = dem.find('CONF-ITEMS/CONF-ITEM')
-            if name_tag.find('SHORT-NAME').text != 'ELEMENT_NAME':
-                raise AttributeError('ELEMENT_NAME이 없습니다')
+            # DEM 항목 이름
+            _obj_name = item.find('CONF-ITEMS/CONF-ITEM')
+            if not _get_text(_obj_name, 'SHORT-NAME') == "ELEMENT_NAME":
+                raise ValueError(f'필수 입력 항목: "ELEMENT_NAME"이 {kind} 내 없습니다.')
+            name = _get_text(_obj_name, 'VF')
 
-            name = name_tag.find('VF').text
-            sysc = getV(dem, 'SW-SYSCOND')
-            _id = f'{name}-{sysc}'.replace(" ", "")
-            elements[_id] = {key: [] for key in columns}
-            elements[_id]['ELEMENT_NAME'] += [name]
-            elements[_id]['SYSCON'] += [getV(dem, 'SW-SYSCOND')]
+            # DEM 항목의 SYSCON (정의된 경우)
+            syscon = _get_text(item, 'SW-SYSCOND')
 
-            for item in dem.findall('CONF-ITEMS/CONF-ITEM'):
-                key = item.find('SHORT-NAME').text
+            # DEM 항목 ID 생성
+            DID = f'{name}-{syscon}'.replace(" ", "")
+
+            # DID에 대한 DEM 정보 초기화(비어 있는 리스트로 초기화)
+            read[DID] = data = {key: [] for key in KEYS}
+            data['ELEMENT_NAME'].append(name)
+            data['SYSCON'].append(syscon)
+
+            # DEM 항목의 DEM 정보 읽기
+            for info in item.findall('CONF-ITEMS/CONF-ITEM'):
+                key = _get_text(info, 'SHORT-NAME')
+
+                # 이미 정의된 key 값은 제외
+                if key in ['ELEMENT_NAME', 'SYSCON']:
+                    continue
+
+                # 특수 DEM 항목: 다중 LAYER 항목은 예외처리
+                # DEB_PARAM @EVENT
                 if key == "DEB_PARAM":
-                    if not "None" in elements[_id]["DEB_METHOD"]:
-                        val = getV(item, 'VF')
+                    if not "None" in data["DEB_METHOD"]:
+                        val = _get_text(info, 'VF')
                         if val.startswith("(,"):
                             continue
                         deb_index = ["DEB_PARAM_OK", "DEB_PARAM_Def", "DEB_PARAM_Ratio"]
                         for n, deb in enumerate(eval(val)):
-                            elements[_id][deb_index[n]] += [f"{deb}"]
+                            data[deb_index[n]] += [f"{deb}"]
+                    continue
 
+                # IUMPR @FID
+                # ㄴDENOM_PHYRLS
+                # ㄴNUM_RLS
+                # ㄴFID_GROUP
                 if key == "IUMPR":
-                    elements[_id][f'{key}_SYSCON'] += [getV(item, 'SW-SYSCOND')]
-                    for sub_item in item.findall('CONF-ITEMS/CONF-ITEM'):
-                        elements[_id][getV(sub_item, 'SHORT-NAME')] += [getV(sub_item, 'VF')]
+                    data['IUMPR_SYSCON'] += [_get_text(info, 'SW-SYSCOND')]
+                    for _info in info.findall('CONF-ITEMS/CONF-ITEM'):
+                        data[_get_text(_info, 'SHORT-NAME')] += [_get_text(_info, 'VF')]
                     continue
 
+                # SCHED @FID
+                # ㄴLOCKED
+                # ㄴENG_MODE
+                # ㄴSHORT_TEST
+                # ㄴEXCLUSIVE
+                #   ㄴEXCLUSION
+                #   ㄴEXCLU_PRIO
                 if key == "SCHED":
-                    for sub_item in item.findall('CONF-ITEMS/CONF-ITEM'):
-                        sub_key = sub_item.find('SHORT-NAME').text
-                        if sub_key == "EXCLUSIVE":
-                            elements[_id][f'{sub_key}_SYSCON'] += [getV(sub_item, 'SW-SYSCOND')]
-                            for sub_item2 in sub_item.findall('CONF-ITEMS/CONF-ITEM'):
-                                elements[_id][getV(sub_item2, 'SHORT-NAME')] += [getV(sub_item2, 'VF')]
+                    for _info in info.findall('CONF-ITEMS/CONF-ITEM'):
+                        _key = _get_text(_info, 'SHORT-NAME')
+                        if _key == "EXCLUSIVE":
+                            data[f'{_key}_SYSCON'] += [_get_text(_info, 'SW-SYSCOND')]
+                            for __info in _info.findall('CONF-ITEMS/CONF-ITEM'):
+                                data[_get_text(__info, 'SHORT-NAME')] += [_get_text(__info, 'VF')]
                             continue
-                        elements[_id][sub_key] += [sub_item.find('VF').text]
+                        data[_key] += [_get_text(_info, 'VF')]
                     continue
 
-                if "group" in columns[key]:
-                    g_name = item.find('VF').text
-                    g_mask = "" if not "(" in g_name else g_name[g_name.find("(") + 1: g_name.find(")")]
-                    g_sysc = "" if item.find('SW-SYSCOND') is None else item.find('SW-SYSCOND').text
-                    elements[_id][key] += [g_name.replace(f'({g_mask})', '')].copy()
+                # GROUPING 항목
+                # INHIBITED_EVENT @FID
+                if "group" in KEYS[key]:
+                    group_name = _get_text(info, 'VF')
+                    group_mask = search(r"\((.*?)\)", group_name)
+                    group_mask = group_mask.group(1) if group_mask else ""
+                    group_syscon = _get_text(info, 'SW-SYSCOND')
+
+                    data[key] += [group_name.replace(f'({group_mask})', '')].copy()
                     if key != "PROVIDED":
-                        elements[_id][f'{key}_MASK'] += [g_mask]
-                    elements[_id][f'{key}_SYSCON'] += [g_sysc]
+                        data[f'{key}_MASK'] += [group_mask]
+                    data[f'{key}_SYSCON'] += [group_syscon]
                     continue
 
-                elements[_id][key] = [getV(item, 'VF')]
-        return elements
+                data[key] = [_get_text(info, 'VF')]
+
+        return read
 
 
     def html(self, kind:str) -> str:
         lf = lambda v: v.replace("\n", "<br>")
 
-        _ELEMENTS = self.dem(kind)
-        _COLUMNS = self.columns(kind)
-        _GROUPS = list(set([prop['group'] for prop in _COLUMNS.values() if 'group' in prop]))
-        if not _ELEMENTS:
-            _ELEMENTS[" "] = { key: [""] for key in _COLUMNS }
+        KEYS = getattr(COLUMNS, kind)
+        GRPS = {key: spec for key, spec in KEYS.items() if "group" in spec}
+        ELEM = self.dem(kind)
+        if not ELEM:
+            ELEM[" "] = {key: [""] for key in KEYS}
 
-        headers = []
-        bodies = []
-        for n, (key, spec) in enumerate(_COLUMNS.items()):
+        head = []
+        body = []
+        for n, (key, spec) in enumerate(KEYS.items()):
             if key == "DEB_PARAM":
                 continue
 
-            if "group" in spec and _ELEMENTS:
-                n_group_row = max([len(prop[key]) for prop in _ELEMENTS.values()])
-                if n_group_row:
-                    if not key in _GROUPS:
+            if ELEM and "group" in spec:
+                n_of_group = max([len(prop[key]) for prop in ELEM.values()])
+                if n_of_group:
+                    group_set = {_key: _spec for _key, _spec in GRPS.items() if _spec["group"] == spec["group"]}
+                    group_key = list(set([_spec["group"] for _spec in group_set.values()]))
+                    if not key in group_key:
                         continue
-                    group_columns = {}
-                    for _key, _spec in _COLUMNS.items():
-                        if "group" in _spec and _spec["group"] == spec["group"]:
-                            group_columns[_key] = _spec
-
-                    for m in range(n_group_row):
-                        for _key, _spec in group_columns.items():
+                    for m in range(n_of_group):
+                        for _key, _spec in group_set.items():
                             tds = [f'<td class="row {_spec["class"]}">{_spec["label"]}</td>']
-                            for element, prop in _ELEMENTS.items():
-                                try:
-                                    tds.append(
-                                        f'<td value="{element}">{lf(prop[_key][m])}</td>'
-                                    )
-                                except IndexError:
-                                    tds.append(
-                                        f'<td value="{lf(element)}"></td>'
-                                    )
+                            for element, prop in ELEM.items():
+                                if 0 <= m < len(prop[_key]):
+                                    tds.append(f'<td value="{element}">{lf(prop[_key][m])}</td>')
+                                else:
+                                    tds.append(f'<td value="{element}"></td>')
                             td = '\n'.join(tds)
-                            bodies.append(f'<tr class="{_key}">\n{td}\n</tr>')
+                            body.append(f'<tr class="{_key}">\n{td}\n</tr>')
                     continue
 
-
             tds = [f'<td class="row {spec["class"]}">{spec["label"]}</td>']
-            for element, prop in _ELEMENTS.items():
+            for element, prop in ELEM.items():
                 if not n:
-                    headers.append(f'<td value="{element}" ></td>')
+                    head.append(f'<td value="{element}" ></td>')
 
                 if not prop[key]:
                     value = ""
@@ -610,25 +208,23 @@ class confReader(ElementTree):
                 if value is None:
                     value = ""
 
-                tds.append(
-                    f'<td value="{element}">{lf(value)}</td>'
-                )
+                tds.append(f'<td value="{element}">{lf(value)}</td>')
             td = '\n'.join(tds)
-            bodies.append(f'<tr class="{key}">\n{td}\n</tr>')
+            body.append(f'<tr class="{key}">\n{td}\n</tr>')
 
-        td_header = "\n".join(headers)
-        tr_bodies = "\n".join(bodies)
+        td_header = "\n".join(head)
+        tr_bodies = "\n".join(body)
         return f'''
-<thead>
-  <tr>
-    <td class="row dem-count"></td>
-{td_header}
+    <thead>
+      <tr>
+        <td class="row dem-count"></td>
+    {td_header}
 
-  </tr>
-</thead>
-<tbody>
-{tr_bodies}
-</tbody>'''
+      </tr>
+    </thead>
+    <tbody>
+    {tr_bodies}
+    </tbody>'''
 
 
     @property
@@ -679,32 +275,27 @@ if __name__ == "__main__":
     from pprint import pprint
     set_option('display.expand_frame_repr', False)
 
-    csrc = lambda file: rf'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\{file}_confdata.xml'
-    conf = confReader(
-        # r'./template.xml'
-        # r'D:\canfdabsd_confdata.xml'
-        csrc('pcvmond')
-    )
 
+    TESTMODE = 0
 
-    # print(conf.admin)
-    # print(conf.history)
-    # ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]
-    demType = "FIM"
-    pprint(conf.dem(demType))
-    # print(conf.html(demType))
+    if TESTMODE == 0:
+        csrc = lambda file: rf'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\{file}_confdata.xml'
+        conf = confReader(csrc('aafd'))
 
-    # from emscan.config import PATH
-    # import os
-    # for n, xml in enumerate([c for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xml')]):
-    #     # print(f'{n+1} {os.path.join(PATH.SVN.CONF, conf)}', '*' * 50)
-    #     conf = os.path.join(PATH.SVN.CONF, xml)
-    #     read = confReader(conf)
-    #     # for dem in ["DEM_PATH", "DEM_EVENT", "FIM", "DEM_DTR", "DEM_SIG"]:
-    #     #     try:
-    #     #         test = read.html(dem)
-    #     #     except Exception as error:
-    #     #         print(f"ERROR: {dem} @{n+1}/{xml}")
-    #     #         print(error)
-    #
-    #     read.html("DEM_EVENT")
+        # print(conf.admin)
+        # print(conf.history)
+        demType = "FID"
+        # pprint(conf.dem(demType))
+        print(conf.html(demType))
+    else:
+        from emscan.config import PATH
+        import os
+        for n, xml in enumerate([c for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xml')]):
+            conf = os.path.join(PATH.SVN.CONF, xml)
+            read = confReader(conf)
+            for dem in ["PATH", "EVENT", "FID", "DTR", "SIG"]:
+                # try:
+                test = read.html(dem)
+                # test = read.dem(dem)
+                # except Exception as error:
+                #     print(f"ERROR: {dem} @{n+1}/{xml}, {error}")

@@ -311,9 +311,15 @@ textarea {
     transform: translateX(-50%);
 }
 
-.config .exe > i.bi-download::after {
+.config .exe > i.bi-download::after,
+.config .exe > i.bi-person-fill-down::after {
     transform: translateX(-100%);
 }
+
+.config-exception::after {
+    transform: translateX(-50%) !important;
+}
+
 .color-box::after {
     z-index: 10;
 }

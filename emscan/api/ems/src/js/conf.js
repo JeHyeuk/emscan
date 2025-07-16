@@ -72,8 +72,8 @@ function readConf(src) {
 	})
 	.then(response => response.json())
 	.then(data => {
+	    const meta = ["PATH", "EVENT", "FID", "DTR", "SIG"];
 		var admin = JSON.parse(data.admin);
-		var meta = JSON.parse(data.meta);
 		var keys = JSON.parse(data.keys);
 	
 		$('.module').html(admin.Model);
@@ -85,7 +85,8 @@ function readConf(src) {
 		$('.svn-user').html(admin.SVNUser);
 		$('.history').html(data.history);
 			
-		Object.entries(meta).forEach(([key, obj]) => {
+//		Object.entries(meta).forEach(([key, obj]) => {
+        meta.forEach(obj => {
 		  	let objCount = data[`N${obj}`];
 		  	let objClass = keys[obj];
   
@@ -102,7 +103,7 @@ function readConf(src) {
 					.attr('data-group', objMeta['group'])
 					.find('.row').addClass('group');
 				}
-				$(this).find('.row').attr('title', '[테스트 중] Tooltip 위치');
+				$(this).find('.row').attr('title', objMeta.note);
 				$(this).find('td:not(.row)').each(function() {
 					$val = $(this).html();
 			  		$(this).addClass(objMeta["write"]);
@@ -162,6 +163,15 @@ function downloadConf(conf) {
 		a.remove();
 	})
 	.catch(error => console.error("Error:", error));
+}
+
+function backTest() {
+/* -------------------------------------------------
+	AUTHOR      : JEHYEUK LEE
+	PUBLISHED   : 2025-07-16
+	DESCRIPTION :
+		API로 confdata 파일 생성 요청 및 파일 응답
+------------------------------------------------- */
 }
   
 function editCell(cell) {
@@ -412,9 +422,11 @@ function updateEventCounter() {
   
 
 $(document)
-//   .on("contextmenu", function(e) {
-//     e.preventDefault();
-//   })
+.ready(function(){
+    if($('.backtest').length){
+        $('.bi-download').addClass('config-exception');
+    }
+})
 .on('select2:select', '.confdata-list', function(e) {
 /* =============================================================
 	[EVENT BINDER]

@@ -1,5 +1,6 @@
 try:
-    from ...core.conf.read import confReader, COLUMNS
+    from ...core.conf.read import confReader
+    from ...core.conf.KEYS import COLUMNS
     from ...config import PATH
     from ...svn.vcon import VersionControl
     from ...svn.scon import SourceControl
@@ -14,7 +15,8 @@ try:
         REST
     )
 except ImportError:
-    from emscan.core.conf.read import confReader, COLUMNS
+    from emscan.core.conf.read import confReader
+    from emscan.core.conf.KEYS import COLUMNS
     from emscan.config import PATH
     from emscan.svn.vcon import VersionControl
     from emscan.svn.scon import SourceControl
@@ -60,7 +62,11 @@ async def read_conf(request:Request):
     :param request:
     :return:
     """
-    return template.TemplateResponse("conf-1.1.0.html", {"request": request, "columns": COLUMNS})
+    return template.TemplateResponse("conf-1.1.0.html", {
+        "request": request,
+        "columns": COLUMNS,
+        "user": os.environ["USERNAME"]
+    })
 
 @app.get("/load-conf")
 def load_conf():
@@ -82,12 +88,11 @@ def read_conf(conf:str=Form(...)):
     data = {
         "admin": admin.to_json(),
         "history": read.history.replace("\n", "<br>"),
-        "meta": dumps(read.TABS),
-        "keys": dumps(read.COLUMNS)
+        "keys": dumps(COLUMNS)
     }
-    for tab, key in read.TABS.items():
-        data[key] = read.html(tab)
-        data[f'N{key}'] = len(read.dem(tab))
+    for key in ["EVENT", "PATH", "FID", "DTR", "SIG"]:
+        data[key] = read.html(key)
+        data[f'N{key}'] = len(read.dem(key))
     return JSONResponse(content=jsonable_encoder(data))
 
 @app.post("/download-conf")
