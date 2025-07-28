@@ -41,6 +41,15 @@ import os, uvicorn, logging
 
 
 
+"""
+CONFIGURATIONS
+"""
+TEAM_NAME = "전동화PT제어1팀"
+
+
+"""
+INITIALIZE FAST API
+"""
 app = FastAPI()
 app.mount("/src", StaticFiles(directory="src"), name="src")
 template = Jinja2Templates(directory="src/template")

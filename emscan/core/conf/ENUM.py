@@ -58,7 +58,7 @@ IUMPR = [
 ]
 
 READINESS = [
-     "Misf",
+    "Misf",
     "실화",
     "FlSys",
     "연료시스템",
@@ -183,4 +183,5 @@ MASK_SIG_ATTRIBUTES = [
     "Qual_13",
     "Qual_14",
     "Qual_Invalid_15",
+    "Qual_Meas_2"
 ]

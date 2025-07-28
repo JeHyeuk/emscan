@@ -18,8 +18,10 @@ for n, xml in enumerate([c for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xm
     conf = os.path.join(PATH.SVN.CONF, xml)
 
     read = confReader(conf)
-    test = "\n".join([read.html(dem) for dem in ["PATH", "EVENT", "FID", "DTR", "SIG"]])
-
+    test = "\n".join([
+        f'<table>{read.html(dem)}</table>' for dem in ["PATH", "EVENT", "FID", "DTR", "SIG"]
+    ])
+    test = f'<table>{read.adminHtml}</table>\n{test}'
     summary, event_list, path_list, fid_list, dtr_list, sig_list = tableParser(test)
 
     file = os.path.join(PATH.DOWNLOADS, rf"bin/{xml}")
@@ -31,3 +33,5 @@ for n, xml in enumerate([c for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xm
         DTR_Sheet(f, dtr_list)
         Sig_Sheet(f, sig_list)
         REST(f)
+    if n == 0:
+        raise SystemExit

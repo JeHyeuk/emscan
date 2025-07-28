@@ -262,12 +262,54 @@ class confReader(ElementTree):
         history_label = "History"
         if self._admin["Model"] in ["EgrD", "EgrFAC", "EgrR", "EgrChrMx"]:
             history_label = "Variant"
+        print(self._admin["Variant"])
         history = self._admin[history_label]
+
         while not (history[0].isalpha() or history[0].isdigit()):
             history = history[1:]
         while not (history[-1].isalpha() or history[-1].isdigit()):
             history = history[:-1]
         return history
+
+    @property
+    def adminHtml(self) -> str:
+        admin = self.admin
+        return f"""
+            <tbody>
+              <tr>
+                <td class="key row mandatory" title="Read Only">모듈명</td>
+                <td class="module read-only">{admin["Model"]}</td>
+              </tr>
+              <tr>
+                <td class="key row mandatory" title="Read Only">파일명</td>
+                <td class="conf-unit read-only">{admin["Filename"]}</td>
+              </tr>
+              <tr>
+                <td class="key row optional-strong">작성자 (영문)</td>
+                <td class="user writable">{admin["Author"]}</td>
+              </tr>
+              <tr>
+                <td class="key row optional-strong" title="자동 생성 항목">최근 생성일</td>
+                <td class="gen-date read-only">{admin["Date"]}</td>
+              </tr>
+              <tr>
+                <td class="key row mandatory-others" title="Read Only">SVN 변경일자</td>
+                <td class="svn-date read-only">2023-07-05 16:40:21</td>
+              </tr>
+              <tr>
+                <td class="key row mandatory-others" title="Read Only">SVN 버전</td>
+                <td class="svn-version read-only">46066</td>
+              </tr>
+              <tr>
+                <td class="key row mandatory-others" title="Read Only">SVN 최근 작성자</td>
+                <td class="svn-user read-only">22011118@KEFICO</td>
+              </tr>
+              <tr>
+                <td class="key row optional-strong">이력</td>
+                <td class="history writable paragraph">{self.history}</td>
+              </tr>
+            </tbody>
+"""
 
 
 if __name__ == "__main__":
@@ -280,13 +322,13 @@ if __name__ == "__main__":
 
     if TESTMODE == 0:
         csrc = lambda file: rf'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\{file}_confdata.xml'
-        conf = confReader(csrc('aafd'))
+        conf = confReader(csrc('egrr_mg6'))
 
         # print(conf.admin)
-        # print(conf.history)
+        print(conf.history)
         demType = "FID"
         # pprint(conf.dem(demType))
-        print(conf.html(demType))
+        # print(conf.html(demType))
     else:
         from emscan.config import PATH
         import os
