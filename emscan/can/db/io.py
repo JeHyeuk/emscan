@@ -1,10 +1,10 @@
 try:
-    from ._column import autofix
+    from .columns import autofix
     from ...config import PATH
     from ...core.xl.read import readXL
     from ...svn.vcon import VersionControl
 except ImportError:
-    from emscan.can.db._column import autofix
+    from emscan.can.db.columns import autofix
     from emscan.config import PATH
     from emscan.core.xl.read import readXL
     from emscan.svn.vcon import VersionControl

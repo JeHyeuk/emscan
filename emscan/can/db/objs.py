@@ -1,8 +1,8 @@
 try:
-    from ._column import Columns
+    from .columns import Columns
     from ...config.error import SignalError
 except ImportError:
-    from emscan.can.db._column import Columns
+    from emscan.can.db.columns import Columns
     from emscan.config.error import SignalError
 from pandas import DataFrame, Series
 from typing import Any, Dict, Union
@@ -159,43 +159,3 @@ class MessageObj(Series):
     def hasAliveCounter(self) -> bool:
         return False if self.AliveCounter.empty else True
 
-
-class CANmem(object):
-
-    def __init__(self, **kwargs):
-        self.__mem__:Dict[str, Any] = kwargs
-        return
-
-    # def __getattr__(self, item):
-    #     try:
-    #         return self.__mem__[item]
-    #     except KeyError:
-    #         return getattr(self, item)
-
-    def __getitem__(self, item):
-        if isinstance(item, int):
-            return list(self.__mem__.values())[item]
-        return self.__mem__[item]
-
-    def __setitem__(self, key, value):
-        self.__mem__[key] = value
-        return
-
-    def __iter__(self):
-        for key, value in self.__mem__.items():
-            yield key, value
-
-    def __len__(self) -> int:
-        return len(self.__mem__)
-
-    def __contains__(self, item):
-        return item in self.__mem__
-
-    def keys(self):
-        return list(self.__mem__.keys())
-
-    def values(self):
-        return list(self.__mem__.values())
-
-    def items(self):
-        return self.__mem__.items()

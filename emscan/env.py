@@ -1,6 +1,9 @@
 from emscan.dtype import path
-import os, psutil
+import os, psutil, zipfile
 
+
+SUPPLIER = 'HYUNDAI KEFICO Co.,Ltd'
+DIVISION = 'Vehicle Control Solution Team'
 
 __os__ = os.environ
 USERPROFILE = __os__['USERPROFILE'] if "USERPROFILE" in __os__ else ""
@@ -31,41 +34,53 @@ class PATH:
 
     if ETASDATA:
         ETASDATA.EXPORT = path(ETASDATA, r'ASCET6.1\Export')
-        if not ETASDATA.EXPORT.isdir:
-            ETASDATA.EXPORT = None
-
+        ETASDATA.BIN = path(ETASDATA, r'ASCET6.1\bin')
         ETASDATA.WORKSPACE = path(ETASDATA, r'ASCET6.1\Workspaces')
-        if not ETASDATA.WORKSPACE.isdir:
-            ETASDATA.WORKSPACE = None
+
 
     if SVN:
         SVN.CANDB = path(SVN, r'dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database')
-        if not SVN.CANDB.isdir:
-            SVN.CANDB = None
-        else:
-            SVN.CANDB.DEV = path(SVN.CANDB, r'dev')
-            SVN.CANDB.DBC = path(SVN.CANDB, r'dbc')
-
+        SVN.CANDB.DEV = path(SVN.CANDB, r'dev')
+        SVN.CANDB.DBC = path(SVN.CANDB, r'dbc')
         SVN.CANTC = path(SVN, r'dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_TestCase')
-        if not SVN.CANTC.isdir:
-            SVN.CANTC = None
 
         SVN.IR = path(SVN, r'GSL_Build\8_IntegrationRequest')
-        if not os.path.isdir(SVN.IR):
-            SVN.IR = None
-
         SVN.SDD = path(SVN, r'GSL_Build\7_Notes')
-        if not os.path.isdir(SVN.SDD):
-            SVN.SDD = None
-
         SVN.CHANGEHISTORY = path(SVN, r'GSL_Release\4_SW변경이력')
-        if not os.path.isdir(SVN.CHANGEHISTORY):
-            SVN.CHANGEHISTORY = None
-
         SVN.CONF = path(SVN, r'GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename')
-        if not os.path.isdir(SVN.CONF):
-            SVN.CONF = None
+        SVN.MODEL = path(SVN, r'model\ascet\trunk')
+        SVN.CANMODEL = path(SVN.MODEL, r'HNB_GASOLINE\_29_CommunicationVehicle')
 
+
+    @classmethod
+    def makedir(cls, dst:str) -> str:
+        os.makedirs(dst, exist_ok=True)
+        return dst
+
+    @classmethod
+    def unzip(cls, src: str, to: str = "") -> bool:
+        """
+        압축(.zip) 해제
+        :param src: 압축파일 경로
+        :param to : [optional] 압축파일을 풀 경로
+        :return:
+        """
+        if to:
+            os.makedirs(to, exist_ok=True)
+        if not to:
+            to = os.path.dirname(src)
+        if not os.path.isfile(src):
+            raise KeyError(f"src: {src}는 경로가 포함된 파일(Full-Directory)이어야 합니다.")
+        if src.endswith('.zip'):
+            zip_obj = zipfile.ZipFile(src)
+            zip_obj.extractall(to)
+        # elif src.endswith('.7z'):
+        #     with py7zr.SevenZipFile(src, 'r') as arc:
+        #         arc.extractall(path=to)
+        else:
+            # raise KeyError(f"src: {src}는 .zip 또는 .7z 압축 파일만 입력할 수 있습니다.")
+            raise KeyError(f"src: {src}는 .zip 압축 파일만 입력할 수 있습니다.")
+        return True
 
 
 

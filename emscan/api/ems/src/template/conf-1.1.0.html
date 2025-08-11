@@ -6,7 +6,7 @@
 
   <link rel="stylesheet" href="/src/css/icon.css">
   <link rel="stylesheet" href="/src/css/select2.min.css">
-  <link rel="stylesheet" href="/src/css/style.css">  
+  <link rel="stylesheet" href="/src/css/style-conf.css">
   <link rel="icon" href="/src/img/favicon-1.1.0.ico" type="image/x-icon">
 
   <script type="text/javascript" src="/src/js/jquery-3.6.1.min.js"></script>
@@ -37,9 +37,6 @@
         <div class="exe search"><select name="model" class="confdata-list"></select></div>
         <div class="exe reload"><i class="bi bi-arrow-clockwise" data-tooltip="파일 리로드"></i></div>
         <div class="exe download"><i class="bi bi-download" data-tooltip="파일 다운로드"></i></div>
-        {% if user in ["22011148", "22403041", "22011187"] %}
-        <div class="exe backtest"><i class="bi bi-person-fill-down" data-tooltip="관리자 다운로드(전체)"></i></div>
-        {% endif %}
       </div>
     
       <div class="content">
@@ -139,8 +136,6 @@
 	
 		
 
-
-    </section>
   </main>
 
   <footer class="footer">

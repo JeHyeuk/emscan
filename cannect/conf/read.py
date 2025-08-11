@@ -1,10 +1,6 @@
-try:
-    import KEYS as COLUMNS
-    from ...config.deco import vargs
-except ImportError:
-    from emscan.core.conf import KEYS as COLUMNS
-    from emscan.config.deco import vargs
-from pandas import concat, DataFrame, Series
+from pyems.decorators import constrain
+from cannect.conf import KEYS as COLUMNS
+from pandas import Series
 from re import search
 from typing import Dict, List
 from xml.etree.ElementTree import Element, ElementTree
@@ -40,7 +36,7 @@ class confReader(ElementTree):
     # def columns(self, kind:str):
     #     return COLUMNS[self.TABS[kind]]
 
-    @vargs("EVENT", "PATH", "FID", "DTR", "SIG")
+    @constrain("EVENT", "PATH", "FID", "DTR", "SIG")
     def dem(self, kind:str) -> Dict[str, Dict[str, List]]:
         """
         confdata 에서 사용자가 입력한 탭:EVENT, PATH, FID, DTR, SIG에 대한 정보를 읽는다.

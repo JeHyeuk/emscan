@@ -12,6 +12,8 @@ Columns = {
         "show_on_html": True,
         "property": "common",
         "dtype": str,
+        "width": 100,
+        "align": "center",
     },
     "Message":{
         "other_names": ["message", "msg"],
@@ -19,6 +21,8 @@ Columns = {
         "show_on_html": True,
         "property": "common",
         "dtype": str,
+        "width": 140,
+        "align": "center",
     },
     "ID":{
         "other_names": ["id"],
@@ -26,6 +30,8 @@ Columns = {
         "show_on_html": True,
         "property": "common",
         "dtype": str,
+        "width": 60,
+        "align": "center",
     },
     "DLC":{
         "other_names": ["dlc"],
@@ -33,6 +39,8 @@ Columns = {
         "show_on_html": True,
         "property": "message",
         "dtype": int,
+        "width": 30,
+        "align": "center",
     },
     "Send Type":{
         "other_names": ["sendtype"],
@@ -40,6 +48,8 @@ Columns = {
         "show_on_html": True,
         "property": "message",
         "dtype": str,
+        "width": 30,
+        "align": "center",
     },
     "Cycle Time":{
         "other_names": ["cycletime"],
@@ -47,6 +57,8 @@ Columns = {
         "show_on_html": True,
         "property": "common",
         "dtype": int,
+        "width": 30,
+        "align": "center",
     },
     "Signal":{
         "other_names": ["signal", "sig"],
@@ -54,6 +66,8 @@ Columns = {
         "show_on_html": True,
         "property": "signal",
         "dtype": str,
+        "width": 200,
+        "align": "left",
     },
     "Definition":{
         "other_names": ["definition"],
@@ -61,6 +75,8 @@ Columns = {
         "show_on_html": False,
         "property": "signal",
         "dtype": str,
+        "width": 240,
+        "align": "left",
     },
     "Length":{
         "other_names": ["length", "Length\n(Bit)"],
@@ -68,6 +84,8 @@ Columns = {
         "show_on_html": True,
         "property": "signal",
         "dtype": int,
+        "width": 30,
+        "align": "center",
     },
     "StartBit":{
         "other_names": ["startbit", "Startbit", "address"],
@@ -75,6 +93,8 @@ Columns = {
         "show_on_html": True,
         "property": "signal",
         "dtype": int,
+        "width": 30,
+        "align": "center",
     },
     "Sig Receivers":{
         "other_names": ["Destination", "receiver"],
@@ -82,6 +102,8 @@ Columns = {
         "show_on_html": False,
         "property": "signal",
         "dtype": str,
+        "width": 80,
+        "align": "left",
     },
     "UserSigValidity":{
         "other_names": [],
@@ -89,6 +111,8 @@ Columns = {
         "show_on_html": True,
         "property": "signal",
         "dtype": str,
+        "width": 60,
+        "align": "center",
     },
     "Value Table":{
         "other_names": ["table"],
@@ -96,6 +120,8 @@ Columns = {
         "show_on_html": False,
         "property": "signal",
         "dtype": str,
+        "width": 140,
+        "align": "left",
     },
     "Value Type":{
         "other_names": ["type"],
@@ -103,6 +129,8 @@ Columns = {
         "show_on_html": True,
         "property": "signal",
         "dtype": str,
+        "width": 80,
+        "align": "center",
     },
     "GenSigStartValue":{
         "other_names": ["startvalue", "initialValue", "initial"],
@@ -110,6 +138,8 @@ Columns = {
         "show_on_html": True,
         "property": "signal",
         "dtype": str,
+        "width": 80,
+        "align": "center",
     },
     "Factor":{
         "other_names": ["factor"],
@@ -117,6 +147,8 @@ Columns = {
         "show_on_html": True,
         "property": "signal",
         "dtype": float,
+        "width": 60,
+        "align": "center",
     },
     "Offset":{
         "other_names": ["offset"],
@@ -124,6 +156,8 @@ Columns = {
         "show_on_html": True,
         "property": "signal",
         "dtype": float,
+        "width": 60,
+        "align": "center",
     },
     "Min":{
         "other_names": ["min"],
@@ -131,6 +165,8 @@ Columns = {
         "show_on_html": False,
         "property": "signal",
         "dtype": float,
+        "width": 60,
+        "align": "center",
     },
     "Max":{
         "other_names": ["max"],
@@ -138,6 +174,8 @@ Columns = {
         "show_on_html": False,
         "property": "signal",
         "dtype": float,
+        "width": 60,
+        "align": "center",
     },
     "Unit":{
         "other_names": ["unit"],
@@ -145,6 +183,8 @@ Columns = {
         "show_on_html": True,
         "property": "signal",
         "dtype": str,
+        "width": 60,
+        "align": "center",
     },
     "Local Network Wake Up Request":{
         "other_names": [],
@@ -152,6 +192,8 @@ Columns = {
         "show_on_html": True,
         "property": "message",
         "dtype": str,
+        "width": 40,
+        "align": "center",
     },
     "Network Request Holding Time":{
         "other_names": [],
@@ -159,6 +201,8 @@ Columns = {
         "show_on_html": False,
         "property": None,
         "dtype": str,
+        "width": 30,
+        "align": "center",
     },
     "Description":{
         "other_names": ["description"],
@@ -166,6 +210,8 @@ Columns = {
         "show_on_html": False,
         "property": "signal",
         "dtype": str,
+        "width": 100,
+        "align": "left",
     },
     "Version":{
         "other_names": ["version"],
@@ -173,6 +219,8 @@ Columns = {
         "show_on_html": False,
         "property": "signal",
         "dtype": str,
+        "width": 80,
+        "align": "center",
     },
     "Timeout": {
         "other_names": [],
@@ -180,6 +228,8 @@ Columns = {
         "show_on_html": False,
         "property": "message",
         "dtype": str,
+        "width": 80,
+        "align": "center",
     },
     "ByteOrder": {
         "other_names": [],
@@ -187,6 +237,8 @@ Columns = {
         "show_on_html": True,
         "property": "message",
         "dtype": str,
+        "width": 80,
+        "align": "center",
     },
     "ICE Channel":{
         "other_names": [],
@@ -194,6 +246,8 @@ Columns = {
         "show_on_html": True,
         "property": "message",
         "dtype": str,
+        "width": 60,
+        "align": "center",
     },
     "ICE WakeUp":{
         "other_names": [],
@@ -201,6 +255,8 @@ Columns = {
         "show_on_html": True,
         "property": "message",
         "dtype": str,
+        "width": 60,
+        "align": "center",
     },
     "HEV Channel":{
         "other_names": [],
@@ -208,6 +264,8 @@ Columns = {
         "show_on_html": True,
         "property": "message",
         "dtype": str,
+        "width": 60,
+        "align": "center",
     },
     "HEV WakeUp": {
         "other_names": [],
@@ -215,6 +273,8 @@ Columns = {
         "show_on_html": True,
         "property": "message",
         "dtype": str,
+        "width": 60,
+        "align": "center",
     },
     "SystemConstant":{
         "other_names": [],
@@ -222,6 +282,8 @@ Columns = {
         "show_on_html": True,
         "property": "message",
         "dtype": str,
+        "width": 160,
+        "align": "center",
     },
     "Codeword":{
         "other_names": [],
@@ -229,6 +291,8 @@ Columns = {
         "show_on_html": True,
         "property": "message",
         "dtype": str,
+        "width": 160,
+        "align": "center",
     },
     "Formula":{
         "other_names": [],
@@ -236,6 +300,8 @@ Columns = {
         "show_on_html": True,
         "property": "signal",
         "dtype": str,
+        "width": 140,
+        "align": "center",
     },
     "SignedProcessing":{
         "other_names": [],
@@ -243,6 +309,8 @@ Columns = {
         "show_on_html": True,
         "property": "signal",
         "dtype": str,
+        "width": 100,
+        "align": "center",
     },
     "InterfacedVariable":{
         "other_names": [],
@@ -250,6 +318,8 @@ Columns = {
         "show_on_html": True,
         "property": "signal",
         "dtype": str,
+        "width": 200,
+        "align": "left",
     },
     "SignalRenamed":{
         "other_names": [],
@@ -257,6 +327,8 @@ Columns = {
         "show_on_html": True,
         "property": "signal",
         "dtype": str,
+        "width": 200,
+        "align": "left",
     },
     "History":{
         "other_names": [],
@@ -264,6 +336,8 @@ Columns = {
         "show_on_html": False,
         "property": "signal",
         "dtype": str,
+        "width": 100,
+        "align": "center",
     },
     "Remark":{
         "other_names": [],
@@ -271,6 +345,8 @@ Columns = {
         "show_on_html": False,
         "property": "signal",
         "dtype": str,
+        "width": 100,
+        "align": "center",
     }
 }
 
@@ -286,3 +362,14 @@ def autofix(columns:Iterable) -> list:
         if not col in new_columns:
             raise ColumnError(f"Cannot find {col} in columns; {columns}")
     return new_columns
+
+def jss(columns:Iterable) -> list:
+    cols = []
+    for col in columns:
+        if not col in Columns:
+            cols.append({"type": "text", "width": 100})
+        else:
+            attr = Columns[col]
+            cols.append({"type": "text", "width": attr["width"], "title":col, "align": attr["align"]})
+    return cols
+

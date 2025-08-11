@@ -1,10 +1,10 @@
 from random import choice, choices, shuffle
 from time import time
-from typing import List
+from typing import List, Union
 import string
 
 
-def oidGenerator(count:int) -> List[str]:
+def generateOID(count:int=1) -> Union[str, List[str]]:
     syntax1 = [
         '1ngg01pp', '1ngg00p9', '03000000', '1ngg01a0', '1ngg0140',
         '000g00p9', '04136psg', '00000300', '038g01ah', '000g0136',
@@ -19,9 +19,11 @@ def oidGenerator(count:int) -> List[str]:
         randomkey = list(timestamp[-8:]) + choices(charset, k=5)
         shuffle(randomkey)
         oids.append(f'_040g{choice(syntax1)}{choice(syntax2)}{"".join(randomkey)}')
+    if len(oids) == 1:
+        return oids[0]
     return oids
 
 
 if __name__ == "__main__":
-    for oid in oidGenerator(100):
+    for oid in generateOID(100):
         print(oid)

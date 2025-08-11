@@ -89,7 +89,7 @@ function readConf(src) {
         meta.forEach(obj => {
 		  	let objCount = data[`N${obj}`];
 		  	let objClass = keys[obj];
-  
+
 		  	$(`.tab[data-label="${obj}"]`).html(`${obj}(${objCount})`);
 		  	$(`#${obj}`).html(data[obj]);
 			$(`#${obj} .dem-count`).html(`${objCount} ITEMS`);

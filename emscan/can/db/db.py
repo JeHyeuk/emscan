@@ -1,11 +1,13 @@
 try:
     from .io import DBio
-    from ._column import Columns
-    from .objs import CANmem, MessageObj, SignalObj
+    from .columns import Columns
+    from .objs import MessageObj, SignalObj
+    from ...dtype import dDict
 except ImportError:
     from emscan.can.db.io import DBio
-    from emscan.can.db._column import Columns
-    from emscan.can.db.objs import CANmem, MessageObj, SignalObj
+    from emscan.can.db.columns import Columns
+    from emscan.can.db.objs import MessageObj, SignalObj
+    from emscan.dtype import dDict
 from pandas import DataFrame
 from typing import Union
 import pandas as pd
@@ -14,7 +16,8 @@ import os
 
 class db(DataFrame):
     _source:str = ""
-    _message: CANmem = CANmem()
+    _message: dDict = dDict()
+    isDevMode:bool = False
 
     def __init__(self, source:str=""):
         super().__init__()
@@ -48,8 +51,12 @@ class db(DataFrame):
         return ".".join(os.path.basename(self.source).split(".")[:-1])
 
     @property
-    def messages(self) -> CANmem:
+    def messages(self) -> dDict:
         return self._message
+
+    @property
+    def signals(self) -> list:
+        return [SignalObj(sig) for _, sig in self.iterrows()]
 
     @staticmethod
     def align_message(dataframe:DataFrame):
@@ -85,7 +92,7 @@ class db(DataFrame):
                 self[col] = self[col].astype(prop["dtype"])
         self.fillna("", inplace=True)
 
-        self._message = CANmem(**{msg:MessageObj(df) for msg, df in self.groupby(by="Message")})
+        self._message = dDict(**{msg:MessageObj(df) for msg, df in self.groupby(by="Message")})
         return
 
     def constraint(self, key):
@@ -142,7 +149,7 @@ class db(DataFrame):
         base = pd.concat(objs=[base, ph_p, ph_h], axis=0, ignore_index=True)
         base["Channel"] = base[f"{spec} Channel"]
         base["WakeUp"] = base[f"{spec} WakeUp"]
-
+        self.isDevMode = True
         self.reset(base)
         return
 
@@ -157,6 +164,7 @@ if __name__ == "__main__":
 
     # print(DB.source)
     print(DB)
+    print(DB.columns)
     # DB.dev_mode("HEV")
     # DB.dev_mode("ICE")
     # print(DB)
@@ -167,9 +175,8 @@ if __name__ == "__main__":
     # print(DB("ABS_ESC_01_10ms"))
     # print(DB("ABS_ESC_01_10ms", "Signal"))
 
-    myMsg = DB("HTCU_05_10ms")
-    print(myMsg)
-    print(myMsg.signals)
-    print(myMsg.hasAliveCounter())
-    print(myMsg.hasCRC())
-
+    # myMsg = DB("HTCU_05_10ms")
+    # print(myMsg)
+    # print(myMsg.signals)
+    # print(myMsg.hasAliveCounter())
+    # print(myMsg.hasCRC())

@@ -1,6 +1,7 @@
 import os
 
-class mem(dict):
+
+class dDict(dict):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         for key, value in kwargs.items():
@@ -13,9 +14,9 @@ class mem(dict):
 
     def __getattr__(self, attr):
         try:
+            return super().__getattribute__(attr)
+        except AttributeError:
             return self[attr]
-        except KeyError:
-            raise AttributeError(f"No such attribute: {attr}")
 
     def __setattr__(self, attr, value):
         self[attr] = value
@@ -60,6 +61,12 @@ class path(str):
 
     def makefile(self, file:str):
         return os.path.join(self, file)
+
+    def findfile(self, file:str):
+        for _root, _dirs, _files in os.walk(self):
+            if file in _files:
+                return os.path.join(_root, file)
+        raise FileNotFoundError
 
 
 

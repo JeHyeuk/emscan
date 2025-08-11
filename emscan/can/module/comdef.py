@@ -1,17 +1,17 @@
 try:
     from ...core.ascet.module.module import Module
+    from ...core.ascet.oid import oidGenerator
     from ...config import PATH
     from ...config.error import ObjectIDError
     from ..db.db import db
     from .core import ccode, element
-    from .oid import oidGenerator
 except ImportError:
     from emscan.config import PATH
     from emscan.config.error import ObjectIDError
     from emscan.core.ascet.module.module import Module
+    from emscan.core.ascet.oid import oidGenerator
     from emscan.can.db.db import db
     from emscan.can.module.core import ccode, element
-    from emscan.can.module.oid import oidGenerator
 from datetime import datetime
 from pandas import DataFrame
 import pandas as pd
@@ -135,94 +135,6 @@ inline void alvvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres
     .replace("&tb;", "\t") \
     .replace("&lf;", "\n")
 
-#         date = datetime.today().strftime("%Y-%m-%d")
-#         define = f""""""
-#         for name, message in database.messages.items():
-#             define += ccode.messageDefine(message)
-#         struct = ""
-#         for name, message in database.messages.items():
-#             # struct += ccode.summaryHeader(message)
-#             struct += ccode.messageStructure(message.signals)
-#
-#         syntax = f"""/* ================================================
-# * COMPANY\t: HYUNDAI KEFICO Co.,Ltd
-# * DIVISION\t: WG2, Vehicle Control Solution Team 1
-# * UPDATED\t: {date}
-# * DB VER.\t\t: HYUNDAI-KEFICO EMS CAN DB
-#
-#   Copyright(c) 2020-{date[:4]} HYUNDAI KEFICO Co.,Ltd, All Rights Reserved.
-# ================================================== */
-#
-# #include <Bsw/Include/Bsw.h>
-#
-# {define}
-# {struct}
-#         """
-#         syntax += """
-# /* ----------------------------------------------------------------------------------------------------
-#     Inline Function : Memory Copy
-# ---------------------------------------------------------------------------------------------------- */
-# inline void __memcpy(void *dst, const void *src, size_t len) {
-#     size_t i;
-#     char *d = dst;
-#     const char *s = src;
-#     for (i = 0; i < len; i++)
-#         d[i] = s[i];
-# }
-#
-# /* ----------------------------------------------------------------------------------------------------
-#     Inline Function : Message Counter Check
-# ---------------------------------------------------------------------------------------------------- */
-# inline void cntvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {
-#     if ( recv == calc ) {
-#         *timer += 1;
-#         if ( *timer >= thres ) {
-#             *timer = thres;
-#             *vld = 0;
-#         }
-#     }
-#     else {
-#         *timer = 0;
-#         *vld = 1;
-#     }
-# }
-#
-# /* ----------------------------------------------------------------------------------------------------
-#     Inline Function : CRC Check
-# ---------------------------------------------------------------------------------------------------- */
-# inline void crcvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {
-#     if ( recv == calc ) {
-#         *timer = 0;
-#         *vld = 1;
-#     }
-#     else {
-#         *timer += 1;
-#         if ( *timer >= thres ) {
-#             *timer = thres;
-#             *vld = 0;
-#         }
-#     }
-# }
-#
-# /* ----------------------------------------------------------------------------------------------------
-#     Inline Function : Alive Counter Check
-# ---------------------------------------------------------------------------------------------------- */
-# inline void alvvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {
-#     if ( ( recv == calc ) || ( (recv - calc) > 10 ) ) {
-#         *timer += 1;
-#         if ( *timer >= thres ) {
-#             *timer = thres;
-#             *vld = 0;
-#         }
-#     }
-#     else {
-#         *timer = 0;
-#         *vld = 1;
-#     }
-# }
-#         """
-#         return syntax
-
     @staticmethod
     def _gen_process(database:db):
         objs = {}
@@ -314,9 +226,8 @@ Copyright(c) 2020-{datetime.today().year} HYUNDAI KEFICO Co.,Ltd, All Rights Res
             self.spec.change(method, context)
 
         super().write()
-        print(f"모델 생성 완료: {os.path.join(PATH.DOWNLOADS, self['name'])}")
-
         if summary:
+            print(f"모델 생성 완료: {os.path.join(PATH.DOWNLOADS, self['name'])}")
             deleted = self._old[~self._old["name"].isin(self._new["name"])].copy()
             print("삭제된 항목: ", end="")
             print("없음" if deleted.empty else ", ".join(deleted["name"]))
@@ -353,3 +264,7 @@ if __name__ == "__main__":
     )
     model.generate()
 
+    import shutil
+    file = os.path.join(os.path.dirname(__file__), rf"{mname}")
+    source = os.path.join(PATH.DOWNLOADS, mname)
+    shutil.make_archive(file, 'zip', source)

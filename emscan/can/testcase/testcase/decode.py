@@ -67,12 +67,12 @@ if __name__ == "__main__":
     }
 
 
-    tester = SignalDecoding('SCU_STATUS', **option)
+    tester = SignalDecoding('ABS_ESC_01_10ms', **option)
     print(tester)
 
     # 보고 자료용 적합 Parameter
     # @separate = True
     # @linewidth = 4
     # @legendfontsize = 16
-    tester.attachResult(testfile, show=False, separate=True, linewidth=4, legendfontsize=16)
+    # tester.attachResult(testfile, show=False, separate=True, linewidth=4, legendfontsize=16)
     tester.to_report()
