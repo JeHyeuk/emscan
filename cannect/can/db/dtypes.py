@@ -147,9 +147,6 @@ class CanMessage(object):
     def __getitem__(self, item):
         return self.__attr__[item]
 
-    def __getattr__(self, item):
-        return getattr(self.__attr__, item)
-
     def __iter__(self):
         for _, row in self.signals.iterrows():
             sig = CanSignal(row)
@@ -190,10 +187,14 @@ class CanMessage(object):
         return Series()
 
     def hasCrc(self) -> bool:
-        return not self.crc.empty
+        if not hasattr(self, '__hascrc__'):
+            self.__setattr__('__hascrc__', not self.crc.empty)
+        return self.__getattribute__('__hascrc__')
 
     def hasAliveCounter(self) -> bool:
-        return not self.aliveCounter.empty
+        if not hasattr(self, '__hasac__'):
+            self.__setattr__('__hasac__', not self.aliveCounter.empty)
+        return self.__getattribute__('__hasac__')
 
 
 

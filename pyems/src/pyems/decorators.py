@@ -53,7 +53,7 @@ def constrain(*allowed_args):
             value = args[1] if len(args) > 1 else kwargs.get('value')
 
             if value not in allowed_set:
-                raise ValueError(f"입력한 값: {arg}은 입력 가능한 인자: {allowed_args}가 아닙니다")
+                raise ValueError(f"입력한 값: {value}은 입력 가능한 인자: {allowed_args}가 아닙니다")
 
             return func(*args, **kwargs)
         return wrapper

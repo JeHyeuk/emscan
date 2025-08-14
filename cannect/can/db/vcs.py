@@ -98,7 +98,7 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    print(CanDBVCS.List)
-    print(CanDBVCS.Latest)
-    print(CanDBVCS.Assigned)
-    print(CanDBVCS.clipbd2db())
+    # print(CanDBVCS.List)
+    # print(CanDBVCS.Latest)
+    # print(CanDBVCS.Assigned)
+    print(CanDBVCS.clipbd2db(CanDBVCS.Assigned))

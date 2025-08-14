@@ -264,7 +264,7 @@ if __name__ == "__main__":
     )
     model.generate()
 
-    import shutil
-    file = os.path.join(os.path.dirname(__file__), rf"{mname}")
-    source = os.path.join(PATH.DOWNLOADS, mname)
-    shutil.make_archive(file, 'zip', source)
+    # import shutil
+    # file = os.path.join(os.path.dirname(__file__), rf"{mname}")
+    # source = os.path.join(PATH.DOWNLOADS, mname)
+    # shutil.make_archive(file, 'zip', source)

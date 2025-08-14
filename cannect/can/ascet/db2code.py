@@ -38,7 +38,7 @@ def SignalDecode(signal:CanSignal, rule:naming=None) -> str:
         rtz = f"if ( {buff} == {hex(2 ** (signal.Length - 1)).upper().replace('X', 'x')} ) {{ {elem} = 0x0; }}"
 
         if str(signal.name) in ["TCU_TqRdctnVal", "TCU_EngTqLimVal", "L_TCU_TqRdctnVal", "L_TCU_EngTqLimVal"]:
-            syn += rtz
+            syn += f'\n{rtz}'
         return syn
 
 
@@ -54,10 +54,10 @@ class MessageValidator:
             return
         elif alv_or_crc.isCrc():
             self.calcCode = f'{calc} = CRC{alv_or_crc.Length}bit_Calculator.calc( {alv_or_crc.ID}, {rule.tag}.Data, {rule.dlc} );'
-            self.validate = f'crcvld( &amp;{rule.crcValid}, &amp;{rule.crcTimer}, {var}, {calc}, {rule.thresholdTime} );'
+            self.validate = f'crcvld( &{rule.crcValid}, &{rule.crcTimer}, {var}, {calc}, {rule.thresholdTime} );'
         elif alv_or_crc.isAliveCounter():
             self.calcCode = f'{calc} = {var};'
-            self.validate = f'alvvld( &amp;{rule.aliveCountValid}, &amp;{rule.aliveCountTimer}, {var}, {calc}, {rule.thresholdTime} );'
+            self.validate = f'alvvld( &{rule.aliveCountValid}, &{rule.aliveCountTimer}, {var}, {calc}, {rule.thresholdTime} );'
         else:
             pass
         return
@@ -147,16 +147,7 @@ typedef union {{
         names = self.names
         aliveCounter = MessageValidator(self.message.aliveCounter, names)
         crc = MessageValidator(self.message.crc, names)
-
         code = f"""
-/* ================================================
-* SUPPLIER\t\t\t: HYUNDAI KEFICO Co.,Ltd.
-* SPECIFICATION\t: HYUNDAI-KEFICO EMS CAN DB
-* REFERENCE 1\t\t: AUTOSAR E2E PROFILE-5, 11
-* REFERENCE 2\t\t: HMG STANDARD ES95480-02K
-==================================================
-Copyright(c) 2020-{datetime.today().year} HYUNDAI KEFICO Co.,Ltd., All Rights Reserved. */
-
 /* ------------------------------------------------------------------------------
  MESSAGE\t\t\t: {self.name}
  MESSAGE ID\t\t: {self["ID"]}
@@ -164,28 +155,28 @@ Copyright(c) 2020-{datetime.today().year} HYUNDAI KEFICO Co.,Ltd., All Rights Re
  SEND TYPE\t\t: {self.SEND_TYPE[self["Send Type"]]}
  VERSION\t\t\t: {self["Version"]}
 -------------------------------------------------------------------------------- */
-if ( CanFrm_Recv( MSGNAME_{names.tag}, {names.buffer}, &amp;{names.dlc} ) == CAN_RX_UPDATED ) {{
+if ( CanFrm_Recv( MSGNAME_{names.tag}, {names.buffer}, &{names.dlc} ) == CAN_RX_UPDATED ) {{
 
     CanFrm_{names.tag} {names.tag} = {{0, }};
     __memcpy( {names.tag}.Data, {names.buffer}, {names.dlc} );
-    
+
     { crc.decode }
     { crc.calcCode }
     { aliveCounter.decode }
-    
+
     { self.signalDecode() }
-    
+
     { names.counter }++;
 }}
 
-cntvld( &amp;{names.messageCountValid}, &amp;{names.messageCountTimer}, {names.counter}, {names.counterCalc}, {names.thresholdTime} );
+cntvld( &{names.messageCountValid}, &{names.messageCountTimer}, {names.counter}, {names.counterCalc}, {names.thresholdTime} );
 { crc.validate }
 { aliveCounter.validate }
 
-{ names.counter } = { names.counterCalc };
+{ names.counterCalc } = { names.counter };
 { aliveCounter.calcCode }
 """
-        pcode = code.splitlines()
+        pcode = code[1:].splitlines()
         ccode = []
         for n, line in enumerate(pcode):
             if n:
@@ -205,5 +196,5 @@ if __name__ == "__main__":
     # message_name = "ACU_02_00ms"
     mc = MessageCode(db.messages[message_name])
 
-    print(mc.struct)
+    # print(mc.struct)
     print(mc.method)

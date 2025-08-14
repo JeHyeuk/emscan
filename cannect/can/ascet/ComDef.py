@@ -1,4 +1,5 @@
 from pyems.ascet import AmdIO
+from pyems.decorators import constrain
 from pyems.dtypes import dD
 from pyems.util import unzip, copyTo
 from cannect.can.db.db import CanDB
@@ -7,8 +8,9 @@ from cannect.can.ascet.db2elem import (
     MessageElement,
     SignalElement
 )
+from cannect.can.ascet.db2code import MessageCode
 from pandas import DataFrame
-from typing import Union
+from typing import Union, Tuple
 import os
 
 
@@ -48,10 +50,10 @@ class ComDef:
         """
         대상 모델 IO 객체 생성
         """
-        self.main = main = AmdIO(rf'{path}\{name}.main.amd')
-        self.impl = impl = AmdIO(rf'{path}\{name}.implementation.amd')
-        self.data = data = AmdIO(rf'{path}\{name}.data.amd')
-        self.spec = spec = AmdIO(rf'{path}\{name}.specification.amd')
+        self.main = AmdIO(rf'{path}\{name}.main.amd')
+        self.impl = AmdIO(rf'{path}\{name}.implementation.amd')
+        self.data = AmdIO(rf'{path}\{name}.data.amd')
+        self.spec = AmdIO(rf'{path}\{name}.specification.amd')
 
         """
         변경 전 모델 요소 수집
@@ -70,10 +72,11 @@ class ComDef:
         return
 
     def autorun(self):
-        self.defineElements(self.main, 'MethodSignature')
-        self.defineElements(self.main, 'Element')
-        self.defineElements(self.impl, 'ImplementationEntry')
-        self.defineElements(self.data, 'DataEntry')
+        self.defineElements('MethodSignature')
+        self.defineElements('Element')
+        self.defineElements('ImplementationEntry')
+        self.defineElements('DataEntry')
+        self.defineElements('MethodBody')
 
         self.export()
         return
@@ -91,38 +94,65 @@ class ComDef:
             Elements=mainE.join(implE).join(dataE)
         )
 
-    def defineElements(self, amd:AmdIO, tag:str):
-        """
-        {tag} 신규화:: 기존 {tag} 항목은 모두 삭제 후 DB 기반 신규 Element로 대체
-        기존재 항목은 동일 Rule 기반 생성으로, 결과적 동일
+    @constrain('MethodSignature', 'Element', 'ImplementationEntry', 'DataEntry', 'MethodBody')
+    def parents(self, tag:str) -> Tuple:
+        if tag == "MethodSignature":
+            return self.main.find('Component/MethodSignatures'), None
+        if tag == "Element":
+            return self.main.find('Component/Elements'), None
+        if tag == 'ImplementationEntry':
+            return tuple(self.impl.findall('ImplementationSet'))
+        if tag == 'DataEntry':
+            return tuple(self.data.findall('DataSet'))
+        if tag == 'MethodBody':
+            return self.spec.strictFind('CodeVariant', target="G_HMCEMS"), None
 
-        :param amd:
+    def defineElements(self, tag:str):
+        """
+        {tag}에 해당하는 AmdIO를 찾는다.
+        {tag}에 해당하는 AmdIO의 부모 tag를 찾는다.
+        - Implementation 및 Data는 @scope에 따른 부모 tag가 2개 존재한다.
+        부모 tag의 하위 {tag}를 모두 삭제하고 신규 정의 Element로 대체한다.
+
         :param tag:
         :return:
         """
-        elem = amd.strictFind(tag)[0]
-        parent = amd.findParent(elem)[elem]
-        for child in list(parent):
-            parent.remove(child)
+        pGlob, pLoc = self.parents(tag)
+        if tag == "MethodBody":
+            pGlob = pGlob.find('MethodBodies')
+
+        for child in list(pGlob):
+            pGlob.remove(child)
+        if pLoc is not None:
+            for child in list(pLoc):
+                pLoc.remove(child)
 
         if tag == 'MethodSignature':
             for name in self.db.messages:
-                parent.append(self.ME[name].MethodSignature)
+                pGlob.append(self.ME[name].method)
+            return
+
+        if tag == "MethodBody":
+            for name, me in self.ME.items():
+                pGlob.append(self.ME[name].MethodBody)
             return
 
         for se in self.SE:
-            parent.append(getattr(se, tag))
+            pGlob.append(getattr(se, tag))
 
-        for key in MessageElement.meta:
-            for name, obj in self.db.messages.items():
-                if "alive" in key and not obj.hasAliveCounter():
-                    continue
-                if "crc" in key and not obj.hasCrc():
-                    continue
+        for key in MessageElement.__slots__:
+            if key in ["method", "MethodBody", "aliveCounter", "crc"]:
+                continue
+            for name, me in self.ME.items():
+                if hasattr(me, key):
+                    elem = getattr(me, key)
+                    if pLoc is None:
+                        parent = pGlob
+                    else:
+                        parent = pLoc if elem.kwargs.scope == "local" else pGlob
+                    parent.append(getattr(elem, tag))
 
-                me = self.ME[name]
-                attr = getattr(me, key)
-                parent.append(getattr(attr, tag))
+        parent = pGlob if tag == 'Element' else pLoc
         parent.append(getattr(crcClassElement(16, self.oids), tag))
         parent.append(getattr(crcClassElement(8, self.oids), tag))
         return
@@ -131,6 +161,7 @@ class ComDef:
         self.main.export()
         self.impl.export()
         self.data.export()
+        self.spec.export()
         return
 
 
