@@ -1,45 +1,8 @@
-try:
-    from ...can.db.db import DB
-    from ...can.db.io import DBio
-    from ...can.db.columns import jss
-    from ...can.module.comdef import ComDef
-    from ...can.module.comx import ComX
-    from ...core.conf.read import confReader
-    from ...core.conf.KEYS import COLUMNS
-    from ...config import PATH
-    from ...svn.vcon import VersionControl
-    from ...svn.scon import SourceControl
-    from ...space.kyuna.parse import tableParser
-    from ...space.jaehyeong.confgen import (
-        Summary_Sheet,
-        Path_Sheet,
-        Event_Sheet,
-        FID_Sheet,
-        DTR_Sheet,
-        Sig_Sheet,
-        REST
-    )
-except ImportError:
-    from emscan.can.db.db import DB
-    from emscan.can.db.io import DBio
-    from emscan.can.db.columns import jss
-    from emscan.can.module.comdef import ComDef
-    from emscan.can.module.comx import ComX
-    from emscan.core.conf.read import confReader
-    from emscan.core.conf.KEYS import COLUMNS
-    from emscan.config import PATH
-    from emscan.svn.vcon import VersionControl
-    from emscan.svn.scon import SourceControl
-    from space.kyuna.parse import tableParser
-    from space.jaehyeong.confgen import (
-        Summary_Sheet,
-        Path_Sheet,
-        Event_Sheet,
-        FID_Sheet,
-        DTR_Sheet,
-        Sig_Sheet,
-        REST
-    )
+from pyems.dtypes import dD
+from pyems.svn import SVN, SVNPATH
+from cannect.can import CanDB, CanDBKEY
+
+
 from datetime import datetime
 from fastapi import FastAPI, Form, Request
 from fastapi.encoders import jsonable_encoder
@@ -53,9 +16,12 @@ import os, uvicorn, shutil
 """
 CONFIGURATIONS
 """
-COPYRIGHT  = f"ⓒCopyright HYUNDAI KEFICO. Co., Ltd. 2020-{datetime.today().year}. All Rights Reserved."
+TODAY      = datetime.today()
+COMPANY    = "HYUNDAI KEFICO. Co., Ltd."
+COPYRIGHT  = f"ⓒCopyright {COMPANY} 2020-{TODAY.year}. All Rights Reserved."
 TEAM_NAME  = "ELECTRIFICATION PT CONTROL TEAM 1"
 NAVIGATION = ["CONF"]
+CANDB      = CanDB()
 
 
 """
@@ -69,8 +35,9 @@ template = Jinja2Templates(directory="src/template")
 """
 INITIALIZE SVN SOURCE
 """
-SVN = VersionControl()
-CONF = SVN[SVN["상대경로"].str.endswith("_confdata.xml")]
+REPO = dD(CONF=SVN(SVNPATH.CONF))
+
+# CONF = SVN[SVN["상대경로"].str.endswith("_confdata.xml")]
 
 
 @app.get("/")
@@ -80,7 +47,7 @@ async def read_root(request:Request):
         "title": "",
         "navigation": NAVIGATION,
         "data": DB.values.tolist(),
-        "columns": jss(DB.columns),
+        "columns": CanDBKEY.toJSpreadSheet(),
         "copyright": COPYRIGHT,
         "division": TEAM_NAME
     })

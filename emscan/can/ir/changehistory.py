@@ -40,8 +40,8 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     model = "LogIf_HEV"
-    asis = rf"D:\Archive\00_프로젝트\2017 통신개발-\2025\DS0512 NOx센서 스펙 개정\모델\Prev\CanNOXM.main.amd"
-    tobe = rf"D:\Archive\00_프로젝트\2017 통신개발-\2025\DS0512 NOx센서 스펙 개정\모델\Curr\CanNOXM.main.amd"
+    asis = rf"D:\Archive\00_프로젝트\2017 통신개발-\2025\DS0203 LCR_HEV_LDC신호개발\모델\Curr\CanFDLDCM_HEV.main.amd"
+    tobe = rf"D:\Archive\00_프로젝트\2017 통신개발-\2025\DS0203 LCR_HEV_LDC신호개발\모델\Prev\CanFDLDCM_HEV.main.amd"
     Compare(asis, tobe)
 
     # 0x320

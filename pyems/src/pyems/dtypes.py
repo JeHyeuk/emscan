@@ -28,6 +28,7 @@ class metaClass(type):
         return str(cls.__string__)
 
 
+
 class DataDictionary(dict):
     """
     데이터 저장 Dictionary

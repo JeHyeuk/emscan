@@ -23,7 +23,7 @@ class ComX(Module):
 * DB VER. : HYUNDAI KEFICO-EMS CAN-FD
 * UPDATED : {datetime.today().strftime("%Y-%m-%d")}
 
-* Copyright(c) 2020-2024 HYUNDAI KEFICO Co.,Ltd, All Rights Reserved.
+* Copyright(c) 2020-2025 HYUNDAI KEFICO Co.,Ltd, All Rights Reserved.
         """
 
     def __init__(self, source:str, database:db):
@@ -37,8 +37,8 @@ class ComX(Module):
         period = message["Cycle Time"]
         if "E" in message["Send Type"]:
             period = 40
-        if not message["Cycle Time"]:
-            period = 10
+        # if not message["Cycle Time"]:
+        #     period = 10
 
         normal = f"_{period}msPreRunPost"
         wakeup = "N/A" if not message["WakeUp"] else f"_{period}msWakeUp"
@@ -100,7 +100,7 @@ if __name__ == "__main__":
 
     set_option('display.expand_frame_repr', False)
 
-    SPEC = "ICE"
+    SPEC = "HEV"
 
     EXCLUDE = {
         'ICE': ["EMS", "CVVD", "MHSG", "NOx", "BMS", "LDC"],

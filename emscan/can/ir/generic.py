@@ -118,10 +118,11 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     ir = IntegrationRequest(
-        "CanNOX", "CanNOXM",
-        ChangeHistoryName='8408_EU7_NOx센서_MODE5신호추가.pptx',
-        ChangeHistoryRev=37282,
-        Comment="CR10779285 NOx 센서 SPEC 개정 6.0S21 -> 6.0S22 (추가 개정)",
+        "ComRx_HEV",
+        "CanFDCLUM_HEV",
+        ChangeHistoryName='8464_HEV_CAN_WAKEUP인터페이스개발.pptx',
+        ChangeHistoryRev=38341,
+        Comment="WAKEUP메시지 인터페이스 추가",
         User="이제혁",
         Date=datetime.now().strftime("%Y-%m-%d")
     )

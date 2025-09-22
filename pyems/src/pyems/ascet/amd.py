@@ -10,13 +10,15 @@ from xml.etree.ElementTree import ElementTree, Element
 import os
 
 
+BIN_PATH = r'D:\ETASData\ASCET6.1\bin'
+
 class AmdSource:
 
     def __init__(self, file:str, binary:str=''):
         self.name = name = os.path.basename(file).split('.')[0]
         if file.endswith('.zip'):
             if not binary:
-                binary = os.path.join(os.path.dirname(__file__), 'bin')
+                binary = BIN_PATH
                 os.makedirs(binary, exist_ok=True)
             unzip(file, binary)
             self.path = path = binary
@@ -487,7 +489,9 @@ class AmdIO(ElementTree):
         return Series(data=__attr__)
 
     def dataframe(self, tag:str) -> DataFrame:
-        return DataFrame(data=self.datadict(tag))
+        df = DataFrame(data=self.datadict(tag))
+        df['model'] = self.name
+        return df
 
     def datadict(self, tag:str) -> List[dD]:
         data = []
@@ -537,7 +541,9 @@ class AmdIO(ElementTree):
 
 
 
-
+# Alias
+AmdSC = AmdSource
+AmdEL = AmdElements
 
 
 if __name__ == "__main__":
