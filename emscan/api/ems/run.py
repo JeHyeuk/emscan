@@ -173,9 +173,8 @@ def read_conf(conf:str=Form(...)):
 
 @app.post("/download-conf")
 def download_conf(conf:str=Form(...), tables:str=Form(...)):
-    # print(conf)
-    # print(tables)
     summary, event_list, path_list, fid_list, dtr_list, sig_list = tableParser(tables)
+    summary['Date'] = datetime.today().strftime("%Y-%m-%d")
 
     file = os.path.join(os.path.dirname(__file__), rf"bin/{conf}")
     with open(file, "w", encoding="utf-8") as f:
