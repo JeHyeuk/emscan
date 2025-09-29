@@ -1,22 +1,10 @@
-import sys
-import os
-import inspect
-from IPython.display import display
-
-# 현재 파일의 상위 디렉터리를 sys.path에 추가
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+import inspect, os
 import pandas as pd
-from tables import returnTables2
-from tables import returnTables
-from pandas import set_option
 from io import StringIO
 from bs4 import BeautifulSoup
-set_option('display.expand_frame_repr', False)
 
 
-
-
-def tableParser(src : str) -> tuple[dict, list]:
+def tableParser(src : str) -> tuple:
     """
         CONFDATA TABLE PARSER
         :param : str
@@ -286,6 +274,13 @@ def tableParser(src : str) -> tuple[dict, list]:
 
 
 if __name__ == "__main__" :
+    from pandas import set_option
+
+    set_option('display.expand_frame_repr', False)
+
+    from tables import returnTables2
+    from tables import returnTables
+
     tableParser(returnTables())
 
 

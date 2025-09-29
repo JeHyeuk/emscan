@@ -76,3 +76,4 @@ if __name__ == "__main__":
     # @legendfontsize = 16
     # tester.attachResult(testfile, show=False, separate=True, linewidth=4, legendfontsize=16)
     tester.to_report()
+    # tester.to_testcase()

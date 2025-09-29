@@ -1,5 +1,5 @@
 from pyems.decorators import constrain
-from cannect.conf import KEYS as COLUMNS
+from cannect.conf import schema as COLUMNS
 from pandas import Series
 from re import search
 from typing import Dict, List
@@ -58,7 +58,7 @@ class confReader(ElementTree):
 
 
         # 입력 탭에 대한 KEY 정보 호출:
-        # KEY 정보는 동일 경로 KEYS.py 내 정의되어 있음
+        # KEY 정보는 동일 경로 schema.py 내 정의되어 있음
         KEYS = getattr(COLUMNS, kind)
         NAME = {"EVENT": "DEM_EVENT", "PATH":"DEM_PATH", "FID":"FIM", "DTR":"DEM_DTR", "SIG": "DEM_SIG"}[kind]
 

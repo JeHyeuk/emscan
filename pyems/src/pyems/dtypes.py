@@ -6,10 +6,11 @@
 # HISTORY     : `2025.08.05. 라이브러리 이관 (모듈화)
 #               `2025.01.23. 최초 작성
 # ====================================================================================================
+from typing import Any, Iterator, Union
 import os, pprint
 
 
-class metaClass(type):
+class metaclass(type):
     """
     클래스 자체의 던더 메소드 정의를 위한 메타 클래스
     메타 클래스로 지정할 경우 하위 클래스 변수를 명시적으로 지정해주어야 함.
@@ -17,7 +18,7 @@ class metaClass(type):
     __iterable__ = None
     __string__ = None
 
-    def __iter__(cls) -> iter:
+    def __iter__(cls) -> Iterator:
         if cls.__iterable__ is None:
             raise TypeError('Not Iterable: {cls.__iterable__} is not defined')
         return iter(cls.__iterable__)
@@ -70,59 +71,51 @@ class DataDictionary(dict):
         return pprint.pformat(self)
 
 
-# class PathTree(str):
-#     """
-#     경로 트리 저장 데이터
-#     """
-#     def __new__(cls, _dir:str="", *paths):
-#         for _path in paths:
-#             _dir = os.path.join(_dir, _path)
-#         if _dir and not os.path.isdir(_dir):
-#             raise FileNotFoundError(f'Invalid Path: {_dir}')
-#         return super().__new__(cls, _dir)
-#
-#     def __call__(self, file:str):
-#         if not "." in file:
-#             return
-#         for _path_, _folder_, _files_ in os.walk(self):
-#             for _file_ in _files_:
-#                 if _file_ == file:
-#                     return os.path.join(_path_, _file_)
-#         return
-#
-#     def __setattr__(self, key, value):
-#         self.__dict__[key] = value
-#
-#     def __getattr__(self, item):
-#         if item in self.__dict__:
-#             return self.__dict__[item]
-#         if hasattr(os.path, item):
-#             return getattr(os.path, item)(self)
-#         return str.__getattribute__(self, item)
-#
-#     def __repr__(self, prefix:str='', indent:int=0) -> str:
-#         items = []
-#         justify = max([len(key) for key in self.__dict__]) + 2
-#         for key, value in self.__dict__.items():
-#             name = f'{prefix}.{key}' if prefix else f'{key}'
-#             items.append(f'{name.rjust(indent + justify)}: {value}')
-#             if isinstance(value, PathTree) and len(value.__dict__):
-#                 items.append(value.__repr__(f'{key}', justify - len(name)))
-#         return '\n'.join(items)
-#
-#     def makefile(self, file:str):
-#         return os.path.join(self, file)
-#
-#     def findfile(self, file:str):
-#         for _root, _dirs, _files in os.walk(self):
-#             if file in _files:
-#                 return os.path.join(_root, file)
-#         raise FileNotFoundError
+class Path(str):
+
+    def __new__(cls, path:str, readonly:bool=False):
+        if os.path.isfile(path):
+            raise TypeError(f'Invalid Path Type: {path}')
+        if not readonly:
+            os.makedirs(path, exist_ok=True)
+        return super().__new__(cls, path)
+
+    def __init__(self, path:str, readonly:bool=False):
+        self._path = path
+        self._read = readonly
+
+    def __getitem__(self, item) -> Union[Any, str]:
+        if isinstance(item, int) or isinstance(item, slice):
+            return super().__getitem__(item)
+        if isinstance(item, str):
+            if '.' in item:
+                f = os.path.join(self._path, item)
+                if self._read and not os.path.isfile(f):
+                    raise FileNotFoundError(f'Invalid Path Type: {item}')
+                return f
+            p = os.path.join(self._path, item)
+            if self._read and not os.path.isdir(p):
+                raise FileExistsError(f'Invalid Path Type: {item}')
+            return Path(p)
+        if isinstance(item, (list, tuple)):
+            sub = self._path
+            for dr in item[:-1]:
+                sub = os.path.join(sub, dr)
+                if not self._read:
+                    os.makedirs(sub, exist_ok=True)
+            if '.' in item[-1]:
+                return os.path.join(self._path, *item)
+            return Path(os.path.join(self._path, *item))
+
+        raise TypeError(f'Invalid Path Type: {item}')
+
+    def __delitem__(self, item):
+        os.remove(self[item])
 
 
 # Alias
-dD = dDict = DataDictionary
-# pT = pathT = PathTree
+dD = dDict = DD = DataDictionary
+
 
 
 if __name__ == "__main__":

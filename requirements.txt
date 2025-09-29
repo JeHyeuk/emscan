@@ -17,6 +17,7 @@ pypandoc
 pyperclip
 python-can
 python-docx
+python-dotenv
 python-multipart
 pywin32
 screeninfo

@@ -171,3 +171,5 @@ class UnitTestCase(Series):
 if __name__ == "__main__":
     unit = UnitTestCase()
     print(unit)
+    unit['Test Result'] = "PASS TEST"
+    print(unit)

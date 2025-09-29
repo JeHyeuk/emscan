@@ -1,7 +1,17 @@
-from pyems.dtypes import dD
-from pyems.svn import SVN, SVNPATH
-from cannect.can import CanDB, CanDBKEY
-
+from pyems.dtypes import DataDictionary
+from pyems.environ import SVN
+from pyems.svn import subversion
+from cannect.conf import CONF_SCHEMA, confReader
+from space.kyuna.parse import tableParser
+from space.jaehyeong.confgen import (
+    Summary_Sheet,
+    Path_Sheet,
+    Event_Sheet,
+    FID_Sheet,
+    DTR_Sheet,
+    Sig_Sheet,
+    REST
+)
 
 from datetime import datetime
 from fastapi import FastAPI, Form, Request
@@ -20,8 +30,12 @@ TODAY      = datetime.today()
 COMPANY    = "HYUNDAI KEFICO. Co., Ltd."
 COPYRIGHT  = f"ⓒCopyright {COMPANY} 2020-{TODAY.year}. All Rights Reserved."
 TEAM_NAME  = "ELECTRIFICATION PT CONTROL TEAM 1"
-NAVIGATION = ["CONF"]
-CANDB      = CanDB()
+NAVIGATION = ["COMM", "CONF"]
+SUBVERSION = DataDictionary(
+    CONF=subversion(SVN.CONF)
+)
+# CANDB      = CanDB()
+
 
 
 """
@@ -32,22 +46,12 @@ app.mount("/src", StaticFiles(directory="src"), name="src")
 template = Jinja2Templates(directory="src/template")
 
 
-"""
-INITIALIZE SVN SOURCE
-"""
-REPO = dD(CONF=SVN(SVNPATH.CONF))
-
-# CONF = SVN[SVN["상대경로"].str.endswith("_confdata.xml")]
-
-
 @app.get("/")
 async def read_root(request:Request):
     return template.TemplateResponse("index.html", {
         "request": request,
         "title": "",
         "navigation": NAVIGATION,
-        "data": DB.values.tolist(),
-        "columns": CanDBKEY.toJSpreadSheet(),
         "copyright": COPYRIGHT,
         "division": TEAM_NAME
     })
@@ -108,30 +112,30 @@ async def read_conf(request:Request):
     """
     return template.TemplateResponse("conf-1.1.0.html", {
         "request": request,
-        "columns": COLUMNS,
+        "columns": CONF_SCHEMA,
+        "confs": [""] + [c for c in os.listdir(SVN.CONF) if c.endswith('.xml')]
     })
 
 @app.get("/load-conf")
 def load_conf():
-    return JSONResponse(content={"conf": [c for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xml')]})
+    update_result = SUBVERSION.CONF.update()
+    return JSONResponse(content={"result": update_result})
 
 @app.post("/read-conf")
 def read_conf(conf:str=Form(...)):
-    svn = CONF[CONF['상대경로'].str.endswith(conf)].iloc[0]
-
-    file = os.path.join(PATH.SVN.CONF, conf)
-    read = confReader(file)
+    from_svn = SUBVERSION.CONF[conf]
+    read = confReader(SVN.CONF[conf])
 
     admin = read.admin.copy()
     admin["Date"] = "-".join([str(n).zfill(2) for n in admin["Date"].split(".")])
-    admin["SVNRev"] = svn["Revision"]
-    admin["SVNDate"] = svn["변경일자"]
-    admin["SVNUser"] = svn["사용자"]
+    admin["SVNRev"] = from_svn["changed_revision"]
+    admin["SVNDate"] = from_svn["last_mod_time"]
+    admin["SVNUser"] = from_svn["changed_author"]
 
     data = {
         "admin": admin.to_json(),
         "history": read.history.replace("\n", "<br>"),
-        "keys": dumps(COLUMNS)
+        "keys": dumps(CONF_SCHEMA)
     }
     for key in ["EVENT", "PATH", "FID", "DTR", "SIG"]:
         data[key] = read.html(key)
@@ -140,8 +144,6 @@ def read_conf(conf:str=Form(...)):
 
 @app.post("/download-conf")
 def download_conf(conf:str=Form(...), tables:str=Form(...)):
-    # print(conf)
-    # print(tables)
     summary, event_list, path_list, fid_list, dtr_list, sig_list = tableParser(tables)
 
     file = os.path.join(os.path.dirname(__file__), rf"bin/{conf}")

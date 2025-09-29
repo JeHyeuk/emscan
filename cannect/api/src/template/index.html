@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="icon" href="/src/img/favicon-1.1.0.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/src/css/style.css">
+  <link rel="stylesheet" href="/src/css/icon.css">
+
+
+  <script src="/src/js/jquery-3.6.1.min.js"></script>
+  <script src="/src/js/cannect.js" defer></script>
+
+  <title>CANNECT{{ title }}</title>
+
+</head>
+<body>
+  <div id="blur-overlay"></div>
+  <div id="spinner"></div>
+
+  <header id="header" class="header header-fix">
+    <a href="/" class="logo">
+      <img src="/src/img/logo-1.0.0.png" alt="EMS">
+    </a>
+    <nav id="navbar" class="navbar">
+      <ul>{% for nav in navigation %}
+        <li><a href="/{{ nav.lower() }}">{{ nav }}</a></li>{% endfor %}
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="main-body">
+      <div class="service-item service-color-green">
+        <div class="service-icon">
+          <i class="bi bi-chat-square-quote"></i>
+        </div>
+        <div class="service-title">
+          COMM
+        </div>
+        <div class="service-desc">
+          CAN-FD 통신 개발/검증 자동화 서비스<br> (* 통신 개발자 전용 *)
+        </div>
+      </div>
+      <div class="service-item service-color-blue">
+        <div class="service-icon">
+          <i class="bi bi-filetype-xml"></i>
+        </div>
+        <div class="service-title">
+          CONF
+        </div>
+        <div class="service-desc">
+          CONF-DATA 자동화 생성 서비스
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-bottom">
+      <div class="copyright">
+        {{ copyright }}
+      </div>
+      <div class="credits">
+        {{ division }}
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+<script>
+  $(document).ready(function () {
+    $('.service-item.service-color-green').on('click', function() {
+      alert('SERVICE NOT READY !');
+    })
+    $('.service-item.service-color-blue').on('click', function(){
+      window.location.href = '/conf';
+    })
+  })
+</script>
+</html>

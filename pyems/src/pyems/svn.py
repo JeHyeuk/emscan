@@ -1,34 +1,15 @@
 from pyems.errors import AuthorizeError
+from pyems.environ import SVN
+
 from dataclasses import dataclass
 from datetime import datetime
 from pandas import read_sql, isna, DataFrame, Series
 from typing import Union
+import pandas as pd
 import os, sqlite3, subprocess
 
 
-AUTH = ["22011148", "22403041"]
-if os.environ["USERNAME"] == "22011148":
-
-    @dataclass
-    class PATH:
-        CONF:str = r"D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename"
-        MODEL:str = r"D:\SVN\model\ascet\trunk"
-
-
-elif os.environ["USERNAME"] == "22403041":
-
-    @dataclass
-    class PATH:
-        CONF: str = r"D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename"
-        MODEL: str = r"D:\SVN\model\ascet\trunk"
-
-else:
-    raise AuthorizeError(f"NOT AUTHORIZED ACCESS AUTHORIZED TO {AUTH}")
-
-# Alias
-SVNPATH = PATH
-
-class SVN:
+class subversion:
     """
 
     """
@@ -51,15 +32,15 @@ class SVN:
         return
 
     def __getitem__(self, item) -> Union[Series, DataFrame]:
-        return self.get_file(item)
+        return self.unit(item)
 
-    def get_file(self, filename:str) -> Union[Series, DataFrame]:
+    def unit(self, filename:str) -> Union[Series, DataFrame]:
         selected = self.db[self.db["base"] == filename]
         if len(selected):
             return selected.iloc[0]
         return selected
 
-    def update(self):
+    def update(self, display: bool=False) -> str:
         try:
             result = subprocess.run(
                 ['svn', 'update', self.path],
@@ -67,12 +48,17 @@ class SVN:
                 text=True,
                 check=True
             )
-            print(result.stdout)
+            if display:
+                print(result.stdout)
+            return result.stdout
         except subprocess.CalledProcessError as e:
-            print(f"Failed to update SVN repository: {self.path} ::", e.stderr)
+            msg = f"Failed to update SVN repository: {self.path} ::", e.stderr
+            if display:
+                print(msg)
+            return msg
 
     def log(self, filename:str) -> DataFrame:
-        file = self.get_file(filename)
+        file = self[filename]
         result = subprocess.run(['svn', 'log', file['abs_path']], capture_output=True, text=True)
         if result.returncode != 0:
             raise OSError
@@ -105,11 +91,10 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-
-    svn = SVN(PATH.CONF)
+    svn = subversion(SVN.CONF)
     svn.update()
     print(svn.db)
-    print(svn.get_file("canfdepbd_hev_confdata.xml"))
+    print(svn.unit("canfdepbd_hev_confdata.xml"))
+    print(svn["canfdepbd_hev_confdata.xml"])
     print(svn.log("canfdepbd_hev_confdata.xml"))
-    # svn2 = SVN(PATH.MODEL)
-    # print(svn2.db)
+
