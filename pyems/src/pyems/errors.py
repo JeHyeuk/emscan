@@ -9,3 +9,6 @@ class BCNotFoundError(FileExistsError):
 
 class AuthorizeError(OSError):
     pass
+
+class FileFormatError(FileExistsError):
+    pass

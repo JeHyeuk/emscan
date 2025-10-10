@@ -1,6 +1,5 @@
-from cannect.can.db.dtypes import CanMessage, CanSignal
+from pyems.candb import CanMessage, CanSignal
 from cannect.can.rule import naming
-from datetime import datetime
 
 
 def SignalDecode(signal:CanSignal, rule:naming=None) -> str:

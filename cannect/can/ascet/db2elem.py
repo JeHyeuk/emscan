@@ -1,26 +1,29 @@
 from pyems.ascet import generateOID, AmdElements
-from pyems.dtypes import dD
+from pyems.typesys import DataDictionary
 from pyems.util import xml
-from cannect.can.db.dtypes import CanMessage, CanSignal
+from pyems.candb import CanMessage, CanSignal
+
 from cannect.can.rule import naming
 from cannect.can.ascet.db2code import MessageCode
-from typing import Dict, Union
+from typing import Dict, Iterator, Optional, Union
 from xml.etree.ElementTree import Element
 import math
 
 
-def elementWrapper(**kwargs) -> dD[str, Union[dD, Element]]:
-    return dD(
-        kwargs=dD(**kwargs),
+def elementWrapper(**kwargs) -> DataDictionary:
+    return DataDictionary(
+        kwargs=DataDictionary(**kwargs),
         Element=AmdElements.Element(**kwargs),
         ImplementationEntry=AmdElements.ImplementationEntry(**kwargs),
         DataEntry=AmdElements.DataEntry(**kwargs)
     )
 
 
-def crcClassElement(n:Union[int, str], oids:Dict[str, str]={}) -> dD:
+def crcClassElement(n:Union[int, str], oid_tag:Optional[Dict[str, str]]=None) -> DataDictionary:
     n = str(n)
-    classID = dD(
+    if not oid_tag:
+        oid_tag = {}
+    class_id = DataDictionary(
         componentID={
             "8": "_040g1ngg01pp1oo708cg4rviuqor2",
             "16": "_040g1ngg01pp1oo708a0du6locrr2"
@@ -35,16 +38,16 @@ def crcClassElement(n:Union[int, str], oids:Dict[str, str]={}) -> dD:
         }
     )
     name = f'CRC{n}bit_Calculator'
-    kwargs = dD(
+    kwargs = DataDictionary(
         name=name,
-        OID=oids[name] if name in oids else generateOID(),
+        OID=oid_tag[name] if name in oid_tag else generateOID(),
         comment=f'CRC {n}bit Calculator Instance',
         modelType="complex",
         basicModelType="class",
         unit="",
         componentName=f"/HNB_GASOLINE/_29_CommunicationVehicle/CANInterfaceCommon/InterfaceLibrary/CRCCalc/"
                       f"CRC{n}Bit_Calculator/CRC{n}bit_Calculator",
-        componentID=classID.componentID[n],
+        componentID=class_id.componentID[n],
         scope="local",
         set="false",
         get="false",
@@ -54,19 +57,21 @@ def crcClassElement(n:Union[int, str], oids:Dict[str, str]={}) -> dD:
         elementName=f'CRC{n}bit_Calculator',
         elementOID="",
         implementationName="Impl",
-        implementationOID=classID.implementationOID[n],
+        implementationOID=class_id.implementationOID[n],
         value="false",
         dataName="Data",
-        dataOID=classID.dataOID[n]
+        dataOID=class_id.dataOID[n]
     )
     return elementWrapper(**kwargs)
 
 
-def SignalElement(signal:CanSignal, oids:Dict[str, str]={}) -> dD:
-    kwargs = dD()
-    elementName = signal.name if not signal["SignalRenamed"] else signal["SignalRenamed"]
-    kwargs.name = name = f'{elementName}_{"Ems" if signal.ECU == "EMS" else "Can"}'
-    kwargs.OID = oids[name] if name in oids else generateOID()
+def SignalElement(signal:CanSignal, oid_tag:Optional[Dict[str, str]]=None) -> DataDictionary:
+    if not oid_tag:
+        oid_tag = {}
+    kwargs = DataDictionary()
+    element_name = signal.name if not signal["SignalRenamed"] else signal["SignalRenamed"]
+    kwargs.name = name = f'{element_name}_{"Ems" if signal.ECU == "EMS" else "Can"}'
+    kwargs.OID = oid_tag[name] if name in oid_tag else generateOID()
     kwargs.comment = signal.Definition
     if signal.ECU == "EMS":
         kwargs.comment = ""
@@ -84,7 +89,7 @@ def SignalElement(signal:CanSignal, oids:Dict[str, str]={}) -> dD:
     kwargs.scope = "exported"
     if signal.ECU == "EMS":
         kwargs.scope = "imported"
-        if signal.isCRC() or signal.isAliveCounter():
+        if signal.isCrc() or signal.isAliveCounter():
             kwargs.scope = "local"
 
     kwargs.quantization = "0" if kwargs.basicModelType == "cont" else "1"
@@ -135,46 +140,48 @@ class MessageElement:
         "crcValid",
     ]
 
-    def __init__(self, message:CanMessage, oids:Dict[str,str]={}):
-        commentId = f'{message.name}({message["ID"]})'
-        timerFormula = f"Ti_q{str(message['taskTime']).replace('.', 'p')}_s".replace('p0_s', '_s')
+    def __init__(self, message:CanMessage, oid_tag:Optional[Dict[str, str]]=None):
+        if not oid_tag:
+            oid_tag = {}
+        comment_id = f'{message.name}({message["ID"]})'
+        timer_formula = f"Ti_q{str(message['taskTime']).replace('.', 'p')}_s".replace('p0_s', '_s')
 
         """
         신규 Element OID 부여
         """
         rule = naming(message.name)
         for req in self.__slots__:
-            if req  == "MethodBody":
+            if req.startswith("MethodBody"):
                 continue
             if req == "aliveCounter":
-                oids[f'{message.aliveCounter.name}_Can'] = oids.get(f'{message.aliveCounter.name}_Can', '') or generateOID()
+                oid_tag[f'{message.aliveCounter.name}_Can'] = oid_tag.get(f'{message.aliveCounter.name}_Can', '') or generateOID()
                 continue
             if req == "aliveCounterCalc":
-                oids[f'{message.aliveCounter.name}Calc'] = oids.get(f'{message.aliveCounter.name}Calc', '') or generateOID()
+                oid_tag[f'{message.aliveCounter.name}Calc'] = oid_tag.get(f'{message.aliveCounter.name}Calc', '') or generateOID()
                 continue
             if req == "crc":
-                oids[f'{message.crc.name}_Can'] = oids.get(f'{message.crc.name}_Can', '') or generateOID()
+                oid_tag[f'{message.crc.name}_Can'] = oid_tag.get(f'{message.crc.name}_Can', '') or generateOID()
                 continue
             if req == 'crcCalc':
-                oids[f'{message.crc.name}Calc'] = oids.get(f'{message.crc.name}Calc', '') or generateOID()
+                oid_tag[f'{message.crc.name}Calc'] = oid_tag.get(f'{message.crc.name}Calc', '') or generateOID()
                 continue
 
-            if not getattr(rule, req) in oids:
-                oids[getattr(rule, req)] = generateOID()
+            if not oid_tag or not getattr(rule, req) in oid_tag:
+                oid_tag[getattr(rule, req)] = generateOID()
 
         """
         %ComDef* 모델의 메시지 MethodSignature 생성
         """
         self.method = AmdElements.MethodSignature(
             name=rule.method,
-            OID=oids[rule.method],
+            OID=oid_tag[rule.method],
             defaultMethod='true' if str(message.name) == 'ABS_ESC_01_10ms' else 'false'
         )
 
         """
         %ComDef* 모델의 메시지에 대한 MethodBody의 CodeBlock :: C Code 소스
         """
-        MethodBody = Element('MethodBody', methodName=rule.method, methodOID=oids[rule.method])
+        MethodBody = Element('MethodBody', methodName=rule.method, methodOID=oid_tag[rule.method])
         CodeBlock = Element('CodeBlock')
         CodeBlock.text = MessageCode(message).method
         MethodBody.append(CodeBlock)
@@ -183,10 +190,10 @@ class MessageElement:
         """
         %ComDef* 모델의 메시지 Element
         """
-        self.buffer = elementWrapper(**dD(
+        self.buffer = elementWrapper(**DataDictionary(
             name=rule.buffer,
-            OID=oids[rule.buffer],
-            comment=f'{commentId} Buffer',
+            OID=oid_tag[rule.buffer],
+            comment=f'{comment_id} Buffer',
             modelType="array",
             basicModelType="udisc",
             maxSizeX=str(message["DLC"]),
@@ -199,10 +206,10 @@ class MessageElement:
             value="0",
         ))
 
-        self.dlc = elementWrapper(**dD(
+        self.dlc = elementWrapper(**DataDictionary(
             name=rule.dlc,
-            OID=oids[rule.dlc],
-            comment=f'{commentId} DLC',
+            OID=oid_tag[rule.dlc],
+            comment=f'{comment_id} DLC',
             modelType="scalar",
             basicModelType="udisc",
             kind="variable",
@@ -214,10 +221,10 @@ class MessageElement:
             value="0",
         ))
 
-        self.thresholdTime = elementWrapper(**dD(
+        self.thresholdTime = elementWrapper(**DataDictionary(
             name=rule.thresholdTime,
-            OID=oids[rule.thresholdTime],
-            comment=f'{commentId} Timeout Threshold',
+            OID=oid_tag[rule.thresholdTime],
+            comment=f'{comment_id} Timeout Threshold',
             modelType="scalar",
             basicModelType="cont",
             unit="s",
@@ -226,16 +233,16 @@ class MessageElement:
             volatile="false",
             write="false",
             quantization="0",
-            formula=timerFormula,
+            formula=timer_formula,
             physType="real64", physMin="0.0", physMax=f'{round(255 * message["taskTime"], 2)}',
             implType="uint8", implMin="0", implMax="255",
             value=f'{math.ceil(message["timeoutTime"] / message["taskTime"]) * message["taskTime"]: .2f}'
         ))
 
-        self.counter = elementWrapper(**dD(
+        self.counter = elementWrapper(**DataDictionary(
             name=rule.counter,
-            OID=oids[rule.counter],
-            comment=f'{commentId} Message Counter',
+            OID=oid_tag[rule.counter],
+            comment=f'{comment_id} Message Counter',
             modelType="scalar",
             basicModelType="udisc",
             kind="message",
@@ -247,10 +254,10 @@ class MessageElement:
             value="0",
         ))
 
-        self.counterCalc = elementWrapper(**dD(
+        self.counterCalc = elementWrapper(**DataDictionary(
             name=rule.counterCalc,
-            OID=oids[rule.counterCalc],
-            comment=f'{commentId} Message Counter Calculated',
+            OID=oid_tag[rule.counterCalc],
+            comment=f'{comment_id} Message Counter Calculated',
             modelType="scalar",
             basicModelType="udisc",
             kind="variable",
@@ -262,26 +269,26 @@ class MessageElement:
             value="0",
         ))
 
-        self.messageCountTimer = elementWrapper(**dD(
+        self.messageCountTimer = elementWrapper(**DataDictionary(
             name=rule.messageCountTimer,
-            OID=oids[rule.messageCountTimer],
-            comment=f'{commentId} Counter Timeout Timer',
+            OID=oid_tag[rule.messageCountTimer],
+            comment=f'{comment_id} Counter Timeout Timer',
             modelType="scalar",
             basicModelType="cont",
             unit="s",
             kind="variable",
             scope="local",
             quantization="0",
-            formula=timerFormula,
+            formula=timer_formula,
             physType="real64", physMin="0.0", physMax=f'{round(255 * message["taskTime"], 2)}',
             implType="uint8", implMin="0", implMax="255",
             value=f'0.0'
         ))
 
-        self.messageCountValid = elementWrapper(**dD(
+        self.messageCountValid = elementWrapper(**DataDictionary(
             name=rule.messageCountValid,
-            OID=oids[rule.messageCountValid],
-            comment=f'{commentId} Counter Validity',
+            OID=oid_tag[rule.messageCountValid],
+            comment=f'{comment_id} Counter Validity',
             modelType="scalar",
             basicModelType="log",
             kind="message",
@@ -291,37 +298,37 @@ class MessageElement:
         ))
 
         if message.hasAliveCounter():
-            self.aliveCounter = SignalElement(message.aliveCounter, oids)
+            self.aliveCounter = SignalElement(message.aliveCounter, oid_tag)
             attr = xml.to_dict(self.aliveCounter.Element)
             attr.update(xml.to_dict(self.aliveCounter.ImplementationEntry))
             attr.update(xml.to_dict(self.aliveCounter.DataEntry))
             attr.update(
                 name=f'{message.aliveCounter.name}Calc',
-                OID=oids[f'{message.aliveCounter.name}Calc'],
-                comment=f'{commentId} Alive Counter Calculated',
+                OID=oid_tag[f'{message.aliveCounter.name}Calc'],
+                comment=f'{comment_id} Alive Counter Calculated',
                 kind='variable',
                 scope='local'
             )
             self.aliveCounterCalc = elementWrapper(**attr)
-            self.aliveCountTimer = elementWrapper(**dD(
+            self.aliveCountTimer = elementWrapper(**DataDictionary(
                 name=rule.aliveCountTimer,
-                OID=oids[rule.aliveCountTimer],
-                comment=f'{commentId} Alive Counter Timeout Timer',
+                OID=oid_tag[rule.aliveCountTimer],
+                comment=f'{comment_id} Alive Counter Timeout Timer',
                 modelType="scalar",
                 basicModelType="cont",
                 unit="s",
                 kind="variable",
                 scope="local",
                 quantization="0",
-                formula=timerFormula,
+                formula=timer_formula,
                 physType="real64", physMin="0.0", physMax=f'{round(255 * message["taskTime"], 2)}',
                 implType="uint8", implMin="0", implMax="255",
                 value=f'0.0'
             ))
-            self.aliveCountValid = elementWrapper(**dD(
+            self.aliveCountValid = elementWrapper(**DataDictionary(
                 name=rule.aliveCountValid,
-                OID=oids[rule.aliveCountValid],
-                comment=f'{commentId} Alive Counter Validity',
+                OID=oid_tag[rule.aliveCountValid],
+                comment=f'{comment_id} Alive Counter Validity',
                 modelType="scalar",
                 basicModelType="log",
                 kind="message",
@@ -331,14 +338,14 @@ class MessageElement:
             ))
 
         if message.hasCrc():
-            self.crc = SignalElement(message.crc, oids)
+            self.crc = SignalElement(message.crc, oid_tag)
             attr = xml.to_dict(self.crc.Element)
             attr.update(xml.to_dict(self.crc.ImplementationEntry))
             attr.update(xml.to_dict(self.crc.DataEntry))
             attr.update(
                 name=f'{message.crc.name}Calc',
-                OID=oids[f'{message.crc.name}Calc'],
-                comment=f'{commentId} CRC Calculated',
+                OID=oid_tag[f'{message.crc.name}Calc'],
+                comment=f'{comment_id} CRC Calculated',
                 kind='variable',
                 scope='local'
             )
@@ -348,26 +355,26 @@ class MessageElement:
                     scope='exported',
                 )
             self.crcCalc = elementWrapper(**attr)
-            self.crcTimer = elementWrapper(**dD(
+            self.crcTimer = elementWrapper(**DataDictionary(
                 name=rule.crcTimer,
-                OID=oids[rule.crcTimer],
-                comment=f'{commentId} Alive Counter Timeout Timer',
+                OID=oid_tag[rule.crcTimer],
+                comment=f'{comment_id} Alive Counter Timeout Timer',
                 modelType="scalar",
                 basicModelType="cont",
                 unit="s",
                 kind="variable",
                 scope="local",
                 quantization="0",
-                formula=timerFormula,
+                formula=timer_formula,
                 physType="real64", physMin="0.0", physMax=f'{round(255 * message["taskTime"], 2)}',
                 implType="uint8", implMin="0", implMax="255",
                 value=f'0.0'
             ))
 
-            self.crcValid = elementWrapper(**dD(
+            self.crcValid = elementWrapper(**DataDictionary(
                 name=rule.crcValid,
-                OID=oids[rule.crcValid],
-                comment=f'{commentId} CRC Validity',
+                OID=oid_tag[rule.crcValid],
+                comment=f'{comment_id} CRC Validity',
                 modelType="scalar",
                 basicModelType="log",
                 kind="message",
@@ -378,18 +385,16 @@ class MessageElement:
 
         return
 
-    def __iter__(self) -> iter:
+    def __iter__(self) -> Iterator[DataDictionary]:
         for slot in self.__slots__:
             yield self.__getattribute__(slot)
 
 
 if __name__ == "__main__":
-    from cannect.can.db.db import CanDB
-
-    db = CanDB()
+    from pyems.candb import CAN_DB
 
     message_name = "ABS_ESC_01_10ms"
-    me = MessageElement(db.messages[message_name])
+    me = MessageElement(CAN_DB.messages[message_name])
 
     # print(xml.to_str(me.method))
 

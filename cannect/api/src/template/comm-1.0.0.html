@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="icon" href="/src/img/favicon-1.1.0.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/src/css/style.css">
+  <link rel="stylesheet" href="/src/css/icon.css">
+  <link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v5/jspreadsheet.css" type="text/css" />
+  <link rel="stylesheet" href="https://jsuites.net/v5/jsuites.css" type="text/css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
+
+  <script src="/src/js/jquery-3.6.1.min.js"></script>
+  <script src="/src/js/cannect.js" defer></script>
+  <script src="https://bossanova.uk/jspreadsheet/v5/jspreadsheet.js"></script>
+  <script src="https://jsuites.net/v5/jsuites.js"></script>  
+
+  <title>CANNECT: COMM</title>
+</head>
+<body>
+  <div id="blur-overlay"></div>
+  <div id="spinner"></div>
+
+  <header id="header" class="header header-fix">
+    <a href="/" class="logo">
+      <img src="/src/img/logo-1.0.0.png" alt="EMS">
+    </a>
+    <nav id="navbar" class="navbar">
+      <ul>{% for nav in navigation %}
+        <li><a href="/{{ nav.lower() }}">{{ nav }}</a></li>{% endfor %}
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="config">
+      <div class="toolbars">
+        <span class="toggle"><i class="bi bi-toggle2-off"></i></span>
+        <span class="engine-type">ICE</span>
+        <span class="splitbar"></span>
+        <span class="tool"><i class="bi bi-file-earmark-code" title="%ComDef"></i></span>
+        <span class="tool"><i class="bi bi-box-arrow-in-right" title="%ComRx"></i></span>
+        <span class="tool"><i class="bi bi-box-arrow-right" title="%ComTx"></i></span>
+        <span class="splitbar"></span>
+        <span class="tool"><i class="bi bi-search-heart" title="진단 모델"></i></span>
+        <span class="splitbar"></span>
+        <span class="tool"><i class="bi bi-filetype-xlsx" title="Test Case"></i></span>
+        <span class="splitbar"></span>
+        <span class="tool"><i class="bi bi-journals" title="사양서"></i></span>
+      </div>
+      <div class="searchbar">
+        <span class="tool"><i class="bi bi-cloud-download" title="새로고침"></i></span>
+        <select class="db-selector">
+          <option val="id">{{ traceability }}</option>
+        </select>
+        <span class="tool"><i class="bi bi-folder2-open" title="DB열기"></i></span>
+      </div>
+    </section>
+    <section class="db">
+
+        <div id="spreadsheet"></div>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-bottom">
+      <div class="copyright">
+        {{ copyright }}
+      </div>
+      <div class="credits">
+        {{ division }}
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const dvh2px = window.innerHeight * 0.75;
+    const rowHeight = 22;
+    const pagination = parseInt(dvh2px/rowHeight) - 8;
+    jspreadsheet(document.getElementById('spreadsheet'), {
+      tabs: false,
+      toolbar: false,
+      worksheets: [{
+        data:{{ data | tojson }},
+        columns:{{ columns | tojson }},
+        tableOverflow: true,
+        worksheetName: '시그널리스트',
+        pagination: pagination,
+        search: true,
+      }],
+    });
+  </script>
+</body>
+</html>

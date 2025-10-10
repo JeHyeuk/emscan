@@ -82,6 +82,7 @@ class xml:
         )
         dom = f'{minidom.parseString(stream.getvalue()).toprettyxml()}' \
             .replace('<?xml version="1.0" ?>', '<?xml version="1.0" encoding="UTF-8"?>') \
+            .replace("<CodeBlock/>", "<CodeBlock></CodeBlock>") \
             .replace("ns0:", "") \
             .replace('xmlns:ns0="http://www.w3.org/2000/09/xmldsig#" ', '') \
             .replace('<Signature>', '<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">')

@@ -1,10 +1,13 @@
-from pyems.dtypes import dD, metaClass
+from pyems.typesys import DataDictionary, metaclass
 from pandas import Index
 
 
-class COLUMNS(metaclass=metaClass):
-
-    METADATA = __meta__ = dD({
+class CanDbSchema(metaclass=metaclass):
+    """
+    CAN DB의 SCHEMA
+    클래스 단위로 사용
+    """
+    METADATA = __meta__ = DataDictionary({
         "ECU":{
             "synonyms": ["ecu", "controller", "sender", "tx", "송출제어기"],
             "dtype": str,
@@ -243,17 +246,17 @@ class COLUMNS(metaclass=metaClass):
 
     @classmethod
     def standardize(cls, columns: Index) -> list:
-        standardColumns = []
+        standard_columns = []
         for col in cls.__meta__:
             if col in columns:
-                standardColumns.append(col)
+                standard_columns.append(col)
                 continue
             for synonym in cls.__meta__[col].synonyms:
                 if synonym in columns:
-                    standardColumns.append(col)
-            if not col in standardColumns:
+                    standard_columns.append(col)
+            if not col in standard_columns:
                 raise KeyError(f"Cannot find {col} in columns; {columns}")
-        return standardColumns
+        return standard_columns
 
     @classmethod
     def toJSpreadSheet(cls, columns: Index=None) -> list:
@@ -271,8 +274,8 @@ class COLUMNS(metaclass=metaClass):
 
 
 if __name__ == "__main__":
-    print(COLUMNS)
-    # print(COLUMNS['ECU'])
-    # print(COLUMNS.toJSpreadSheet())
-    # for test in COLUMNS:
+    print(CanDbSchema)
+    # print(CanDbSchema['ECU'])
+    # print(CanDbSchema.toJSpreadSheet())
+    # for test in CanDbSchema:
     #     print(test)

@@ -245,7 +245,7 @@ if __name__ == "__main__":
 
     set_option('display.expand_frame_repr', False)
 
-    SPEC = "ICE"
+    SPEC = "HEV"
 
     EXCLUDE = {
         'ICE': ["EMS", "CVVD", "MHSG", "NOx", "BMS", "LDC"],

@@ -1,17 +1,11 @@
-from pyems.dtypes import DataDictionary
-from pyems.environ import SVN
+from pyems.environ import ENV
+from pyems.typesys import DataDictionary
 from pyems.svn import subversion
+from pyems.candb import CAN_DB
+
 from cannect.conf import CONF_SCHEMA, confReader
 from space.kyuna.parse import tableParser
-from space.jaehyeong.confgen import (
-    Summary_Sheet,
-    Path_Sheet,
-    Event_Sheet,
-    FID_Sheet,
-    DTR_Sheet,
-    Sig_Sheet,
-    REST
-)
+from space.jaehyeong import confgen
 
 from datetime import datetime
 from fastapi import FastAPI, Form, Request
@@ -26,16 +20,10 @@ import os, uvicorn, shutil
 """
 CONFIGURATIONS
 """
-TODAY      = datetime.today()
-COMPANY    = "HYUNDAI KEFICO. Co., Ltd."
-COPYRIGHT  = f"ⓒCopyright {COMPANY} 2020-{TODAY.year}. All Rights Reserved."
-TEAM_NAME  = "ELECTRIFICATION PT CONTROL TEAM 1"
 NAVIGATION = ["COMM", "CONF"]
 SUBVERSION = DataDictionary(
-    CONF=subversion(SVN.CONF)
+    CONF=subversion(ENV.SVN_PATH.CONF)
 )
-# CANDB      = CanDB()
-
 
 
 """
@@ -48,12 +36,32 @@ template = Jinja2Templates(directory="src/template")
 
 @app.get("/")
 async def read_root(request:Request):
+    """
+    :param request:
+    :return:
+    """
     return template.TemplateResponse("index.html", {
         "request": request,
         "title": "",
         "navigation": NAVIGATION,
-        "copyright": COPYRIGHT,
-        "division": TEAM_NAME
+        "copyright": ENV.COPYRIGHT,
+        "division": ENV.DIVISION
+    })
+
+@app.get("/comm")
+async def read_comm(request:Request):
+    """
+    :param request:
+    :return:
+    """
+    return template.TemplateResponse("comm-1.0.0.html", {
+        "request": request,
+        "navigation": NAVIGATION,
+        "data": CAN_DB.values.tolist(),
+        "columns": CAN_DB.SCHEMA.toJSpreadSheet(),
+        "traceability": CAN_DB.traceability,
+        "copyright": ENV.COPYRIGHT,
+        "division": ENV.DIVISION
     })
 
 @app.post("/download-comdef")
@@ -113,7 +121,7 @@ async def read_conf(request:Request):
     return template.TemplateResponse("conf-1.1.0.html", {
         "request": request,
         "columns": CONF_SCHEMA,
-        "confs": [""] + [c for c in os.listdir(SVN.CONF) if c.endswith('.xml')]
+        "confs": [""] + [conf for conf in ENV.SVN_PATH.CONF if conf.endswith('.xml')]
     })
 
 @app.get("/load-conf")
@@ -148,13 +156,13 @@ def download_conf(conf:str=Form(...), tables:str=Form(...)):
 
     file = os.path.join(os.path.dirname(__file__), rf"bin/{conf}")
     with open(file, "w", encoding="utf-8") as f:
-        Summary_Sheet(f, summary)
-        Path_Sheet(f, path_list)
-        Event_Sheet(f, event_list)
-        FID_Sheet(f, fid_list)
-        DTR_Sheet(f, dtr_list)
-        Sig_Sheet(f, sig_list)
-        REST(f)
+        confgen.Summary_Sheet(f, summary)
+        confgen.Path_Sheet(f, path_list)
+        confgen.Event_Sheet(f, event_list)
+        confgen.FID_Sheet(f, fid_list)
+        confgen.DTR_Sheet(f, dtr_list)
+        confgen.Sig_Sheet(f, sig_list)
+        confgen.REST(f)
     return FileResponse(path=file, filename=conf, media_type="text/plain")
 
 

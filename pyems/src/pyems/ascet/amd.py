@@ -1,7 +1,8 @@
 from pyems.decorators import mandatory
-from pyems.dtypes import dD
+from pyems.typesys import DataDictionary
 from pyems.util import clear, unzip, xml
 from pyems.errors import AmdFormatError
+from pyems.environ import ENV
 
 from datetime import datetime
 from pandas import DataFrame, Series
@@ -10,15 +11,44 @@ from xml.etree.ElementTree import ElementTree, Element
 import os
 
 
-BIN_PATH = r'D:\ETASData\ASCET6.1\bin'
+class AmdSource(object):
+    """
+    [KOR]
+    *.amd 파일 핸들러
+    *.amd 파일을 읽기 위한 클래스입니다. *.main.amd, *.implementation.amd,
+    *.data.amd, *.specification.amd 파일을 동일 경로에서 찾습니다. 입력된
+    소스 파일이 압축 파일 (.zip)인 경우 임시 폴더(bin)에 압축을 푼 후 *.amd
+    파일을 찾습니다. 임시 폴더는 정의하는 것을 강하게 권장합니다. 임시 폴더가
+    정의되지 않은 경우 자동을 폴더 생성 후 클래스 인스턴스가 소멸될 때 삭제됩니다.
 
-class AmdSource:
+    [ENG]
+    *.amd FILE HANDLER
+    This class is designed to read *.amd files. It searches for related
+    files such as: *.main.amd, *.implementation.amd, *.data.amd,
+    *.specification.amd in the same directory as the input file. If the
+    input source file is a compressed .zip file, it will be extracted to
+    a temporary folder (default: 'bin'), and the *.amd files will be
+    searched within the extracted contents. It is strongly recommended
+    to explicitly define the temporary folder. If no temporary folder is
+    defined, one will be automatically created. The folder will be deleted
+    when the class instance is destroyed.
+    """
+
+    __slots__ = (
+        "name", # name of *.amd
+        "path", # directory (parent path) of *.amds
+        "file", # full path of *.main.amd
+        "main", # full path of *.main.amd
+        "impl", # full path of *.implementation.amd
+        "data", # full path of *.data.amd
+        "spec", # full path of *.specification.amd
+    )
 
     def __init__(self, file:str, binary:str=''):
         self.name = name = os.path.basename(file).split('.')[0]
         if file.endswith('.zip'):
             if not binary:
-                binary = BIN_PATH
+                binary = ENV["ASCET_BIN_PATH"]
                 os.makedirs(binary, exist_ok=True)
             unzip(file, binary)
             self.path = path = binary
@@ -57,7 +87,7 @@ class AmdElements:
         :param kwargs:
         :return:
         """
-        kwargs = dD(**kwargs)
+        kwargs = DataDictionary(**kwargs)
         return Element('MethodSignature',
                  name=kwargs.name,
                  OID=kwargs.OID,
@@ -85,7 +115,7 @@ class AmdElements:
         :param kwargs:
         :return:
         """
-        kwargs = dD(**kwargs)
+        kwargs = DataDictionary(**kwargs)
 
         """
         공통 태그 요소 생성
@@ -213,7 +243,7 @@ class AmdElements:
         :param kwargs: Element(**kwargs)의 kwargs를 C/O
         :return:
         """
-        kwargs = dD(**kwargs)
+        kwargs = DataDictionary(**kwargs)
 
         ImplementationEntry = Element('ImplementationEntry')
         ImplementationVariant = Element('ImplementationVariant', name='default')
@@ -356,7 +386,7 @@ class AmdElements:
         :param kwargs: Element(**kwargs)의 kwargs를 C/O
         :return:
         """
-        kwargs = dD(**kwargs)
+        kwargs = DataDictionary(**kwargs)
 
         DataEntry = Element('DataEntry',
                       elementName=kwargs.name,
@@ -493,11 +523,11 @@ class AmdIO(ElementTree):
         df['model'] = self.name
         return df
 
-    def datadict(self, tag:str) -> List[dD]:
+    def datadict(self, tag:str) -> List[DataDictionary]:
         data = []
         for elem in self.iter():
             if elem.tag == tag:
-                data.append(dD(xml.to_dict(elem)))
+                data.append(DataDictionary(xml.to_dict(elem)))
         return data
 
     def export(self, path:str=''):
@@ -570,7 +600,7 @@ if __name__ == "__main__":
     # amd.append(Element('Element', name='test', ))
     # print(amd.dom)
 
-    attr = dD(
+    attr = DataDictionary(
         name='tester',
         OID="",
         # modelType='complex',
