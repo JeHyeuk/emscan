@@ -152,10 +152,28 @@ class CanDbSchema(metaclass=metaclass):
             "width": 80,
             "align": "center",
         },
-        "Timeout": {
+        "Requirement ID": {
             "synonyms": [],
             "dtype": str,
-            "width": 80,
+            "width": 100,
+            "align": "center",
+        },
+        "Required Date": {
+            "synonyms": [],
+            "dtype": str,
+            "width": 60,
+            "align": "center",
+        },
+        "Remark": {
+            "synonyms": [],
+            "dtype": str,
+            "width": 100,
+            "align": "center",
+        },
+        "Status": {
+            "synonyms": [],
+            "dtype": str,
+            "width": 60,
             "align": "center",
         },
         "ByteOrder": {
@@ -224,18 +242,6 @@ class CanDbSchema(metaclass=metaclass):
             "width": 200,
             "align": "left",
         },
-        "History":{
-            "synonyms": [],
-            "dtype": str,
-            "width": 100,
-            "align": "center",
-        },
-        "Remark":{
-            "synonyms": [],
-            "dtype": str,
-            "width": 100,
-            "align": "center",
-        }
     })
 
     __iterable__ = __meta__.items()

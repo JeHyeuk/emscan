@@ -1,5 +1,7 @@
+from pyems.errors import DBError
 from pandas import DataFrame, Series
 from typing import Dict, List, Union
+import pandas as pd
 
 
 class CanSignal(object):
@@ -126,12 +128,13 @@ class CanMessage(object):
         __attr__:Dict[str, Union[str, int, float]] = signals.iloc[0].to_dict()
         __attr__['Version'] = signals["Version"].sort_values(ascending=True).iloc[-1]
         if "E" in __attr__["Send Type"]:
+            if pd.isna(__attr__["Cycle Time"]):
+                raise DBError()
             __attr__["taskTime"] = 0.04
-        elif not __attr__["Cycle Time"]:
-            __attr__["taskTime"] = 0.01
         else:
             __attr__["taskTime"] = __attr__["Cycle Time"] / 1000
 
+        # ES SPEC TIMEOUT TIME
         if __attr__["Cycle Time"] <= 50:
             __attr__["timeoutTime"] = 0.5
         elif __attr__["Cycle Time"] < 500:
@@ -195,6 +198,10 @@ class CanMessage(object):
         if not hasattr(self, '__hasac__'):
             self.__setattr__('__hasac__', not self.aliveCounter.empty)
         return self.__getattribute__('__hasac__')
+
+    def isTsw(self) -> bool:
+        status = self.signals["Status"].unique().tolist()
+        return len(status) == 1 and status[0].lower() == "tsw"
 
 
 

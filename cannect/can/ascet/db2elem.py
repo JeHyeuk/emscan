@@ -76,13 +76,12 @@ def SignalElement(signal:CanSignal, oid_tag:Optional[Dict[str, str]]=None) -> Da
     if signal.ECU == "EMS":
         kwargs.comment = ""
     kwargs.modelType = 'scalar'
-    kwargs.basicModelType = 'cont'
     if signal.Length == 1:
         kwargs.basicModelType = "log"
     elif signal.Formula == "OneToOne":
         kwargs.basicModelType = "udisc"
     else:
-        pass
+        kwargs.basicModelType = 'cont'
     kwargs.unit = signal.Unit
 
     kwargs.kind = "message"

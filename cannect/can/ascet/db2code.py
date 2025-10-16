@@ -1,5 +1,86 @@
 from pyems.candb import CanMessage, CanSignal
+from pyems.environ import ENV
 from cannect.can.rule import naming
+from datetime import datetime
+from pandas import DataFrame, Series
+from typing import Dict
+import pandas as pd
+import re
+
+
+INFO = lambda revision: f"""This Model is Auto-Generated. 
+* COMPANY: {ENV['COMPANY']}
+* DIVISION: {ENV['DIVISION']}
+* AUTHOR: {ENV['USERNAME']}
+* CREATED: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+* DB VERSION: {revision}
+
+* {ENV["COPYRIGHT"]}.
+"""
+
+INLINE = f"""
+/* ----------------------------------------------------------------------------------------------------
+    Inline Function : Memory Copy
+---------------------------------------------------------------------------------------------------- */
+inline void __memcpy(void *dst, const void *src, size_t len) {{
+    size_t i;
+    char *d = dst;
+    const char *s = src;
+    for (i = 0; i < len; i++)
+        d[i] = s[i];
+}}
+
+/* ----------------------------------------------------------------------------------------------------
+    Inline Function : Message Counter Check
+---------------------------------------------------------------------------------------------------- */
+inline void cntvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {{
+    if ( recv == calc ) {{
+        *timer += 1;
+        if ( *timer >= thres ) {{
+            *timer = thres;
+            *vld = 0;
+        }}
+    }}
+    else {{
+        *timer = 0;
+        *vld = 1;
+    }}
+}}
+
+/* ----------------------------------------------------------------------------------------------------
+    Inline Function : CRC Check
+---------------------------------------------------------------------------------------------------- */
+inline void crcvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {{
+    if ( recv == calc ) {{
+        *timer = 0;
+        *vld = 1;
+    }}
+    else {{
+        *timer += 1;
+        if ( *timer >= thres ) {{
+            *timer = thres;
+            *vld = 0;
+        }}
+    }}
+}}
+
+/* ----------------------------------------------------------------------------------------------------
+    Inline Function : Alive Counter Check
+---------------------------------------------------------------------------------------------------- */
+inline void alvvld(uint8 *vld, uint8 *timer, uint8 recv, uint8 calc, uint8 thres) {{
+    if ( ( recv == calc ) || ( (recv - calc) > 10 ) ) {{
+        *timer += 1;
+        if ( *timer >= thres ) {{
+            *timer = thres;
+            *vld = 0;
+        }}
+    }}
+    else {{
+        *timer = 0;
+        *vld = 1;
+    }}
+}}
+"""
 
 
 def SignalDecode(signal:CanSignal, rule:naming=None) -> str:
@@ -70,10 +151,13 @@ class MessageCode:
         "EW": "Event On Write",
     }
 
-    def __init__(self, message:CanMessage):
+    def __init__(self, message:CanMessage, exclude_tsw:bool=True):
         self.message = message
-        self.name = str(message.name)
+        self.name = name = str(message.name)
         self.names = naming(self.name)
+        self.exclude_tsw = exclude_tsw
+
+        self.srv_name = lambda md: f"#define COMPILE_UNUSED__{md.upper()}_IMPL__{name}"
         return
 
     def __getitem__(self, item):
@@ -81,6 +165,7 @@ class MessageCode:
 
     def messageAlign(self) -> list:
         buffer = [f"Reserved_{n // 8}" for n in range(8 * self["DLC"])]
+        self.message.ITERATION_INCLUDES_CRC = self.message.ITERATION_INCLUDES_ALIVECOUNTER = True
         for sig in self.message:
             index = sig.StartBit
             while index < (sig.StartBit + sig.Length):
@@ -114,6 +199,7 @@ class MessageCode:
             if label in eigen:
                 aligned_copy[n] = aligned_copy[n].replace(label, f'{label}_{eigen.count(label)}')
             eigen.append(label)
+
         return aligned_copy
 
     def signalDecode(self, spliter:str="\n\t") -> str:
@@ -123,6 +209,25 @@ class MessageCode:
                 continue
             code.append(SignalDecode(sig, self.names))
         return spliter.join(code)
+
+    @property
+    def def_name(self) -> str:
+        chn = "PL2" if self["Channel"] == "H" else "PL1" if self["Channel"] == "L" else "P"
+        bsw = f"CAN_MSGNAME_{self['Message']}_{chn}"
+        if self["Message"] == "EGSNXUpStream_Data":
+            bsw = "CAN_MSGNAME_EGSNXUpStream_B1_data_1"
+        if self["Message"] == "EGSNXUpStream_Req":
+            bsw = "CAN_MSGNAME_EGSNXUpStream_B1_Rqst"
+        if self["Message"] == "HCU_11_P_00ms":
+            bsw = "CAN_MSGNAME_HCU_11_00ms_P"
+        if self["Message"] == "HCU_11_H_00ms":
+            bsw = "CAN_MSGNAME_HCU_11_00ms_PL2"
+        if self["Message"] == "IMU_01_10ms":
+            bsw = "CAN_MSGNAME_YRS_01_10ms_P"
+        if self.message.isTsw() and self.exclude_tsw:
+            bsw = 255
+        asw = f'MSGNAME_{naming(self["Message"]).tag}'
+        return f"#define {asw}\t{bsw}"
 
     @property
     def struct(self) -> str:
@@ -135,11 +240,11 @@ class MessageCode:
  SEND TYPE\t\t: {self["Send Type"]}
 -------------------------------------------------------------------------------- */
 typedef union {{
-    uint8 Data[8];
+    uint8 Data[{self["DLC"]}];
     struct {{
         {aligned}
     }} B;
-}} CanFrm_{self.names.tag}"""
+}} CanFrm_{self.names.tag};"""
 
     @property
     def method(self) -> str:
@@ -186,14 +291,42 @@ cntvld( &{names.messageCountValid}, &{names.messageCountTimer}, {names.counter},
             ccode.append(line)
         return "\n".join(ccode)
 
+    def to_rx(self, model: str) -> str:
+        tab, i = '\t', 0
+        send_type = {
+            "P": "Periodic",
+            "PE": "Periodic On Event",
+            "EC": "Event On Change",
+            "EW": "Event On Write",
+        }
+        syntax = f"""
+/* ------------------------------------------------
+ MESSAGE\t\t\t: {self["Message"]}
+ MESSAGE ID\t\t: {self["ID"]}
+ MESSAGE DLC\t: {self["DLC"]}
+ SEND TYPE\t\t: {send_type[self["Send Type"]]}
+ CHANNEL\t\t\t: {self["Channel"]}-CAN
+-------------------------------------------------- */"""
+        if self["SystemConstant"]:
+            syntax += f"\n#if ( {self['SystemConstant']} )"
+        if self["Codeword"]:
+            syntax += f"\nif ( {self['Codeword']} ) {{"
+            i += 1
+        syntax += f"\n{tab * i}{model.upper()}_IMPL__{self['Message']}();\n"
+        if self["Codeword"]:
+            syntax += f"}}\n"
+        if self["SystemConstant"]:
+            syntax += f"#endif\n"
+        return syntax
 
-if __name__ == "__main__":
-    from cannect.can.db.db import CanDB
+    @classmethod
+    def method_contains_message(cls, context: Dict[str, str]) -> DataFrame:
+        status = {}
+        for method, code in context.items():
+            if code is None:
+                status[method] = None
+            else:
+                fs = [f.split("__")[-1] for f in re.findall(r'\bCOMDEF_\w*', code)]
+                status[method] = Series(index=fs, data=fs)
+        return pd.concat(status, axis=1)
 
-    db = CanDB()
-    message_name = "ABS_ESC_01_10ms"
-    # message_name = "ACU_02_00ms"
-    mc = MessageCode(db.messages[message_name])
-
-    # print(mc.struct)
-    print(mc.method)

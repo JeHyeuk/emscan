@@ -1,12 +1,49 @@
-from pyems.errors import AuthorizeError
-from pyems.environ import SVN
-
-from dataclasses import dataclass
 from datetime import datetime
 from pandas import read_sql, isna, DataFrame, Series
+from logging import Logger
 from typing import Union
-import pandas as pd
 import os, sqlite3, subprocess
+
+
+def update(file_or_path:str, logger:Logger=None) -> str:
+    try:
+        result = subprocess.run(
+            ['svn', 'update', file_or_path],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        msg = result.stdout
+    except subprocess.CalledProcessError as e:
+        msg = f"Failed to update SVN repository: {file_or_path} :: {e.stderr}"
+
+    if logger is None:
+        print(msg)
+    else:
+        logger.info(msg)
+    return msg
+
+
+def log(filepath:str) -> DataFrame:
+    result = subprocess.run(['svn', 'log', filepath], capture_output=True, text=True)
+    if result.returncode != 0:
+        raise OSError
+    text = [e for e in result.stdout.split('\n') if e and (not e.endswith('-'))]
+    data = []
+    line = ''
+    for n, part in enumerate(text):
+        if n % 2:
+            line = f'{line} | {part}'.split(' | ')
+            data.append(line)
+            line = ''
+        else:
+            line += part
+    logger = DataFrame(data=data)
+    logger = logger.drop(columns=[1, 3]).rename(columns={0: 'revision', 2: 'datetime', 4: 'log'})
+    logger = logger[logger["log"].str.startswith('[')]
+    logger["datetime"] = logger["datetime"].apply(lambda x: x[:x.find('+0900') - 1])
+    logger["log"] = logger["log"].apply(lambda x: x.split('] ')[-1])
+    return logger
 
 
 class subversion:
@@ -41,43 +78,11 @@ class subversion:
         return selected
 
     def update(self, display: bool=False) -> str:
-        try:
-            result = subprocess.run(
-                ['svn', 'update', self.path],
-                capture_output=True,
-                text=True,
-                check=True
-            )
-            if display:
-                print(result.stdout)
-            return result.stdout
-        except subprocess.CalledProcessError as e:
-            msg = f"Failed to update SVN repository: {self.path} ::", e.stderr
-            if display:
-                print(msg)
-            return msg
+        return update(self.path, display=display)
 
     def log(self, filename:str) -> DataFrame:
         file = self[filename]
-        result = subprocess.run(['svn', 'log', file['abs_path']], capture_output=True, text=True)
-        if result.returncode != 0:
-            raise OSError
-        text = [e for e in result.stdout.split('\n') if e and (not e.endswith('-'))]
-        data = []
-        line = ''
-        for n, part in enumerate(text):
-            if n % 2:
-                line = f'{line} | {part}'.split(' | ')
-                data.append(line)
-                line = ''
-            else:
-                line += part
-        logger = DataFrame(data=data)
-        logger = logger.drop(columns=[1, 3]).rename(columns={0:'revision', 2:'datetime', 4:'log'})
-        logger = logger[logger["log"].str.startswith('[')]
-        logger["datetime"] = logger["datetime"].apply(lambda x: x[:x.find('+0900') - 1])
-        logger["log"] = logger["log"].apply(lambda x:x.split('] ')[-1])
-        return logger
+        return log(file['abs_path'])
 
     @classmethod
     def to_datetime_string(cls, value) -> str:
@@ -91,10 +96,18 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    svn = subversion(SVN.CONF)
-    svn.update()
-    print(svn.db)
-    print(svn.unit("canfdepbd_hev_confdata.xml"))
-    print(svn["canfdepbd_hev_confdata.xml"])
-    print(svn.log("canfdepbd_hev_confdata.xml"))
+    from pyems.environ import SVN_PATH
+
+    my_file = r"D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\자체제어기_KEFICO-EMS_CANFD.xlsx"
+
+    print(log(my_file))
+    update(my_file, display=True)
+
+
+    svn = subversion(SVN_PATH.CONF)
+    # svn.update()
+    # print(svn.db)
+    # print(svn.unit("canfdepbd_hev_confdata.xml"))
+    # print(svn["canfdepbd_hev_confdata.xml"])
+    # print(svn.log("canfdepbd_hev_confdata.xml"))
 

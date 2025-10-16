@@ -3,22 +3,34 @@ from pyems.decorators import constrain
 from pyems.typesys import DataDictionary
 from pyems.candb import CanDb
 from pyems.environ import ENV
+from pyems.logger import Logger
 
 from cannect.can.ascet.db2elem import (
     crcClassElement,
     MessageElement,
     SignalElement
 )
-from cannect.can.ascet.db2code import MessageCode
-from pandas import DataFrame
+from cannect.can.ascet.db2code import (
+    INFO,
+    INLINE,
+    MessageCode
+)
 from typing import Any, Union, Tuple
+from pandas import DataFrame
 import os, copy
 
 
-SVN_MODEL = ENV['SVN_PATH']["MODEL"]["HNB_GASOLINE/_29_CommunicationVehicle/StandardDB/NetworkDefinition"]
-class ComDef_:
+SVN_MODEL = ENV['SVN']["model/ascet/trunk/HNB_GASOLINE/_29_CommunicationVehicle/StandardDB/NetworkDefinition"]
 
-    def __init__(self, db:CanDb, engine_spec:str, base_model:str=''):
+class ComDef:
+
+    def __init__(
+        self,
+        db:CanDb,
+        engine_spec:str,
+        base_model:str='',
+        exclude_tsw:bool=True,
+    ):
         # 모델 이름 정의
         name = 'ComDef_HEV' if engine_spec == 'HEV' else 'ComDef'
 
@@ -31,10 +43,10 @@ class ComDef_:
             base_model = os.path.join(SVN_MODEL, rf'{name}\{name}.zip')
 
         # amd 파일 Source Control
-        amd = AmdSC(base_model, path)
+        amd = AmdSC(base_model)
 
         # 공용 속성 생성
-        self.db = db = db.to_comdef_mode(engine_spec)
+        self.db = db
         self.name = name
         self.path = path
 
@@ -44,39 +56,62 @@ class ComDef_:
         self.data = AmdIO(amd.data)
         self.spec = AmdIO(amd.spec)
 
+        self.logger = logger = Logger(os.path.join(path, 'log.txt'), clean_record=True)
+        logger.info(f"%{name} MODEL GENERATION")
+        logger.info(f">>> Engine Spec: {engine_spec}")
+        logger.info(f">>> Base Model: {base_model}")
+        logger.info(f">>> DB Revision: {db.revision}")
+        logger.info(f">>> Exclude TSW: {'Yes' if exclude_tsw else 'No'}")
+
         """
         변경 전 모델 요소 수집
         """
+        logger.info(">>> Collecting Base Model Properties... 0.01s")
         prev = self.collect_properties()
         oids = dict(zip(prev.Elements['name'], prev.Elements.index))
         oids.update(dict(zip(prev.MethodSignature['name'], prev.MethodSignature.index)))
         self.prev = prev
         self.oids = oids
-        print(prev.MethodSignature)
-        # print(prev.MethodBody)
-        print(prev.Elements)
 
         """
         DB 메시지 기반의 요소 생성
         """
-        import time
-        stime = time.perf_counter()
+        logger.run()
         self.ME = {name: MessageElement(obj, oid_tag=oids) for name, obj in db.messages.items()}
-        print(f'{time.perf_counter() - stime: .4f}s')
+        self.MC = {name: MessageCode(obj, exclude_tsw) for name, obj in db.messages.items()}
+        logger.end(">>> Defining Message Elements...")
 
-        stime = time.perf_counter()
+        logger.run()
         self.SE = [SignalElement(sig, oid_tag=oids) for sig in db.signals.values()]
-        print(f'{time.perf_counter() - stime: .4f}s')
+        logger.end(">>> Defining Signal Elements...")
         return
 
     def autorun(self):
+        self.main.find('Component/Comment').text = INFO(self.db.revision)
         self.define_elements('MethodSignature')
         self.define_elements('Element')
         self.define_elements('ImplementationEntry')
         self.define_elements('DataEntry')
+        self.define_elements('HeaderBlock')
         self.define_elements('MethodBody')
-
         self.export()
+
+        curr = self.collect_properties()
+        deleted = list(set(self.prev.Elements['name']) - set(curr.Elements['name']))
+        added = list(set(curr.Elements['name']) - set(self.prev.Elements['name']))
+        desc = DataFrame(
+            data={
+                ("Method", "Total"): [len(self.prev.MethodSignature), len(self.db.messages)],
+                ("Element", "Total"): [len(self.prev.Elements), len(curr.Elements)],
+                ("Element", "Added"): ["-", len(added)],
+                ("Element", "Deleted"): [len(deleted), "-"]
+            },
+            index=['Base Model', ' New Model']
+        )
+        self.logger.info(">>> Summary\n" + \
+                         desc.to_string() + '\n' + \
+                         f'* Added: {", ".join(added)}' + '\n' + \
+                         f'* Deleted: {", ".join(deleted)}')
         return
 
     def collect_properties(self) -> DataDictionary:
@@ -92,7 +127,7 @@ class ComDef_:
             Elements=mainE.join(implE).join(dataE)
         )
 
-    @constrain('MethodSignature', 'Element', 'ImplementationEntry', 'DataEntry', 'MethodBody')
+    @constrain('MethodSignature', 'Element', 'ImplementationEntry', 'DataEntry', 'MethodBody', 'HeaderBlock')
     def parents(self, tag:str) -> Union[Any, Tuple]:
         if tag == "MethodSignature":
             return self.main.find('Component/MethodSignatures'), None
@@ -105,6 +140,9 @@ class ComDef_:
         if tag == 'MethodBody':
             return self.spec.strictFind('CodeVariant', target="G_HMCEMS").find('MethodBodies'), \
                    self.spec.strictFind('CodeVariant', target="PC").find('MethodBodies')
+        if tag == "HeaderBlock":
+            return self.spec.strictFind('CodeVariant', target="G_HMCEMS").find('HeaderBlock'), \
+                   self.spec.strictFind('CodeVariant', target="PC").find('HeaderBlock')
         raise AttributeError
 
     def define_elements(self, tag:str):
@@ -127,6 +165,22 @@ class ComDef_:
         if tag == 'MethodSignature':
             for name in self.db.messages:
                 pGlob.append(self.ME[name].method)
+            return
+
+        if tag == 'HeaderBlock':
+            pLoc.text = "/* Please Change Target In Order To View Source Code */"
+            pGlob.text = f"""#include <Bsw/Include/Bsw.h>
+
+#ifdef SRV_HMCEMS
+{"&lf;".join([mc.srv_name(self.name) for mc in self.MC.values()])}
+#endif
+
+{"&lf;".join([mc.def_name for mc in self.MC.values()])}
+
+{"&lf;".join([mc.struct for mc in self.MC.values()])}
+{INLINE}""" \
+    .replace("&tb;", "\t") \
+    .replace("&lf;", "\n")
             return
 
         if tag == "MethodBody":
@@ -170,12 +224,30 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    from pyems.candb import CAN_DB
+    from pyems.candb import CanDb
 
-    model = ComDef_(CAN_DB, 'ICE', r'D:\ETASData\ASCET6.1\Export\ComDef\ComDef.main.amd')
+    db = CanDb()
+    engine_spec = "ICE"
+
+    # DB CUSTOMIZE ------------------------------------------------------
+    exclude_ecus = ["EMS", "CVVD", "MHSG", "NOx"]
+    if engine_spec == "ICE":
+        exclude_ecus += ["BMS", "LDC"]
+    db = db[~db["ECU"].isin(exclude_ecus)]
+
+    # db = db[db["Status"] != "TSW"] # TSW 제외
+    # db = db[~db["Requirement ID"].isin(["VCDM CR10777888"])] # 특정 CR 제외
+    # db = db[~db["Required Date"].isin(["2024-08-27"])] # 특정 일자 제외
+    # db.revision = "TEST SW" # 공식SW는 주석 처리
+    # DB CUSTOMIZE END --------------------------------------------------
+    db = db.to_developer_mode(engine_spec)
+
+    model = ComDef(
+        db=db,
+        engine_spec=engine_spec,
+        exclude_tsw=True,
+        # base_model="",
+        # base_model=r'D:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\StandardDB\NetworkDefinition\ComDef\ComDef-22368\ComDef.main.amd'
+        # base_model=ENV['ASCET_EXPORT_PATH']
+    )
     model.autorun()
-
-    # print(model.prev.HeaderBlock)
-    # print(model.prev.MethodSignature)
-    # print(model.prev.Elements)
-

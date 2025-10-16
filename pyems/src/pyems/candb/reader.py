@@ -31,6 +31,8 @@ class CanDb:
 
         __db__ = __db__[~__db__["Message"].isna()]
         for col, prop in self.SCHEMA:
+            if col not in __db__.columns:
+                continue
             if not isinstance(__db__[col].dtype, prop["dtype"]):
                 if prop["dtype"] == float:
                     __db__[col] = __db__[col].apply(lambda v: 0 if not v else v)
@@ -40,6 +42,7 @@ class CanDb:
         self.db = __db__
         self.source = source
         self.traceability = traceability
+        self.revision = traceability.split("_")[-1] if "@" in traceability else "TSW"
         return
 
     def __str__(self) -> str:
@@ -51,7 +54,7 @@ class CanDb:
     def __getitem__(self, item):
         __get__ = self.db.__getitem__(item)
         if isinstance(__get__, DataFrame):
-            return CanDb(__get__)
+            return CanDb(__get__, source=self.source, traceability=self.traceability)
         return __get__
 
     def __len__(self) -> int:
@@ -108,17 +111,6 @@ class CanDb:
         base["WakeUp"] = base[f"{engine_spec} WakeUp"]
         return CanDb(base, source=self.source, traceability=self.traceability)
 
-    @constrain("ICE", "HEV")
-    def to_comdef_mode(self, engine_spec:str):
-        base = self.to_developer_mode(engine_spec)
-        exclude_ecus = ["EMS", "CVVD", "MHSG", "NOx"]
-        if engine_spec == "ICE":
-            exclude_ecus += ["BMS", "LDC"]
-        base = base[~base["ECU"].isin(exclude_ecus)].copy()
-        return CanDb(base, source=self.source, traceability=self.traceability)
-
-
-
 
 if __name__ == "__main__":
     from pandas import set_option
@@ -126,6 +118,8 @@ if __name__ == "__main__":
 
     db = CanDb()
     print(db)
-    # print(db.source)
-    print(db.developerDB("ICE"))
-    print(db.messages['ABS_ESC_01_10ms'])
+    print(db.source)
+    print(db.traceability)
+    print(db.revision)
+    # print(db.to_developer_mode("ICE").revision)
+    # print(db.messages['ABS_ESC_01_10ms'])

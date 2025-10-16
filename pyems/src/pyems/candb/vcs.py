@@ -1,7 +1,8 @@
+from pyems.candb.schema import CanDbSchema
 from pyems.errors import FileFormatError
 from pyems.environ import SVN_PATH
+from pyems.svn import log
 from pyems.typesys import Path
-from pyems.candb.schema import CanDbSchema
 
 from datetime import datetime
 from pandas import DataFrame
@@ -18,54 +19,29 @@ class CanDbVersionControl:
     공개되어서는 안 되며 구동하는 호스트내 경로를 입력하여야 한다. 경로는 환경변수로 관리하거나
     HMG 보안 처리된 서버가 Check-Out된 경로를 사용한다.
     """
-    NAME = 'KEFICO-EMS_MASTER'
-    DATE = datetime.today().strftime('%Y.%m.%d')[2:]
+    NAME = "자체제어기_KEFICO-EMS_CANFD.xlsx"
+    FILE = SVN_PATH["CANDB"][NAME]
+    PATH = SVN_PATH["CANDB"]["dev"]
+    PATH.readonly = False
 
-    def __init__(self, resource_path:Union[str, Path]=""):
-        if not resource_path:
-            resource_path = SVN_PATH.CANDB['dev']
-        if isinstance(resource_path, str):
-            resource_path = Path(resource_path)
-        self._path:Path = resource_path
-        self._path.readonly = False
+    def __init__(self):
+        self.history = history = log(self.FILE)
+        self.revision = history.sort_values(by='revision', ascending=False).iloc[0]['revision']
         return
+
+    def __iter__(self):
+        for f in os.listdir(self.PATH):
+            yield os.path.join(self.PATH, f)
 
     @property
     def file_list(self) -> DataFrame:
-        """
-        :return: Example::
-                              unix                   datetime                         name                path
-            revision
-            0000      1.754438e+09 2025-08-06 08:45:27.540014  0000_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0001      1.754438e+09 2025-08-06 08:45:27.547732  0001_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0002      1.754438e+09 2025-08-06 08:45:27.554734  0002_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0003      1.754438e+09 2025-08-06 08:45:27.563623  0003_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0004      1.754438e+09 2025-08-06 08:45:27.570625  0004_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0005      1.754438e+09 2025-08-06 08:45:27.577499  0005_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0006      1.754438e+09 2025-08-06 08:45:27.588490  0006_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0007      1.754438e+09 2025-08-06 08:45:27.596492  0007_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0008      1.754438e+09 2025-08-06 08:45:27.604119  0008_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0009      1.754438e+09 2025-08-06 08:45:27.611121  0009_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0010      1.754438e+09 2025-08-06 08:45:27.619122  0010_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0011      1.754438e+09 2025-08-06 08:45:27.626120  0011_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0012      1.754438e+09 2025-08-06 08:45:27.634122  0012_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0013      1.754438e+09 2025-08-06 08:45:27.641122  0013_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0014      1.754438e+09 2025-08-06 08:45:27.649122  0014_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0015      1.754438e+09 2025-08-06 08:45:27.656122  0015_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0016      1.754438e+09 2025-08-06 08:45:27.664122  0016_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0017      1.754438e+09 2025-08-06 08:45:27.671120  0017_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0018      1.754438e+09 2025-08-06 08:45:27.679122  0018_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0019      1.754438e+09 2025-08-06 08:45:27.686122  0019_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-            0020      1.754438e+09 2025-08-06 08:45:27.693747  0020_KEFICO-EMS_MASTER.json  D:\SVN\dev.bsw\...
-        """
         data = []
-        for f in os.listdir(self._path):
-            if not f.replace(f"_{self.NAME}.json", "").isdigit():
+        for f in os.listdir(self.PATH):
+            if not self.NAME.replace(".xlsx", "") in f:
                 continue
-            file = self._path[f]
+            file = self.PATH[f]
             data.append({
-                'revision': f.split("_")[0],
-                'unix': os.path.getmtime(file),
+                'revision': f.split("_")[-1].replace(".json", ""),
                 'datetime': datetime.fromtimestamp(os.path.getmtime(file)),
                 'name': f,
                 'path': file,
@@ -87,7 +63,10 @@ class CanDbVersionControl:
         :return: Example::
             D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dev\0021_KEFICO-EMS_MASTER.json
         """
-        return self._path[f'{str(int(self.file_list.index.max()) + 1).zfill(4)}_{self.NAME}.json']
+        alloc = self.NAME.replace(".xlsx", f'_{self.revision}')
+        n = len([f for f in os.listdir(self.PATH) if f.startswith(alloc)]) + 1
+        filename = f"{alloc}@{str(n).zfill(2)}.json"
+        return os.path.join(self.PATH, filename)
 
     def clipbd2db(self, save:bool=True, save_as:Union[str, Path]="") -> DataFrame:
         """
@@ -98,6 +77,7 @@ class CanDbVersionControl:
         """
         clipboard = [row.split("\t") for row in paste().split("\r\n")]
         source = DataFrame(data=clipboard[1:], columns=CanDbSchema.standardize(clipboard[0]))
+        # source = DataFrame(data=clipboard[1:], columns=clipboard[0])
         source = source[~source["ECU"].isna() & (source["ECU"] != "")]
         if save_as:
             if not save_as.endswith(".json"):
@@ -114,8 +94,8 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     src = r"D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dev"
-    vcs = CanDbVersionControl(src)
+    vcs = CanDbVersionControl()
     # print(vcs.file_list)
     # print(vcs.file_latest)
     # print(vcs.file_allocated)
-    vcs.clipbd2db(True)
+    vcs.clipbd2db(save=True, save_as="")

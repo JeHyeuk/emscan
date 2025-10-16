@@ -4,6 +4,9 @@ class AmdFormatError(FileExistsError):
 class AscetPathError(FileExistsError):
     pass
 
+class DBError(AttributeError):
+    pass
+
 class BCNotFoundError(FileExistsError):
     pass
 
