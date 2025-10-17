@@ -49,6 +49,7 @@ class ComDef:
         self.db = db
         self.name = name
         self.path = path
+        self.engine_spec = engine_spec
 
         # 각 amd의 IO 생성
         self.main = AmdIO(amd.main)
@@ -181,6 +182,8 @@ class ComDef:
 {INLINE}""" \
     .replace("&tb;", "\t") \
     .replace("&lf;", "\n")
+            if self.engine_spec == "HEV":
+                pGlob.text = pGlob.text.replace("YRS", "IMU")
             return
 
         if tag == "MethodBody":
@@ -227,7 +230,7 @@ if __name__ == "__main__":
     from pyems.candb import CanDb
 
     db = CanDb()
-    engine_spec = "ICE"
+    engine_spec = "HEV"
 
     # DB CUSTOMIZE ------------------------------------------------------
     exclude_ecus = ["EMS", "CVVD", "MHSG", "NOx"]

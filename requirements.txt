@@ -24,3 +24,4 @@ screeninfo
 tqdm
 uvicorn
 xlsxwriter
+-e .

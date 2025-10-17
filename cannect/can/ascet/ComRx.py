@@ -144,7 +144,7 @@ if __name__ == "__main__":
     from pyems.candb import CanDb
 
     db = CanDb()
-    engine_spec = "ICE"
+    engine_spec = "HEV"
 
     # DB CUSTOMIZE ------------------------------------------------------
     exclude_ecus = ["EMS", "CVVD", "MHSG", "NOx"]
@@ -161,7 +161,7 @@ if __name__ == "__main__":
 
     model = ComRx(
         db=db,
-        engine_spec='ICE',
+        engine_spec=engine_spec,
         # base_model="",
         # base_model=r'D:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\StandardDB\NetworkDefinition\ComDef\ComDef-22368\ComDef.main.amd'
         # base_model=ENV['ASCET_EXPORT_PATH']

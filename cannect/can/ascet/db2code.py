@@ -94,9 +94,9 @@ def SignalDecode(signal:CanSignal, rule:naming=None) -> str:
     elem = f'{name}_Can'
     if signal.Message == "L_BMS_22_100ms" and signal.Length == 32:
         return f"""{elem} = (uint32)({buff}_1
-               + ({buff}_2 << 8)
-               + ({buff}_3 << 16)
-               + ({buff}_4 << 24));"""
+                            + ({buff}_2 << 8)
+                            + ({buff}_3 << 16)
+                            + ({buff}_4 << 24));"""
 
     if signal["Value Type"].lower() == "unsigned":
         return f"{elem} = (uint{size}){buff};"
@@ -330,3 +330,11 @@ cntvld( &{names.messageCountValid}, &{names.messageCountTimer}, {names.counter},
                 status[method] = Series(index=fs, data=fs)
         return pd.concat(status, axis=1)
 
+if __name__ == "__main__":
+    from pyems.candb import CAN_DB
+
+    testDB = CAN_DB.to_developer_mode("HEV")
+
+    code = MessageCode(testDB.messages["L_BMS_22_100ms"])
+    print(code.def_name)
+    print(code.method)

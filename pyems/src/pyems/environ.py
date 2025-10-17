@@ -3,6 +3,8 @@ from datetime import datetime
 from dotenv import load_dotenv
 import os
 
+if not os.getenv('USERDOMAIN', None) == 'HKEFICO':
+    raise OSError('This Library is Only for HYUNDAI KEFICO Co.,Ltd.')
 
 load_dotenv()
 if os.getenv('SVN_PATH', None) is None:
