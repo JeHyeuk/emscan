@@ -118,8 +118,8 @@ if __name__ == "__main__":
 
     db = CanDb()
     print(db)
-    print(db.source)
-    print(db.traceability)
-    print(db.revision)
+    # print(db.source)
+    # print(db.traceability)
+    # print(db.revision)
     # print(db.to_developer_mode("ICE").revision)
     # print(db.messages['ABS_ESC_01_10ms'])

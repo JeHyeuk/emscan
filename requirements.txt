@@ -24,4 +24,4 @@ screeninfo
 tqdm
 uvicorn
 xlsxwriter
--e .
+-e ./pyems
