@@ -118,11 +118,11 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     ir = IntegrationRequest(
-        "ComRx_HEV",
-        "CanFDCLUM_HEV",
-        ChangeHistoryName='8464_HEV_CAN_WAKEUP인터페이스개발.pptx',
-        ChangeHistoryRev=38341,
-        Comment="WAKEUP메시지 인터페이스 추가",
+        "ComDef",
+        "ComRx",
+        ChangeHistoryName='8495_ICE_CANDB_업데이트_변경_R21564.pptx',
+        ChangeHistoryRev=38702,
+        Comment="CAN DB r21564 반영",
         User="이제혁",
         Date=datetime.now().strftime("%Y-%m-%d")
     )

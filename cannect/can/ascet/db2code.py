@@ -1,4 +1,5 @@
 from pyems.candb import CanMessage, CanSignal
+from pyems.errors import DBError
 from pyems.environ import ENV
 from cannect.can.rule import naming
 from datetime import datetime
@@ -109,7 +110,7 @@ def SignalDecode(signal:CanSignal, rule:naming=None) -> str:
             neg = f"(sint{size})({buff} | {hex(2 ** size - 2 ** signal.Length).upper().replace('X', 'x')})"
             pos = f"(sint{size}){buff}"
             return f"{elem} = {msb} ? {neg} : {pos};"
-    else:
+    elif signal.SignedProcessing.lower() == "absolute":
         msb = f"( {buff} >> {signal.Length - 1} ) && 1"
         neg = f"(sint{size})( (~{buff} + 1) | {hex(2 ** size - 2 ** (signal.Length - 1)).upper().replace('X', 'x')} )"
         pos = f"(sint{size}){buff}"
@@ -120,6 +121,8 @@ def SignalDecode(signal:CanSignal, rule:naming=None) -> str:
         if str(signal.name) in ["TCU_TqRdctnVal", "TCU_EngTqLimVal", "L_TCU_TqRdctnVal", "L_TCU_EngTqLimVal"]:
             syn += f'\n{rtz}'
         return syn
+    else:
+        raise DBError("Signed Signal must be specified the processing method.")
 
 
 class MessageValidator:

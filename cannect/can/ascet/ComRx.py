@@ -144,7 +144,7 @@ if __name__ == "__main__":
     from pyems.candb import CanDb
 
     db = CanDb()
-    engine_spec = "HEV"
+    engine_spec = "ICE"
 
     # DB CUSTOMIZE ------------------------------------------------------
     exclude_ecus = ["EMS", "CVVD", "MHSG", "NOx"]

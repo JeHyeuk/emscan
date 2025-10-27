@@ -75,6 +75,7 @@ class CanDbVersionControl:
         :param save_as: [str, Path] (파일 이름이 포함된 full directory), 주어진 경우 해당 경로로 저장
         :return:
         """
+        alloc = self.file_allocated
         clipboard = [row.split("\t") for row in paste().split("\r\n")]
         source = DataFrame(data=clipboard[1:], columns=CanDbSchema.standardize(clipboard[0]))
         # source = DataFrame(data=clipboard[1:], columns=clipboard[0])
@@ -85,7 +86,9 @@ class CanDbVersionControl:
             source.to_json(save_as, orient='index')
 
         if save:
-            source.to_json(self.file_allocated, orient='index')
+            source.to_json(alloc, orient='index')
+        print("Manually Updated CAN DB from clipboard.")
+        print(f"- Saved as : {save_as if save_as else alloc}")
         return source
 
 
@@ -93,7 +96,6 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    src = r"D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dev"
     vcs = CanDbVersionControl()
     # print(vcs.file_list)
     # print(vcs.file_latest)
