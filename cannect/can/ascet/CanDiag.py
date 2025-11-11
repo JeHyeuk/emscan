@@ -41,8 +41,8 @@ class CanDiag:
 
         base = AmdIO(base_model.main)
         main = AmdIO(export_model.main)
-        base_task = base.dataframe('MethodSignature').set_index(keys='name')['OID']
-        main_task = main.dataframe('MethodSignature').set_index(keys='name')['OID']
+        base_task = base.dataframe('MethodSignature', depth="shallow").set_index(keys='name')['OID']
+        main_task = main.dataframe('MethodSignature', depth="shallow").set_index(keys='name')['OID']
         rename_book = {
             main_task[task]: base_task[task]
             for task in ['_100msRun', '_EEPRes', '_fcmclr', '_Init']
@@ -196,9 +196,12 @@ if __name__ == "__main__":
 
     md = CanDiag(
         CanDb(),
-        r"D:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\BDC\MessageDiag\CanFDBDCD\CanFDBDCD.zip",
+        # r"D:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\BDC\MessageDiag\CanFDBDCD\CanFDBDCD.zip",
         # "BDC_FD_05_200ms",
-        "BDC_FD_05_200ms", "BDC_FD_07_200ms",
+        # "BDC_FD_05_200ms", "BDC_FD_07_200ms",
         # "BDC_FD_05_200ms", "BDC_FD_07_200ms", "BDC_FD_08_200ms", "BDC_FD_SMK_02_200ms"
+
+        r"\\kefico\keti\ENT\Softroom\Temp\K.N.CHO\HMC_CAN_CR개발\20250904_유로7_OBM_OTA\HEV\CanFDCCUD_HEV_test\CanFDCCUD_HEV.main.amd",
+        "CCU_OBM_01_1000ms"
     )
     md.autorun()
