@@ -500,7 +500,21 @@ class AmdIO(ElementTree):
         self.file = os.path.basename(file)
         self.name = os.path.basename(file).split(".")[0]
         self.type = self.getroot().tag
+
+        self._ns = {'ns0': 'http://www.w3.org/2000/09/xmldsig#'}
         return
+
+    def __getitem__(self, item):
+        return self.root[item]
+
+    def __setitem__(self, key, value):
+        if key in ['digestValue', 'signatureValue']:
+            setattr(self, key, value)
+            return
+        if key in self.getroot()[0].attrib:
+            self.getroot()[0].attrib[key] = value
+        else:
+            raise KeyError(f"No such attribute: {key}")
 
     @property
     def root(self) -> Series:
@@ -518,16 +532,32 @@ class AmdIO(ElementTree):
         })
         return Series(data=__attr__)
 
-    def dataframe(self, tag:str) -> DataFrame:
-        df = DataFrame(data=self.datadict(tag))
+    @property
+    def digestValue(self) -> str:
+        return self.find('ns0:Signature/ns0:SignedInfo/ns0:Reference/ns0:DigestValue', self._ns).text
+
+    @digestValue.setter
+    def digestValue(self, value: str):
+        self.find('ns0:Signature/ns0:SignedInfo/ns0:Reference/ns0:DigestValue', self._ns).text = value
+
+    @property
+    def signatureValue(self) -> str:
+        return self.find('ns0:Signature/ns0:SignatureValue', self._ns).text
+
+    @signatureValue.setter
+    def signatureValue(self, value: str):
+        self.find('ns0:Signature/ns0:SignatureValue', self._ns).text = value
+
+    def dataframe(self, tag:str, depth:str='full') -> DataFrame:
+        df = DataFrame(data=self.datadict(tag, depth=depth))
         df['model'] = self.name
         return df
 
-    def datadict(self, tag:str) -> List[DataDictionary]:
+    def datadict(self, tag:str, depth:str='full') -> List[DataDictionary]:
         data = []
         for elem in self.iter():
             if elem.tag == tag:
-                data.append(DataDictionary(xml.to_dict(elem)))
+                data.append(DataDictionary(xml.to_dict(elem, depth=depth)))
         return data
 
     def export(self, path:str=''):
@@ -585,11 +615,14 @@ if __name__ == "__main__":
     # print(amd.serialize())
     # print(amd.export())
     print("*"*100)
+    print(amd.digestValue)
+    print(amd.signatureValue)
 
-    e = amd.strictFind('DataEntry', elementName="ABS_ActvSta_Can")
-    print(xml.to_str(e, xml_declaration=False))
-    parent = amd.findParent(e)
-    print(xml.to_str(parent[e]))
+
+    # e = amd.strictFind('DataEntry', elementName="ABS_ActvSta_Can")
+    # print(xml.to_str(e, xml_declaration=False))
+    # parent = amd.findParent(e)
+    # print(xml.to_str(parent[e]))
 
 
     # amd.remove('DataEntry', elementName="CF_Ems_ActPurMotStat_VB_Ems")
@@ -600,30 +633,30 @@ if __name__ == "__main__":
     # amd.append(Element('Element', name='test', ))
     # print(amd.dom)
 
-    attr = DataDictionary(
-        name='tester',
-        OID="",
-        # modelType='complex',
-        # basicModelType='class',
-        # modelType='scalar',
-        # basicModelType='cont',
-        modelType='array',
-        basicModelType='udisc',
-        scope='local',
-
-        componentName="classTester",
-        componentID="",
-        implementationName='Impl',
-        implementationOID="",
-        kind='message',
-        quantization="0",
-        formula="Test_Formula",
-
-        maxSizeX='8'
-
-    )
-
-    e = AmdElements.Element(**attr)
+    # attr = DataDictionary(
+    #     name='tester',
+    #     OID="",
+    #     # modelType='complex',
+    #     # basicModelType='class',
+    #     # modelType='scalar',
+    #     # basicModelType='cont',
+    #     modelType='array',
+    #     basicModelType='udisc',
+    #     scope='local',
+    #
+    #     componentName="classTester",
+    #     componentID="",
+    #     implementationName='Impl',
+    #     implementationOID="",
+    #     kind='message',
+    #     quantization="0",
+    #     formula="Test_Formula",
+    #
+    #     maxSizeX='8'
+    #
+    # )
+    #
+    # e = AmdElements.Element(**attr)
     # e = ImplementationEntry(**attr)
     # e = DataEntry(**attr)
-    print(xml.to_str(e, xml_declaration=False))
+    # print(xml.to_str(e, xml_declaration=False))

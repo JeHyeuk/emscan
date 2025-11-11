@@ -40,8 +40,8 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     model = "LogIf_HEV"
-    asis = rf"D:\Archive\00_프로젝트\2017 통신개발-\2025\DS0203 LCR_HEV_LDC신호개발\모델\Curr\CanFDLDCM_HEV.main.amd"
-    tobe = rf"D:\Archive\00_프로젝트\2017 통신개발-\2025\DS0203 LCR_HEV_LDC신호개발\모델\Prev\CanFDLDCM_HEV.main.amd"
+    asis = rf"\\kefico\keti\ENT\Softroom\Temp\K.N.CHO\HMC_CAN_CR개발\20250820_LIN_쿨링팬_메시지추가\HEV\can\prev\LinD_HEV.main.amd"
+    tobe = rf"\\kefico\keti\ENT\Softroom\Temp\K.N.CHO\HMC_CAN_CR개발\20250820_LIN_쿨링팬_메시지추가\HEV\can\curr\LinD_HEV\LinD_HEV.main.amd"
     Compare(asis, tobe)
 
     # 0x320

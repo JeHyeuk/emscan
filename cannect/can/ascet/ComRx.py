@@ -1,30 +1,15 @@
 from pyems.ascet import AmdIO, AmdSC
-from pyems.decorators import constrain
-from pyems.typesys import DataDictionary
 from pyems.candb import CanDb
 from pyems.environ import ENV
 from pyems.logger import Logger
+from cannect.can.ascet.db2code import MessageCode
+from typing import Dict
+from pandas import DataFrame
+import os
 
-from cannect.can.ascet.db2elem import (
-    crcClassElement,
-    MessageElement,
-    SignalElement
-)
-from cannect.can.ascet.db2code import (
-    INFO,
-    INLINE,
-    MessageCode
-)
-from typing import Any, Dict, Union, Tuple
-from pandas import DataFrame, Series
-import pandas as pd
-import os, copy, re
-
-
-SVN_MODEL = ENV['SVN']["model/ascet/trunk/HNB_GASOLINE/_29_CommunicationVehicle/StandardDB/MessageInterface/MessageReceive"]
 
 class ComRx:
-
+    _root = ENV['SVN']['model/ascet/trunk/HNB_GASOLINE/_29_CommunicationVehicle/StandardDB/MessageInterface/MessageReceive']
     def __init__(
         self,
         db:CanDb,
@@ -41,7 +26,7 @@ class ComRx:
 
         # 베이스 모델이 없는 경우 SVN의 최신 모델 사용
         if not base_model:
-            base_model = os.path.join(SVN_MODEL, rf'{name}\{name}.zip')
+            base_model = os.path.join(self._root, rf'{name}\{name}.zip')
 
         # amd 파일 Source Control
         amd = AmdSC(base_model)
@@ -86,23 +71,6 @@ class ComRx:
                          desc.to_string() + '\n' + \
                          f'* Added: {", ".join(added)}' + '\n' + \
                          f'* Deleted: {", ".join(deleted)}')
-
-
-        # logger.info(">>> \n" + pd.concat(summary, axis=1).fillna('').to_string())
-
-
-
-        """
-        DB 메시지 기반의 요소 생성
-        """
-        # logger.run()
-        # self.ME = {name: MessageElement(obj, oid_tag=oids) for name, obj in db.messages.items()}
-        # self.MC = {name: MessageCode(obj) for name, obj in db.messages.items()}
-        # logger.end(">>> Defining Message Elements...")
-        #
-        # logger.run()
-        # self.SE = [SignalElement(sig, oid_tag=oids) for sig in db.signals.values()]
-        # logger.end(">>> Defining Signal Elements...")
         return
 
     def code_generation(self, host:str) -> Dict[str, str]:

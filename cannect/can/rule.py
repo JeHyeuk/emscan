@@ -26,6 +26,7 @@ class naming(object):
             self.message = str(message)
         else:
             raise TypeError(f"Unknown type for message; {message}")
+        self.name = self.message
 
         """
         [예외 처리]
@@ -68,6 +69,7 @@ class naming(object):
             self.base = base = f"L_EMS{splits[-1]}"
         if self.message == "EMS_LDCBMS1":
             self.base = base = "EmsLdcBms1"
+        self.pascal = base
 
         self.root = root = ''.join([char for char in base if char.isalpha()])
         if "Fd" in root:
@@ -94,7 +96,7 @@ class naming(object):
                  L_HTCU_10_10ms  |          LHTCU10
         """
         splits = [split.upper() for split in splits]
-        self.hierarchy = self.tag = tag = ''.join(splits)
+        self.hierarchy = self.tag = self.upper = tag = ''.join(splits)
 
         """
         [Element Names]

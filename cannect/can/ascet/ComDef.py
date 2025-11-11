@@ -4,7 +4,6 @@ from pyems.typesys import DataDictionary
 from pyems.candb import CanDb
 from pyems.environ import ENV
 from pyems.logger import Logger
-
 from cannect.can.ascet.db2elem import (
     crcClassElement,
     MessageElement,
@@ -20,9 +19,9 @@ from pandas import DataFrame
 import os, copy
 
 
-SVN_MODEL = ENV['SVN']["model/ascet/trunk/HNB_GASOLINE/_29_CommunicationVehicle/StandardDB/NetworkDefinition"]
-
 class ComDef:
+
+    _root = ENV['MODEL']["HNB_GASOLINE/_29_CommunicationVehicle/StandardDB/NetworkDefinition"]
 
     def __init__(
         self,
@@ -40,7 +39,7 @@ class ComDef:
 
         # 베이스 모델이 없는 경우 SVN의 최신 모델 사용
         if not base_model:
-            base_model = os.path.join(SVN_MODEL, rf'{name}\{name}.zip')
+            base_model = os.path.join(self._root, rf'{name}\{name}.zip')
 
         # amd 파일 Source Control
         amd = AmdSC(base_model)

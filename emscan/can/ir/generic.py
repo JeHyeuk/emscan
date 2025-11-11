@@ -118,10 +118,10 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     ir = IntegrationRequest(
-        "ComDef",
-        "ComRx",
-        ChangeHistoryName='8495_ICE_CANDB_업데이트_변경_R21564.pptx',
-        ChangeHistoryRev=38702,
+        "ComDef_HEV",
+        "ComRx_HEV",
+        ChangeHistoryName='8496_HEV_CANDB_업데이트_변경_R21564.pptx',
+        ChangeHistoryRev=38790,
         Comment="CAN DB r21564 반영",
         User="이제혁",
         Date=datetime.now().strftime("%Y-%m-%d")

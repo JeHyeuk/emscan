@@ -16,7 +16,7 @@ INFO = lambda revision: f"""This Model is Auto-Generated.
 * CREATED: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 * DB VERSION: {revision}
 
-* {ENV["COPYRIGHT"]}.
+* {ENV["COPYRIGHT"]}
 """
 
 INLINE = f"""

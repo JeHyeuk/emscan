@@ -32,7 +32,6 @@ def copyTo(file:str, dst:str) -> str:
     shutil.copy(file, dst)
     return os.path.join(dst, os.path.basename(file))
 
-
 def clear(path: str, leave_path: bool = True):
     """
     지정한 경로의 파일 및 하위 디렉토리를 모두 삭제
@@ -94,17 +93,20 @@ class xml:
         return dom
 
     @classmethod
-    def to_dict(cls, xml: Union[Element, ElementTree], target: str = 'ascet') -> dict:
+    def to_dict(cls, xml:Union[Element, ElementTree], target:str='ascet', depth:str='full') -> dict:
         """
         xml 요소(태그) 및 그 하위 요소의 text 및 attribute를 dictionary로 변환
 
         :param xml:
         :param target:
-
+        :param depth:
         :return:
         """
         if isinstance(xml, Element):
             xml = ElementTree(xml)
+
+        if not depth == 'full':
+            return xml.getroot().attrib
 
         attr = {}
         for elem in xml.iter():
