@@ -146,10 +146,13 @@ class Path(str):
             for n, fl in enumerate(_files):
                 if fl in files:
                     found.append(os.path.join(_root, _files[n]))
+        if not found:
+            raise FileNotFoundError(f'{files} 가 {self._root} 내 없습니다.')
         if len(found) == 1:
             return found[0]
-        if not found:
-            raise FileNotFoundError
+        else:
+            return found
+
 
 
 class _SVN(Path):

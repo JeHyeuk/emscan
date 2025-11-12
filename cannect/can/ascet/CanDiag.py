@@ -100,7 +100,8 @@ class CanDiag:
         main['name'] = base['name']
         main['nameSpace'] = base['nameSpace']
         main['OID'] = base['OID']
-        main['defaultProjectOID'] = base['defaultProjectOID']
+        if "defaultProjectOID" in base.root.index:
+            main['defaultProjectOID'] = base['defaultProjectOID']
         main['digestValue'] = base.digestValue
         main['signatureValue'] = base.signatureValue
         main.find('Component/Comment').text = INFO(self.db.revision)
@@ -110,6 +111,8 @@ class CanDiag:
         unique = []
         for line in lines:
             if '<MethodSignature' in line and line in unique:
+                continue
+            if '<MethodSignature name="_100msRun"' in line and 'defaultMethod="false"' in line:
                 continue
             unique.append(line)
         context = '\n'.join(unique)
@@ -199,9 +202,13 @@ if __name__ == "__main__":
         # r"D:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\BDC\MessageDiag\CanFDBDCD\CanFDBDCD.zip",
         # "BDC_FD_05_200ms",
         # "BDC_FD_05_200ms", "BDC_FD_07_200ms",
-        # "BDC_FD_05_200ms", "BDC_FD_07_200ms", "BDC_FD_08_200ms", "BDC_FD_SMK_02_200ms"
+        # "BDC_FD_05_200ms", "BDC_FD_07_200ms", "BDC_FD_08_200ms",
+        # "BDC_FD_05_200ms", "BDC_FD_07_200ms", "BDC_FD_08_200ms", "BDC_FD_SMK_02_200ms", "ABS_ESC_01_10ms"
 
-        r"\\kefico\keti\ENT\Softroom\Temp\K.N.CHO\HMC_CAN_CR개발\20250904_유로7_OBM_OTA\HEV\CanFDCCUD_HEV_test\CanFDCCUD_HEV.main.amd",
-        "CCU_OBM_01_1000ms"
+        # r"\\kefico\keti\ENT\Softroom\Temp\K.N.CHO\HMC_CAN_CR개발\20250904_유로7_OBM_OTA\HEV\CanFDCCUD_HEV_test\CanFDCCUD_HEV.main.amd",
+        # "CCU_OBM_01_1000ms"
+
+        r"D:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\CCU\MessageDiag\CanFDCCUD\CanFDCCUD.zip",
+        "CCU_OTA_01_200ms", "CCU_OBM_01_1000ms"
     )
     md.autorun()

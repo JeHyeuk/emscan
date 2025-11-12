@@ -58,6 +58,11 @@ class IntegrationRequest(DataFrame):
         return
 
     def Unit(self, index:int, amd:str):
+        if isinstance(amd, list):
+            for n, a in enumerate(amd, start=1):
+                print(f'{n}: {a}')
+            s = int(input("Select the index number of amd above: "))
+            amd = amd[s - 1]
         model = Module(amd)
         self._update_func(index, model)
         self._update_conf(index, model)
@@ -89,8 +94,8 @@ class IntegrationRequest(DataFrame):
             PATH.SVN.BUILD.SDD.file(sdd),
             PATH.SDD
         )
-        note = PATH.SDD.path(model["OID"][1:]).file("FunctionDefinition.rtf")
         try:
+            note = PATH.SDD.path(model["OID"][1:]).file("FunctionDefinition.rtf")
             text = pypandoc.convert_file(note, 'plain')
             svn = self._sdb.file(sdd)
             self.loc[index, "FunctionVersion"] = "".join([c for c in text.split("\n")[0] if c.isdigit() or c == "."])
@@ -117,15 +122,46 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
+    # ir = IntegrationRequest(
+    #     "CanFDCCUD",
+    #     "CanFDCCUM",
+    #     "ComDef",
+    #     "ComRx",
+    #     ChangeHistoryName='',
+    #     ChangeHistoryRev='',
+    #     Comment="CAN/ICE OBM 통신 인터페이스 개발",
+    #     User="이제혁, 조재형, 조규나",
+    #     Date=datetime.now().strftime("%Y-%m-%d")
+    # )
+
     ir = IntegrationRequest(
+        "CanFDBMSD_HEV",
+        "CanFDBMSM_HEV",
+        "CanFDCCUD_HEV",
+        "CanFDCCUM_HEV",
+        "CanFDCLUM_HEV",
+        "CanFDHCUM_HEV",
+        "CAN_EEPROM",
         "ComDef_HEV",
         "ComRx_HEV",
-        ChangeHistoryName='8496_HEV_CANDB_업데이트_변경_R21564.pptx',
-        ChangeHistoryRev=38790,
-        Comment="CAN DB r21564 반영",
-        User="이제혁",
+        ChangeHistoryName='',
+        ChangeHistoryRev='',
+        Comment="CAN/HEV OBM 통신 인터페이스 개발",
+        User="이제혁, 조재형, 조규나",
         Date=datetime.now().strftime("%Y-%m-%d")
     )
+
+    # ir = IntegrationRequest(
+    #     "CanCGW",
+    #     "CanCGWD",
+    #     "CanCGWM",
+    #     "CAN_EEPROM",
+    #     ChangeHistoryName='',
+    #     ChangeHistoryRev='',
+    #     Comment="CANHS/ICE OBM 통신 인터페이스 개발",
+    #     User="이제혁, 조재형, 조규나",
+    #     Date=datetime.now().strftime("%Y-%m-%d")
+    # )
     print(ir)
     ir.to_clipboard(index=False)
 
