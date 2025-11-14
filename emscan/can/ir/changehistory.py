@@ -22,6 +22,9 @@ def Compare(prev:str, curr:str):
         print(f"추가된 요소: {len(added)}건")
         print(", ".join(added["name"]))
 
+    print(f"신규 모델 요소: :{len(curr['name'])}건")
+    print(", ".join(curr["name"]))
+
     cal = added[added["kind"] == "parameter"]
     cal.index = [""] * len(cal)
     if cal.empty:
@@ -40,8 +43,8 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     model = "LogIf_HEV"
-    asis = rf"\\kefico\keti\ENT\Softroom\Temp\K.N.CHO\HMC_CAN_CR개발\20250820_LIN_쿨링팬_메시지추가\HEV\can\prev\LinD_HEV.main.amd"
-    tobe = rf"\\kefico\keti\ENT\Softroom\Temp\K.N.CHO\HMC_CAN_CR개발\20250820_LIN_쿨링팬_메시지추가\HEV\can\curr\LinD_HEV\LinD_HEV.main.amd"
+    asis = rf"\\kefico\keti\ENT\Softroom\Temp\K.N.CHO\HMC_CAN_CR개발\20250904_유로7_OBM_OTA\ICE\model\after\Official\EC_Calc-22549.zip"
+    tobe = rf"\\kefico\keti\ENT\Softroom\Temp\K.N.CHO\HMC_CAN_CR개발\20250904_유로7_OBM_OTA\ICE\model\after\Official\EC_Calc-22549.zip"
     Compare(asis, tobe)
 
     # 0x320

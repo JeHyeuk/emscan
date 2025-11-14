@@ -123,6 +123,15 @@ if __name__ == "__main__":
     # db = db[db["Status"] != "TSW"] # TSW 제외
     # db = db[~db["Requirement ID"].isin(["VCDM CR10777888"])] # 특정 CR 제외
     # db = db[~db["Required Date"].isin(["2024-08-27"])] # 특정 일자 제외
+    db = db[~db["Message"].isin([ # 특정 메시지 제외
+        "ADAS_UX_02_50ms",
+        "HU_CLU_USM_01_00ms",
+        "HU_CLU_USM_E_01",
+        "HU_NAVI_05_200ms",
+        "HU_NAVI_V2_3_POS_PE",
+        "HU_CLOCK_01_1000ms",
+        "HU_CLOCK_PE_02",
+    ])]
     # db.revision = "TEST SW" # 공식SW는 주석 처리
     # DB CUSTOMIZE END --------------------------------------------------
     db = db.to_developer_mode(engine_spec)

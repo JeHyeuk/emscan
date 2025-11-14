@@ -122,34 +122,34 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    # ir = IntegrationRequest(
-    #     "CanFDCCUD",
-    #     "CanFDCCUM",
-    #     "ComDef",
-    #     "ComRx",
-    #     ChangeHistoryName='',
-    #     ChangeHistoryRev='',
-    #     Comment="CAN/ICE OBM 통신 인터페이스 개발",
-    #     User="이제혁, 조재형, 조규나",
-    #     Date=datetime.now().strftime("%Y-%m-%d")
-    # )
-
     ir = IntegrationRequest(
-        "CanFDBMSD_HEV",
-        "CanFDBMSM_HEV",
-        "CanFDCCUD_HEV",
-        "CanFDCCUM_HEV",
-        "CanFDCLUM_HEV",
-        "CanFDHCUM_HEV",
-        "CAN_EEPROM",
-        "ComDef_HEV",
-        "ComRx_HEV",
+        "CANFD_EEPROM",
+        "CanFDCCUD",
+        "CanFDCCUM",
+        "ComDef",
         ChangeHistoryName='',
         ChangeHistoryRev='',
-        Comment="CAN/HEV OBM 통신 인터페이스 개발",
+        Comment="CAN/ICE OBM 통신 인터페이스 개발",
         User="이제혁, 조재형, 조규나",
         Date=datetime.now().strftime("%Y-%m-%d")
     )
+
+    # ir = IntegrationRequest(
+    #     "CanFDBMSD_HEV",
+    #     "CanFDBMSM_HEV",
+    #     "CanFDCCUD_HEV",
+    #     "CanFDCCUM_HEV",
+    #     "CanFDCLUM_HEV",
+    #     "CanFDHCUM_HEV",
+    #     "CAN_EEPROM",
+    #     "ComDef_HEV",
+    #     "ComRx_HEV",
+    #     ChangeHistoryName='',
+    #     ChangeHistoryRev='',
+    #     Comment="CAN/HEV OBM 통신 인터페이스 개발",
+    #     User="이제혁, 조재형, 조규나",
+    #     Date=datetime.now().strftime("%Y-%m-%d")
+    # )
 
     # ir = IntegrationRequest(
     #     "CanCGW",

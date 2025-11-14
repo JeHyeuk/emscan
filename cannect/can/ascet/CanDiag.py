@@ -14,9 +14,6 @@ class CanDiag:
     _dsm = ENV['MODEL']['HMC_ECU_Library/HMC_DiagLibrary/DSM_Types']
 
     def __init__(self, db:CanDb, base_model:str, *messages):
-        if len(messages) > 6:
-            raise ValueError("A maximum of 6 messages can be specified.")
-
         self.db             = db
         self.base_model     = base_model = AmdSC(base_model)
         self.messages       = messages
@@ -57,6 +54,7 @@ class CanDiag:
                 task_oid = base_task[task]
             else:
                 task_oid = generateOID()
+                base_task[task] = task_oid
                 logger.info(f'    * {task} Registration For Project Is Required (Newly Added)')
 
             rename_book.update({
@@ -92,6 +90,10 @@ class CanDiag:
     def rename(self, context:str):
         for prev, curr in self.rename_book.items():
             context = context.replace(prev, curr)
+        if "_HEV" in self.base_model.name:
+            context = context.replace("EEP_FD", "EEP_HEV_FD") \
+                             .replace("EEP_stFD", "EEP_stHevFD")
+
         return context
 
     def refactor_main(self):
@@ -151,8 +153,10 @@ class CanDiag:
                 continue
             impl_name = name.replace(f"{key}_", f"") + f"_{key}"
             if not impl_name in lib.index:
-                self.logger.info(f'    * {key} "{impl_name}" Not Found In %{key}_Typ')
-                continue
+                impl_name = impl_name.replace("0", "")
+                if not impl_name in lib.index:
+                    self.logger.info(f'    * {key} "{impl_name}" Not Found In %{key}_Typ')
+                    continue
             tag[0].attrib.update({
                 "implementationName": impl_name,
                 "implementationOID": lib[impl_name]
@@ -208,7 +212,20 @@ if __name__ == "__main__":
         # r"\\kefico\keti\ENT\Softroom\Temp\K.N.CHO\HMC_CAN_CR개발\20250904_유로7_OBM_OTA\HEV\CanFDCCUD_HEV_test\CanFDCCUD_HEV.main.amd",
         # "CCU_OBM_01_1000ms"
 
-        r"D:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\CCU\MessageDiag\CanFDCCUD\CanFDCCUD.zip",
-        "CCU_OTA_01_200ms", "CCU_OBM_01_1000ms"
+        # r"D:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\CCU\MessageDiag\CanFDCCUD\CanFDCCUD.zip",
+        # "CCU_OTA_01_200ms", "CCU_OBM_01_1000ms"
+
+        # r"\\kefico\keti\ENT\Softroom\Temp\K.N.CHO\HMC_CAN_CR개발\20250904_유로7_OBM_OTA\HEV\CanFDCCUD_HEV_test\CanFDCCUD_HEV.main.amd",
+        # "CCU_OBM_01_1000ms"
+
+        r"D:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\BMS\MessageDiag\CanFDBMSD_HEV\CanFDBMSD_HEV.zip",
+        "BMS_01_100ms",
+        "BMS_02_100ms",
+        "BMS_03_100ms",
+        "BMS_26_500ms",
+        "BMS_32_500ms",
+        "BMS_OBM_34_500ms",
+        "L_BMS_21_100ms",
+        "L_BMS_22_100ms"
     )
     md.autorun()
