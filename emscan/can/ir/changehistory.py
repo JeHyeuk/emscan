@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 try:
     from ...core.ascet.module.module import Module
 except ImportError:
@@ -33,6 +35,17 @@ def Compare(prev:str, curr:str):
         desc = cal[["name", "Comment", "module", "value"]]
         print(f"추가된 Cal Parameter: {len(cal)}건")
         print(desc)
+        # desc.to_clipboard(index=False)
+        print("Copied!")
+
+    cal_all = curr[curr['kind'] == 'parameter']
+    cal_all.index = [""] * len(cal_all)
+    if cal_all.empty:
+        print("변경 후 모델 Cal Parameter: 없음")
+    else:
+        desc = cal_all[["name", "Comment", "module", "value"]]
+        print(f"추가된 Cal Parameter: {len(cal)}건")
+        print(desc)
         desc.to_clipboard(index=False)
         print("Copied!")
 
@@ -43,8 +56,8 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     model = "LogIf_HEV"
-    asis = rf"\\kefico\keti\ENT\Softroom\Temp\K.N.CHO\HMC_CAN_CR개발\20250904_유로7_OBM_OTA\ICE\model\after\Official\EC_Calc-22549.zip"
-    tobe = rf"\\kefico\keti\ENT\Softroom\Temp\K.N.CHO\HMC_CAN_CR개발\20250904_유로7_OBM_OTA\ICE\model\after\Official\EC_Calc-22549.zip"
+    asis = rf"\\kefico\keti\ENT\Softroom\Temp\J.H.Lee\00 CR\CR10785688 CNGPIO\02_Model\Prev\CanEMS_CNG.main.amd"
+    tobe = rf"\\kefico\keti\ENT\Softroom\Temp\J.H.Lee\00 CR\CR10785688 CNGPIO\02_Model\Curr\CanEMS_CNG\CanEMS_CNG.main.amd"
     Compare(asis, tobe)
 
     # 0x320

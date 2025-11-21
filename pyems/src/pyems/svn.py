@@ -13,9 +13,9 @@ def update(file_or_path:str, logger:Logger=None) -> str:
             text=True,
             check=True
         )
-        msg = result.stdout
+        msg = result.stdout[:-1]
     except subprocess.CalledProcessError as e:
-        msg = f"Failed to update SVN repository: {file_or_path} :: {e.stderr}"
+        msg = f"Failed to update SVN repository: '{file_or_path}' {e.stderr}"
 
     if logger is None:
         print(msg)
@@ -40,6 +40,7 @@ def log(filepath:str) -> DataFrame:
             line += part
     logger = DataFrame(data=data)
     logger = logger.drop(columns=[1, 3]).rename(columns={0: 'revision', 2: 'datetime', 4: 'log'})
+    logger = logger[logger['revision'].str.startswith('r')]
     logger = logger[logger["log"].str.startswith('[')]
     logger["datetime"] = logger["datetime"].apply(lambda x: x[:x.find('+0900') - 1])
     logger["log"] = logger["log"].apply(lambda x: x.split('] ')[-1])
@@ -54,10 +55,10 @@ class subversion:
     __db_columns__ = ["local_relpath", "repos_path", "kind", "changed_revision",
                     "changed_date", "changed_author", "last_mod_time", "translated_size"]
 
-    def __init__(self, path:str):
+    def __init__(self, path:str, check_wc:bool=True):
         self.path = path
         self.fdb = fdb = os.path.join(path, r'.svn/wc.db')
-        if not os.path.isfile(fdb):
+        if not os.path.isfile(fdb) and check_wc:
             raise FileExistsError(f'wc.db 파일이 없습니다')
 
         db = read_sql("SELECT * FROM NODES", sqlite3.connect(fdb))[self.__db_columns__]
@@ -98,13 +99,13 @@ if __name__ == "__main__":
 
     from pyems.environ import SVN_PATH
 
-    my_file = r"D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\자체제어기_KEFICO-EMS_CANFD.xlsx"
+    my_file = r"D:\SVN\GSL_Build\7_Notes\040g04136psg1mg71g71q9fkfs48m.zip"
 
     print(log(my_file))
-    update(my_file, display=True)
+    # update(my_file, display=True)
 
 
-    svn = subversion(SVN_PATH.CONF)
+    # svn = subversion(SVN_PATH.CONF)
     # svn.update()
     # print(svn.db)
     # print(svn.unit("canfdepbd_hev_confdata.xml"))

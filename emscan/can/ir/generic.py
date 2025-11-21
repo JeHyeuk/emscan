@@ -45,7 +45,7 @@ class IntegrationRequest(DataFrame):
     _mdb: VersionControl = VersionControl(PATH.SVN.MD.db)
     _cdb: VersionControl = VersionControl(PATH.SVN.CONF.db)
     _sdb: VersionControl = VersionControl(PATH.SVN.BUILD.SDD.db)
-    _pdb: VersionControl = VersionControl(PATH.SVN.POLY.db)
+    # _pdb: VersionControl = VersionControl(PATH.SVN.POLY.db)
 
     def __init__(self, *models, **kwargs):
         super().__init__(columns=self._column, index=[n for n in range(len(models))])
@@ -67,7 +67,7 @@ class IntegrationRequest(DataFrame):
         self._update_func(index, model)
         self._update_conf(index, model)
         self._update_sdd(index, model)
-        self._update_poly(index, model)
+        # self._update_poly(index, model)
         return
 
     def _update_func(self, index:int, model:Module):
@@ -123,10 +123,8 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     ir = IntegrationRequest(
-        "CANFD_EEPROM",
-        "CanFDCCUD",
-        "CanFDCCUM",
-        "ComDef",
+        "LinM_HEV",
+        "LinD_HEV",
         ChangeHistoryName='',
         ChangeHistoryRev='',
         Comment="CAN/ICE OBM 통신 인터페이스 개발",
@@ -134,34 +132,6 @@ if __name__ == "__main__":
         Date=datetime.now().strftime("%Y-%m-%d")
     )
 
-    # ir = IntegrationRequest(
-    #     "CanFDBMSD_HEV",
-    #     "CanFDBMSM_HEV",
-    #     "CanFDCCUD_HEV",
-    #     "CanFDCCUM_HEV",
-    #     "CanFDCLUM_HEV",
-    #     "CanFDHCUM_HEV",
-    #     "CAN_EEPROM",
-    #     "ComDef_HEV",
-    #     "ComRx_HEV",
-    #     ChangeHistoryName='',
-    #     ChangeHistoryRev='',
-    #     Comment="CAN/HEV OBM 통신 인터페이스 개발",
-    #     User="이제혁, 조재형, 조규나",
-    #     Date=datetime.now().strftime("%Y-%m-%d")
-    # )
-
-    # ir = IntegrationRequest(
-    #     "CanCGW",
-    #     "CanCGWD",
-    #     "CanCGWM",
-    #     "CAN_EEPROM",
-    #     ChangeHistoryName='',
-    #     ChangeHistoryRev='',
-    #     Comment="CANHS/ICE OBM 통신 인터페이스 개발",
-    #     User="이제혁, 조재형, 조규나",
-    #     Date=datetime.now().strftime("%Y-%m-%d")
-    # )
     print(ir)
     ir.to_clipboard(index=False)
 

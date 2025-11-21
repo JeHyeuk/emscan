@@ -9,7 +9,7 @@ class Logger(logging.Logger):
     def kst(cls, *args):
         return time.localtime(time.mktime(time.gmtime()) + 9 * 3600)
 
-    def __init__(self, file:str, clean_record:bool=False):
+    def __init__(self, file:str='', clean_record:bool=False):
 
         formatter = logging.Formatter(
             fmt=f"%(asctime)s %(message)s",
@@ -17,12 +17,12 @@ class Logger(logging.Logger):
         )
         formatter.converter = self.kst
 
-        if os.path.exists(file) and clean_record:
-            os.remove(file)
-
-        file_handler = logging.FileHandler(file, encoding="utf-8")
-        file_handler.setLevel(logging.DEBUG)
-        file_handler.setFormatter(formatter)
+        if file:
+            if os.path.exists(file) and clean_record:
+                os.remove(file)
+            file_handler = logging.FileHandler(file, encoding="utf-8")
+            file_handler.setLevel(logging.DEBUG)
+            file_handler.setFormatter(formatter)
 
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.INFO)
@@ -32,12 +32,14 @@ class Logger(logging.Logger):
 
         self.propagate = False
         self.file = file
-
-
         if not self.handlers:
-            self.addHandler(file_handler)
             self.addHandler(console_handler)
+            if file:
+                self.addHandler(file_handler)
         return
+
+    def __call__(self, io:str):
+        return self.info(io)
 
     def read(self, file:str=''):
         if not file:

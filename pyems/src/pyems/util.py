@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 from xml.etree.ElementTree import Element, ElementTree
 from xml.dom import minidom
 import os, zipfile, shutil, io
@@ -31,6 +31,22 @@ def unzip(src: str, to: str = "") -> bool:
 def copyTo(file:str, dst:str) -> str:
     shutil.copy(file, dst)
     return os.path.join(dst, os.path.basename(file))
+
+def find_file(root:str, filename:str) -> Union[str, List[str]]:
+    """
+    @filename: 확장자까지 포함한 단일 파일 이름
+    """
+    found = []
+    for _root, _dir, _files in os.walk(root):
+        for _file in _files:
+            if _file == filename:
+                found.append(os.path.join(_root, _file))
+    if not found:
+        return ""
+    if len(found) == 1:
+        return found[0]
+    return found
+
 
 def clear(path: str, leave_path: bool = True):
     """

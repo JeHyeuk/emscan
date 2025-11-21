@@ -103,11 +103,11 @@ class Path(str):
             if '.' in item.split(os.sep)[-1]:
                 f = os.path.join(self._path, item)
                 if self._readonly and not os.path.isfile(f):
-                    raise FileNotFoundError(f'Invalid Path Type: {item}')
+                    raise FileNotFoundError(f'Invalid Path: {item}')
                 return f
             p = os.path.join(self._path, item)
             if self._readonly and not os.path.isdir(p):
-                raise FileExistsError(f'Invalid Path Type: {item}')
+                raise FileExistsError(f'Invalid Path: {item}')
             return Path(p)
         if isinstance(item, (list, tuple)):
             sub = self._path

@@ -28,6 +28,7 @@ ENV["COPYRIGHT"] = f"Copyright {COMPANY} 2020-{datetime.today().year}. All Right
 ENV["SVN"] = SVN = Path(os.getenv('SVN_PATH'), readonly=True)
 ENV["CAN"] = CAN = SVN[r'dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement']
 ENV["CONF"] = CONF = SVN[r'GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename']
+ENV["SDD"] = SDD = SVN[r'GSL_Build\7_Notes']
 ENV["MODEL"] = MODEL = SVN[r'model\ascet\trunk']
 ENV["CANDB"] = CANDB = SVN[r'dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database']
 ENV["SVN_PATH"] = SVN_PATH = DataDictionary(
@@ -35,6 +36,7 @@ ENV["SVN_PATH"] = SVN_PATH = DataDictionary(
     CAN=CAN,
     CANDB=CANDB,
     CONF=CONF,
+    SDD=SDD,
     MODEL=MODEL,
 )
 
