@@ -88,6 +88,7 @@ class IntegrationRequest:
             md = AmdIO(AmdSC(model).main)
             self._table.loc[n, "SCMName"] = "\\".join(md["nameSpace"][1:].split("/") + [md["name"]])
             self._table.loc[n, "SDDName"] = f'{md.root["OID"][1:]}.zip'
+            self._table.loc[n, "PolyspaceName"] = f"BF_Result_{md['name']}.7z"
             try:
                 self._table.loc[n, "SCMRev"] = rev = log(model).iloc[0, 0][1:]
                 self.logger(f">>> ... %{md['name']: <{self._mx}} @{rev}")
