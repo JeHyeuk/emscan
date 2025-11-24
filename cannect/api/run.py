@@ -224,6 +224,7 @@ if __name__ == "__main__":
     uvicorn.run(
         app=app,
         host=socket.gethostbyname(socket.gethostname()),
+        # host='10.224.53.158',
         port=8000,
         log_config=log_config
     )
