@@ -33,16 +33,19 @@
 
     <section class="container">
       <div class="config">
-        <div class="exe edit"><i class="bi bi-cloud-arrow-down-fill" data-tooltip="리스트 다운로드"></i></div>
+        <div class="exe edit"><i class="bi bi-cloud-arrow-down-fill" data-tooltip="리스트 새로고침"></i></div>
+          <div class="exe reload"><i class="bi bi-arrow-clockwise" data-tooltip="파일 새로고침"></i></div>
         <div class="exe search"><select name="model" class="confdata-list">
   {% for conf in confs %}
     <option>{{ conf }}</option>
   {% endfor %}
 </select></div>
-        <div class="exe reload"><i class="bi bi-arrow-clockwise" data-tooltip="파일 리로드"></i></div>
+        <label  class="exe fileopen" for="xmlFile">
+          <i class="bi bi-folder2-open" data-tooltip="파일 열기"></i>
+        </label>
         <div class="exe download"><i class="bi bi-download" data-tooltip="파일 다운로드"></i></div>
       </div>
-    
+      <input type="file" id="xmlFile" accept=".xml,application/xml,text/xml" style="display:none;">
       <div class="content">
         
         <div class="heading">

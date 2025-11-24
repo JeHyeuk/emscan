@@ -1,6 +1,6 @@
 from pyems.environ import ENV
 from pyems.typesys import DataDictionary
-from pyems.svn import subversion
+from pyems.svn import update, log
 from pyems.candb import CAN_DB
 
 from cannect.conf import CONF_SCHEMA, confReader
@@ -8,7 +8,7 @@ from space.kyuna.parse import tableParser
 from space.jaehyeong import confgen
 
 from datetime import datetime
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, Request, UploadFile, File
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -21,9 +21,6 @@ import os, uvicorn, shutil
 CONFIGURATIONS
 """
 NAVIGATION = ["COMM", "CONF"]
-SUBVERSION = DataDictionary(
-    CONF=subversion(ENV.SVN_PATH.CONF)
-)
 
 
 """
@@ -121,25 +118,44 @@ async def read_conf(request:Request):
     return template.TemplateResponse("conf-1.1.0.html", {
         "request": request,
         "columns": CONF_SCHEMA,
-        "confs": [""] + [conf for conf in ENV.SVN_PATH.CONF if conf.endswith('.xml')]
+        "confs": [""] + [conf for conf in os.listdir(ENV["CONF"]) if conf.endswith('.xml')]
     })
 
 @app.get("/load-conf")
 def load_conf():
-    update_result = SUBVERSION.CONF.update()
+    update_result = update(ENV["CONF"] + "\\").replace(ENV["SVN"], "")
     return JSONResponse(content={"result": update_result})
 
 @app.post("/read-conf")
 def read_conf(conf:str=Form(...)):
-    from_svn = SUBVERSION.CONF[conf]
-    read = confReader(SVN.CONF[conf])
-
+    file_path = ENV["CONF"][conf]
+    read = confReader(file_path)
     admin = read.admin.copy()
     admin["Date"] = "-".join([str(n).zfill(2) for n in admin["Date"].split(".")])
-    admin["SVNRev"] = from_svn["changed_revision"]
-    admin["SVNDate"] = from_svn["last_mod_time"]
-    admin["SVNUser"] = from_svn["changed_author"]
+    try:
+        from_log = log(file_path).iloc[0]
+        admin["SVNRev"] = from_log["revision"]
+        admin["SVNDate"] = from_log["datetime"]
+        admin["SVNUser"] = from_log["author"]
+    except:
+        pass
 
+    data = {
+        "admin": admin.to_json(),
+        "history": read.history.replace("\n", "<br>"),
+        "keys": dumps(CONF_SCHEMA)
+    }
+    for key in ["EVENT", "PATH", "FID", "DTR", "SIG"]:
+        data[key] = read.html(key)
+        data[f'N{key}'] = len(read.dem(key))
+    return JSONResponse(content=jsonable_encoder(data))
+
+@app.post("/local-conf")
+async def local_conf(file: UploadFile=File(...)):
+    content = await file.read()
+    read = confReader(content)
+    admin = read.admin.copy()
+    admin["Date"] = "-".join([str(n).zfill(2) for n in admin["Date"].split(".")])
     data = {
         "admin": admin.to_json(),
         "history": read.history.replace("\n", "<br>"),
@@ -153,6 +169,7 @@ def read_conf(conf:str=Form(...)):
 @app.post("/download-conf")
 def download_conf(conf:str=Form(...), tables:str=Form(...)):
     summary, event_list, path_list, fid_list, dtr_list, sig_list = tableParser(tables)
+    summary["Date"] = datetime.today().strftime("%Y-%m-%d")
 
     file = os.path.join(os.path.dirname(__file__), rf"bin/{conf}")
     with open(file, "w", encoding="utf-8") as f:

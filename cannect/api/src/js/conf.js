@@ -48,19 +48,59 @@ async function loadConf() {
 }
 
 
-//	.then(response => response.json())
-//	.then(data => {
-//		$('.confdata-list')
-//		.select2({placeholder: "CONFDATA 검색"})
-//		.empty()
-//		.append('<option></option>');
-//		data.conf.forEach(item => {
-//			$('.confdata-list').append(`<option>${item}</option>`);
-//		});
-//	})
-//	.catch(error => console.error('Error Loading Conf: ', error));
-//}
-  
+function parseConf(data){
+    const meta = ["PATH", "EVENT", "FID", "DTR", "SIG"];
+    var admin = JSON.parse(data.admin);
+    var keys = JSON.parse(data.keys);
+
+    $('.module').html(admin.Model);
+    $('.conf-unit').html(admin.Filename);
+    $('.user').html(admin.User);
+    $('.gen-date').html(admin.Date);
+    $('.svn-date').html(admin.SVNDate);
+    $('.svn-version').html(admin.SVNRev);
+    $('.svn-user').html(admin.SVNUser);
+    $('.history').html(data.history);
+
+//		Object.entries(meta).forEach(([key, obj]) => {
+    meta.forEach(obj => {
+        let objCount = data[`N${obj}`];
+        let objClass = keys[obj];
+
+        $(`.tab[data-label="${obj}"]`).html(`${obj}(${objCount})`);
+        $(`#${obj}`).html(data[obj]);
+        $(`#${obj} .dem-count`).html(`${objCount} ITEMS`);
+        $(`#${obj} thead tr td:not(.row)`).addClass("column-selector");
+        $(`#${obj} tbody tr td:not(.row)`).addClass("dem-value");
+
+        $(`#${obj} tbody tr`).each(function(){
+            let objMeta = objClass[$(this).attr('class')];
+            if ("group" in objMeta) {
+                $(this)
+                .attr('data-group', objMeta['group'])
+                .find('.row').addClass('group');
+            }
+            $(this).find('.row').attr('title', objMeta.note);
+            $(this).find('td:not(.row)').each(function() {
+                $val = $(this).html();
+                $(this).addClass(objMeta["write"]);
+                if (objMeta["write"] === "selectable") {
+                    let $select = $('<select></select>').attr('data-selected', $val);
+                    if (typeof objMeta.option === 'string') {
+                        objMeta.option = JSON.parse(objMeta.option);
+                    }
+                    objMeta.option.forEach(function(item) {
+                        $select.append($(`<option value="${item}">${item}</option>`));
+                    });
+                    $select.val($val);
+                    $(this).empty().append($select);
+                }
+            })
+        })
+    });
+    __stack__ = [];
+    snapShot();
+}
 function readConf(src) {
 /* -------------------------------------------------
 	AUTHOR      : JEHYEUK LEE
@@ -77,8 +117,6 @@ function readConf(src) {
 				<tbody> 각 cell에 edit 속성 추가
 				<tbody> cell 중 enum 속성인 경우 <select> 추가
 ------------------------------------------------- */
-	__mem__ = {};	
-	
 	const formData = new FormData();
 	formData.append('conf', src);
 	
@@ -87,64 +125,28 @@ function readConf(src) {
 		body: formData
 	})
 	.then(response => response.json())
-	.then(data => {
-	    const meta = ["PATH", "EVENT", "FID", "DTR", "SIG"];
-		var admin = JSON.parse(data.admin);
-		var keys = JSON.parse(data.keys);
-	
-		$('.module').html(admin.Model);
-		$('.conf-unit').html(admin.Filename);
-		$('.user').html(admin.User);
-		$('.gen-date').html(admin.Date);
-		$('.svn-date').html(admin.SVNDate);
-		$('.svn-version').html(admin.SVNRev);
-		$('.svn-user').html(admin.SVNUser);
-		$('.history').html(data.history);
-			
-//		Object.entries(meta).forEach(([key, obj]) => {
-        meta.forEach(obj => {
-		  	let objCount = data[`N${obj}`];
-		  	let objClass = keys[obj];
-
-		  	$(`.tab[data-label="${obj}"]`).html(`${obj}(${objCount})`);
-		  	$(`#${obj}`).html(data[obj]);
-			$(`#${obj} .dem-count`).html(`${objCount} ITEMS`);
-			$(`#${obj} thead tr td:not(.row)`).addClass("column-selector");
-			$(`#${obj} tbody tr td:not(.row)`).addClass("dem-value");
-
-		  	$(`#${obj} tbody tr`).each(function(){
-				let objMeta = objClass[$(this).attr('class')];
-				if ("group" in objMeta) {
-			  		$(this)
-					.attr('data-group', objMeta['group'])
-					.find('.row').addClass('group');
-				}
-				$(this).find('.row').attr('title', objMeta.note);
-				$(this).find('td:not(.row)').each(function() {
-					$val = $(this).html();
-			  		$(this).addClass(objMeta["write"]);
-			  		if (objMeta["write"] === "selectable") {
-						let $select = $('<select></select>').attr('data-selected', $val);
-						if (typeof objMeta.option === 'string') {
-						    objMeta.option = JSON.parse(objMeta.option);
-						}
-                        objMeta.option.forEach(function(item) {
-				  			$select.append($(`<option value="${item}">${item}</option>`));
-				  		});
-						$select.val($val);
-						$(this).empty().append($select);
-			  		}
-				})
-		  	})
-		});
-		__stack__ = [];
-		snapShot();
-	})
+	.then(data => {parseConf(data)})
 	.catch(
 		error => {
 			console.error('Error Reading Conf: ', error); alert(error);
 	});
 }
+
+function fromFile(file) {
+    const formData = new FormData();
+	formData.append('file', file);
+
+	fetch('/local-conf', {
+		method: 'POST',
+		body: formData
+	})
+	.then(response => response.json())
+	.then(data => {parseConf(data)})
+	.catch(
+		error => {
+			console.error('Error Reading Conf: ', error); alert(error);
+	});
+};
 	
 function downloadConf(conf) {
 /* -------------------------------------------------
@@ -454,13 +456,21 @@ $(document)
 .on('click', '.reload', function() {
 	readConf($('.confdata-list').val());
 })
+.on('change', '#xmlFile', async function() {
+    const file = this.files[0];
+    $('.confdata-list').val(0).select2({placeholder: file.name + " @local"});
+    fromFile(file);
+})
 .on('click', '.download', function() {
 	var conf = $('.confdata-list').val();
 	if (!conf) {
-		alert("선택된 Confdata가 없습니다.");
-	} else {
-		downloadConf(conf);
-	}	
+		conf = $('.select2-selection__placeholder').text().replace(" @local", "");
+        if (!conf) {
+            alert("선택된 Confdata가 없습니다.");
+            return;
+        }
+    }
+    downloadConf(conf);
 })
 .on("click", "td.group", function() {
 	var $row = $(this).parent();

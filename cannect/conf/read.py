@@ -1,9 +1,10 @@
 from pyems.decorators import constrain
 from cannect.conf import schema as COLUMNS
 from pandas import Series
-from re import search
-from typing import Dict, List
-from xml.etree.ElementTree import Element, ElementTree
+from re import search, IGNORECASE
+from typing import Dict, List, Union
+from xml.etree.ElementTree import Element, ElementTree, fromstring
+import os
 
 
 TAGS = Series({
@@ -11,6 +12,36 @@ TAGS = Series({
     "MODEL":'SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-SOURCE/SW-FEATURE-REF',
     "ITEMS":'SW-SYSTEMS/SW-SYSTEM/CONF-SPEC/CONF-ITEMS/CONF-ITEM/CONF-ITEMS/CONF-ITEM'
 })
+
+def bytes_to_str_xml(content: bytes) -> str:
+    """
+    XML bytes를 문자열로 디코드한다.
+    1) UTF-8/UTF-16 BOM 제거
+    2) XML 선언에서 encoding 추출
+    3) 추출 실패 시 UTF-8로 디코드 (에러는 유니코드 대체문자로 치환)
+    """
+    if isinstance(content, str):
+        return content
+
+    if not isinstance(content, (bytes, bytearray)):
+        raise TypeError(f"bytes 또는 bytearray가 필요합니다. 현재 타입: {type(content)}")
+
+    b = bytes(content)
+    if b.startswith(b'\xef\xbb\xbf'):
+        b = b[3:]
+    elif b.startswith(b'\xff\xfe') or b.startswith(b'\xfe\xff'):
+        pass
+
+    head = b[:200].decode('utf-8', errors='ignore')
+    m = search(r'<\?xml[^>]*encoding="\'["\']', head, IGNORECASE)
+    if m:
+        enc = m.group(1).strip()
+        try:
+            return b.decode(enc, errors='replace')
+        except LookupError:
+            return b.decode('utf-8', errors='replace')
+    return b.decode('utf-8', errors='replace')
+
 
 class confReader(ElementTree):
     """
@@ -27,8 +58,12 @@ class confReader(ElementTree):
     |   V00.2   | 16th, Jul, 2025  | JEHYEUK LEE |  J1979, Guide note for each key-row
     ----------------------------------------------------------------------------------------------------
     """
-    def __init__(self, conf:str):
-        super().__init__(file=conf)
+    def __init__(self, conf:Union[bytes, str]):
+        if os.path.isfile(conf):
+            super().__init__(file=conf)
+        else:
+            element = bytes_to_str_xml(conf)
+            super().__init__(element=fromstring(element))
         self._admin = {"Model": self.find(TAGS.MODEL).text}
         self._admin.update({tag.attrib["GID"]: tag.text for tag in self.findall(TAGS.ADMIN)})
         return
@@ -311,29 +346,21 @@ if __name__ == "__main__":
     from pprint import pprint
     set_option('display.expand_frame_repr', False)
 
+    from pyems.environ import ENV
+    import os, re
 
-    TESTMODE = 0
 
-    if TESTMODE == 0:
-        csrc = lambda file: rf'D:\SVN\GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename\{file}_confdata.xml'
-        conf = confReader(csrc('ffvs'))
+    for f in os.listdir(ENV["CONF"]):
+        if not f.endswith('.xml'):
+            continue
+        file = os.path.join(ENV["CONF"], f)
+        read = confReader(file)
+        print("*"*80)
+        print(read.admin["Model"], read.admin["Filename"])
+        # print(read.history, "\n")
+        parsed = re.compile(
+            r"^\s*(?P<version>\d+(?:\.\d+)+);\s*\d+\s+(?P<date>\d{4}\.\d{2}\.\d{2})\s+(?P<name>.+?)\s*$"
+        )
 
-        # print(conf.admin)
-        # print(conf.history)
-        demType = "FID"
-        pprint(conf.dem(demType))
-        print(conf.html(demType))
-    else:
-        from emscan.config import PATH
-        import os
-        for n, xml in enumerate([c for c in os.listdir(PATH.SVN.CONF) if c.endswith('.xml')]):
-            conf = os.path.join(PATH.SVN.CONF, xml)
-            read = confReader(conf)
-            print(read.history)
-            # for dem in ["PATH", "EVENT", "FID", "DTR", "SIG"]:
 
-                # try:
-                # test = read.html(dem)
-                # test = read.dem(dem)
-                # except Exception as error:
-                #     print(f"ERROR: {dem} @{n+1}/{xml}, {error}")
+

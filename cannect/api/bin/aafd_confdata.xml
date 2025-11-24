@@ -1536,6 +1536,10 @@
 										<SHORT-NAME>INHIBITED_SIG</SHORT-NAME>
 										<VF>stOilTCnvr(Qual_Frozen_8)</VF>
 									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_SIG</SHORT-NAME>
+										<VF>stMcuHtsnkT(Qual_Frozen_8)</VF>
+									</CONF-ITEM>
 								</CONF-ITEMS>
 							</CONF-ITEM>
 							<CONF-ITEM>
@@ -1593,6 +1597,10 @@
 									<CONF-ITEM>
 										<SHORT-NAME>INHIBITED_SIG</SHORT-NAME>
 										<VF>stOilTCnvr(Qual_Frozen_8)</VF>
+									</CONF-ITEM>
+									<CONF-ITEM>
+										<SHORT-NAME>INHIBITED_SIG</SHORT-NAME>
+										<VF>stMcuHtsnkT(Qual_Frozen_8)</VF>
 									</CONF-ITEM>
 								</CONF-ITEMS>
 							</CONF-ITEM>
