@@ -125,6 +125,7 @@ celerybeat.pid
 .venv
 emscan/env/
 emscan/api/ems/bin/
+cannect/api/bin/
 venv/
 env.bak/
 venv.bak/
