@@ -13,7 +13,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 import os
 
-if not os.getenv('USERDOMAIN', None) == 'HKEFICO':
+if not 'KEFICO' in os.getenv('USERDOMAIN', None):
     raise OSError('This Library is Only for HYUNDAI KEFICO Co.,Ltd.')
 
 load_dotenv()
