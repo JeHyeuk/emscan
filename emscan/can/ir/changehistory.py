@@ -1,5 +1,3 @@
-from dataclasses import asdict
-
 try:
     from ...core.ascet.module.module import Module
 except ImportError:
@@ -56,8 +54,8 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     model = "LogIf_HEV"
-    asis = rf"\\kefico\keti\ENT\Softroom\Temp\J.H.Lee\00 CR\CR10785688 CNGPIO\02_Model\Prev\CanEMS_CNG.main.amd"
-    tobe = rf"\\kefico\keti\ENT\Softroom\Temp\J.H.Lee\00 CR\CR10785688 CNGPIO\02_Model\Curr\CanEMS_CNG\CanEMS_CNG.main.amd"
+    asis = rf"D:\Temp\ACPE-22490\ACPE.main.amd"
+    tobe = rf"D:\Temp\ACPE-22490\ACPE.main.amd"
     Compare(asis, tobe)
 
     # 0x320

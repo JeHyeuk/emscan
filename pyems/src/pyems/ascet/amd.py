@@ -495,6 +495,8 @@ class AmdElements:
 class AmdIO(ElementTree):
 
     def __init__(self, file:str):
+        if file.endswith(".zip"):
+            file = AmdSource(file).main
         super().__init__(file=file)
         self.path = file
         self.file = os.path.basename(file)

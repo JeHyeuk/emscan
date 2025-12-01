@@ -1,7 +1,8 @@
-from typing import Union, List
+from pyems.logger import Logger
+from typing import Union, List, Iterable
 from xml.etree.ElementTree import Element, ElementTree
 from xml.dom import minidom
-import os, zipfile, shutil, io
+import os, zipfile, shutil, io, re
 
 
 def unzip(src: str, to: str = "") -> bool:
@@ -51,7 +52,6 @@ def find_file(root:str, filename:str) -> Union[str, List[str]]:
 def clear(path: str, leave_path: bool = True):
     """
     지정한 경로의 파일 및 하위 디렉토리를 모두 삭제
-
 
     :param path: 삭제 대상이 될 폴더 경로
     :param leave_path: True면 폴더를 남기고 내용만 삭제, False면 폴더 자체도 삭제
@@ -142,3 +142,46 @@ class xml:
 
             attr.update(copy)
         return attr
+
+
+def search(samples: Iterable[str], keyword: str) -> Union[str, List[str]]:
+    """
+    간단한 와일드카드 검색 함수.
+    - '*' 는 0글자 이상 임의의 문자열과 매칭됩니다.
+    - 대소문자를 구분하지 않습니다.
+    - 결과가 1개이면 str을, 그 외(0개 또는 2개 이상)면 List[str]를 반환합니다.
+    """
+    samples = list(samples)
+    if keyword is None:
+        return ""
+
+    kw = keyword.strip()
+    regex_fragments = []
+    for ch in kw:
+        if ch == '*':
+            regex_fragments.append(".*")
+        else:
+            regex_fragments.append(re.escape(ch))
+    regex_body = "".join(regex_fragments)
+    pattern = re.compile(f"^{regex_body}$", flags=re.IGNORECASE)
+    matches = [s for s in samples if pattern.match(s)]
+    if not matches:
+        return ""
+    elif len(matches) == 1:
+        return matches[0]
+    else:
+        return matches
+
+
+class KeywordSearch:
+
+    def __init__(self, *samples):
+        self._samples = list(samples)
+        self._logger = Logger()
+        return
+
+    def __getitem__(self, item:str)-> str:
+        result = search(self._samples, item)
+        if not result:
+            self._logger.warning(f"NOT FOUND: '{item}' IN THE MODEL")
+        return result

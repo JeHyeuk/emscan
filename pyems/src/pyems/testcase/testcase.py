@@ -19,13 +19,13 @@ class TestCase:
             self._units.append(arg)
         return
 
-    def __repr__(self) -> repr:
+    def __repr__(self):
         return repr(self.cases)
 
     def __len__(self) -> int:
         return len(self._units)
 
-    def __iter__(self) -> UnitTestCase:
+    def __iter__(self):
         for unit in self._units:
             yield unit
 

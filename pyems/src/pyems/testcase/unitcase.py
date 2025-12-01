@@ -1,9 +1,8 @@
 from pyems.environ import ENV
 from pyems.testcase.style import Style
-from emscan.env import PATH
 from numpy import nan
 from pandas import Series
-from typing import Any, Union
+from typing import Any, Union, List
 from xlsxwriter import Workbook
 import os
 
@@ -55,6 +54,7 @@ LABEL = {
 class UnitTestCase(Series):
 
     __wb__ = None
+    __rf__ = []
 
     def __init__(self, **kwargs):
         self.__wb__ = None
@@ -71,6 +71,14 @@ class UnitTestCase(Series):
     @workbook.setter
     def workbook(self, workbook: Workbook):
         self.__wb__ = workbook
+
+    @property
+    def reference(self) -> List[str]:
+        return self.__rf__
+
+    @reference.setter
+    def reference(self, reference:List[str]):
+        self.__rf__ = reference
 
     @property
     def variable(self) -> list:
