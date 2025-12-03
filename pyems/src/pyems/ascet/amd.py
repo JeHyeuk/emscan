@@ -573,6 +573,10 @@ class AmdIO(ElementTree):
             f.write(self.serialize())
         return
 
+    def export_to_downloads(self):
+        self.export(path=os.path.join(os.environ['USERPROFILE'], f'Downloads/{self.name}'))
+        return
+
     def findParent(self, *elems:Element) -> Dict[Element, Element]:
         parents = []
         for parent in self.iter():
@@ -601,6 +605,16 @@ class AmdIO(ElementTree):
             return found[0]
         return found
 
+
+class Amd:
+    def __init__(self, file:str):
+        sc = AmdSource(file)
+        self.name = sc.name
+        self.main = AmdIO(sc.main)
+        self.impl = AmdIO(sc.impl)
+        self.data = AmdIO(sc.data)
+        self.spec = AmdIO(sc.spec)
+        return
 
 
 # Alias

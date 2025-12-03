@@ -96,11 +96,11 @@ class ProjectIO:
 
         unique = data[data['scope'] == 'exported']
         oids = dict(zip(unique['name'].values, unique['OID'].values))
-        def __eid(row):
-            if row.scope in ["exported"]:
-                return row.OID
-            if row["name"] in oids:
-                return oids[row["name"]]
+        def __eid(_row):
+            if _row.scope in ["exported"]:
+                return _row.OID
+            if _row["name"] in oids:
+                return oids[_row["name"]]
             return None
         data["UID"] = data.apply(__eid, axis=1)
         return data

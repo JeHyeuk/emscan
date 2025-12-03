@@ -1,4 +1,5 @@
 __all__ = [
+    "Amd",
     "AmdElements",
     "AmdIO",
     "AmdEL",
@@ -7,6 +8,6 @@ __all__ = [
     "generateOID",
     "ProjectIO"
 ]
-from .amd import AmdIO, AmdElements, AmdSource, AmdEL, AmdSC
+from .amd import Amd, AmdIO, AmdElements, AmdSource, AmdEL, AmdSC
 from .oid import generateOID
 from .proj import ProjectIO
