@@ -37,19 +37,20 @@ class Template(Amd):
         self.method_block = {}
         self.element_block = {}
 
-        self.logger = Logger(os.path.join(ENV['USERPROFILE'], f'Downloads/{self.name}/log.log'), clean_record=True)
-
         # 소스 파일이 주어진 경우, Template의 기본 정보를 Base 모델 정보로 복사
         # 복사 범위: 모델명, OID, nameSpace, method, method OID
         # @self.tx : 송출처 이름(Legacy); ABS, BMS, TCU, ...
         # @self.hw : 차량 프로젝트 타입; HEV, ICE
         if src:
             base = Amd(src)
+            os.makedirs(os.path.join(ENV['USERPROFILE'], f'Downloads/{base.name}'), exist_ok=True)
+            self.logger = Logger(os.path.join(ENV['USERPROFILE'], f'Downloads/{base.name}/log.log'), clean_record=True)
             self.logger(f"%{{{base.name}}} MODEL GENERATION")
             self.logger(f">>> BASE MODEL: {src}")
             self.logger(f">>> COPY BASE MODEL PROPERTIES TO TEMPLATE")
             self.tx, self.hw, self.cal = self.copy_from_basemodel(base)
         else:
+            os.makedirs(os.path.join(ENV['USERPROFILE'], f'Downloads/{self.name}'), exist_ok=True)
             self.logger(f"NEW MODEL GENERATION AS %{self.name} ")
             self.tx, self.hw, self.cal = "", "", {}
         self.logger(f">>> DB VERSION: {db.revision}")
