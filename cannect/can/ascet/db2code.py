@@ -9,14 +9,14 @@ import pandas as pd
 import re
 
 
-INFO = lambda revision: f"""This Model is Auto-Generated. 
-* COMPANY: {ENV['COMPANY']}
+INFO = lambda revision: f"""* COMPANY: {ENV['COMPANY']}
 * DIVISION: {ENV['DIVISION']}
 * AUTHOR: {ENV['USERNAME']}
 * CREATED: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 * DB VERSION: {revision}
+{ENV["COPYRIGHT"]} 
 
-* {ENV["COPYRIGHT"]}
+THIS MODEL IS AUTO-GENERATED.
 """
 
 INLINE = f"""

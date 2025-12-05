@@ -52,7 +52,8 @@ class Template(Amd):
             self.logger(f"NEW MODEL GENERATION AS %{self.name} ")
             self.tx, self.hw, self.cal = "", "", {}
         self.logger(f">>> DB VERSION: {db.revision}")
-        self.main.find('Component/Comment').text = INFO(db.revision)
+        message_list = "\n- ".join(messages)
+        self.main.find('Component/Comment').text = f"{INFO(db.revision)}[MESSAGE LIST]\n- {message_list}"
 
         self.db = db
         self.messages = list(messages)
