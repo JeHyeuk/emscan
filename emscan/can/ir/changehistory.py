@@ -33,7 +33,7 @@ def Compare(prev:str, curr:str):
         desc = cal[["name", "Comment", "module", "value"]]
         print(f"추가된 Cal Parameter: {len(cal)}건")
         print(desc)
-        # desc.to_clipboard(index=False)
+        desc.to_clipboard(index=False)
         print("Copied!")
 
     cal_all = curr[curr['kind'] == 'parameter']
@@ -44,7 +44,7 @@ def Compare(prev:str, curr:str):
         desc = cal_all[["name", "Comment", "module", "value"]]
         print(f"추가된 Cal Parameter: {len(cal)}건")
         print(desc)
-        desc.to_clipboard(index=False)
+        # desc.to_clipboard(index=False)
         print("Copied!")
 
 
@@ -54,8 +54,8 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     model = "LogIf_HEV"
-    asis = rf"D:\Temp\ACPE-22490\ACPE.main.amd"
-    tobe = rf"D:\Temp\ACPE-22490\ACPE.main.amd"
+    asis = rf"E:\TEMP\TT\Ori\AccPTqS-22370\AccPTqS.main.amd"
+    tobe = rf"E:\TEMP\TT\new\AccPTqS_251128b\AccPTqS\AccPTqS.main.amd"
     Compare(asis, tobe)
 
     # 0x320

@@ -503,6 +503,16 @@ class AmdIO(ElementTree):
         self.name = os.path.basename(file).split(".")[0]
         self.type = self.getroot().tag
 
+        if file.endswith('.main.amd'):
+            self.extension = '.main.amd'
+        elif file.endswith('.implementation.amd'):
+            self.extension = '.implementation.amd'
+        elif file.endswith('.data.amd'):
+            self.extension = '.data.amd'
+        elif file.endswith('.specification.amd'):
+            self.extension = '.specification.amd'
+        else:
+            raise KeyError
         self._ns = {'ns0': 'http://www.w3.org/2000/09/xmldsig#'}
         return
 
@@ -569,7 +579,7 @@ class AmdIO(ElementTree):
         timestamp = datetime.now().timestamp()
         os.makedirs(path, exist_ok=True)
         os.utime(path, (timestamp, timestamp))
-        with open(file=os.path.join(path, self.file), mode='w', encoding='utf-8') as f:
+        with open(file=os.path.join(path, f'{self.name}{self.extension}'), mode='w', encoding='utf-8') as f:
             f.write(self.serialize())
         return
 

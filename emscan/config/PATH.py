@@ -221,7 +221,7 @@ ASCET     = _ASCET(r"D:\ETASData\ASCET6.1")
 if os.getlogin() == '22403041':
     SVN = _SVN(r"E:\svn")
 elif os.getlogin() == '22011148':
-    SVN = _SVN(r"D:\svn")
+    SVN = _SVN(r"E:\svn")
 
 
 if __name__ == "__main__":
