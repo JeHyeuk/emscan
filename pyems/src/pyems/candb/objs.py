@@ -106,13 +106,15 @@ class CanSignal(object):
     def isCrc(self) -> bool:
         return (("crc" in self.name.lower()) and (self["StartBit"] == 0)) or \
                ("checksum" in self.name.lower()) or \
-               (self.name.startswith("VVDIN_EMS_CRC"))
+               (self.name.startswith("VVDIN_EMS_CRC")) or \
+               (self.name.startswith("VVDIN_CRC"))
 
     def isAliveCounter(self) -> bool:
         return ((self["Message"] == "TMU_01_200ms") and (self.name == "VSVI_AlvCntVal")) or \
                (("alv" in self.name.lower() or "alivec" in self.name.lower()) and self["StartBit"] <= 16) or \
                ("alive" in self.name.lower() and "count" in self.name.lower()) or \
                (self.name.startswith("VVDIN_EMS_CNT")) or \
+               (self.name.startswith("VVDIN_CNT")) or \
                (self.name.lower().endswith("req_a_counter"))
 
 

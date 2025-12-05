@@ -1,13 +1,10 @@
-from pyems.ascet import Amd, AmdIO, AmdSC, generateOID
+from pyems.ascet import Amd, generateOID
 from pyems.candb import CanDb
 from pyems.environ import ENV
 from pyems.logger import Logger
-from pyems.util import copyTo,clear
 from cannect.can.rule import naming
 from cannect.can.ascet.db2code import INFO
 
-from pandas import Series
-from typing import Dict, Union
 from xml.etree.ElementTree import Element, ElementTree
 import os, copy
 
@@ -41,6 +38,7 @@ class Template(Amd):
         # 복사 범위: 모델명, OID, nameSpace, method, method OID
         # @self.tx : 송출처 이름(Legacy); ABS, BMS, TCU, ...
         # @self.hw : 차량 프로젝트 타입; HEV, ICE
+        # @self.cal: Default Cal. 데이터(값)
         if src:
             base = Amd(src)
             os.makedirs(os.path.join(ENV['USERPROFILE'], f'Downloads/{base.name}'), exist_ok=True)
@@ -54,6 +52,7 @@ class Template(Amd):
             self.logger(f"NEW MODEL GENERATION AS %{self.name} ")
             self.tx, self.hw, self.cal = "", "", {}
         self.logger(f">>> DB VERSION: {db.revision}")
+        self.main.find('Component/Comment').text = INFO(db.revision)
 
         self.db = db
         self.messages = list(messages)
@@ -75,12 +74,18 @@ class Template(Amd):
         return
 
     def copy_from_basemodel(self, base:Amd):
+        """
+        BASE 모델의 기본 정보들을 Template으로 복사
+        """
         self.name = self.main.name = base.main['name']
         self.main['name'] = base.main['name']
         self.main['nameSpace'] = base.main['nameSpace']
         self.main['OID'] = base.main['OID']
-        self.main['defaultProjectName'] = base.main['defaultProjectName']
-        self.main['defaultProjectOID'] = base.main['defaultProjectOID']
+        try:
+            self.main['defaultProjectName'] = base.main['defaultProjectName']
+            self.main['defaultProjectOID'] = base.main['defaultProjectOID']
+        except KeyError:
+            self.main['defaultProjectName'] = f'{self.name}_DEFAULT'
 
         base_method = base.main.dataframe('MethodSignature', depth='shallow')[['name', 'OID']]
         base_method = dict(zip(base_method['name'], base_method['OID']))
@@ -89,6 +94,12 @@ class Template(Amd):
             if method.attrib['name'] in base_method:
                 replace_method[method.attrib['OID']] = base_method[method.attrib['name']]
                 method.attrib['OID'] = base_method[method.attrib['name']]
+        for elem in base.main.iter('MethodSignature'):
+            if elem.attrib['name'].endswith('msRun') and not elem.attrib['name'].startswith('_100'):
+                self.main.strictFind('MethodSignatures').append(elem)
+                self.spec.strictFind('MethodBodies').append(
+                    Element('MethodBody', methodName=elem.attrib['name'])
+                )
 
         self.impl.name = base.main['name']
         self.impl['name'] = base.impl['name']
@@ -213,12 +224,6 @@ class Template(Amd):
                 palette.append(copied)
         return
 
-    def validate(self):
-        for message in self.messages:
-            if not message in self.db.messages:
-                raise KeyError(f'{message} NOT EXIST IN CAN DB.')
-        return
-
     def copy_dsm(self):
         fid_md = Amd(os.path.join(self.dsm, "Fid_Typ.zip"))
         fid = fid_md.impl.dataframe("ImplementationSet", depth="shallow").set_index("name")["OID"]
@@ -230,13 +235,36 @@ class Template(Amd):
             if name.startswith("DEve"):
                 impl_name = name.replace("DEve_", "") + "_DEve"
                 lib = deve
+                # 예외 처리 -----------------------------------------
+                target = [
+                    "Bms5", "Bms6", "Bms7",
+                    "Cvvd1", "Cvvd2", "Cvvd3", "Cvvd4",
+                ]
+                if any([key for key in target if key in impl_name]):
+                    impl_name = impl_name \
+                                .replace("FD", "Can") \
+                                .replace("Crc", "Chks")
+                if "Cvvd" in impl_name and "Chks" in impl_name:
+                    impl_name = impl_name.replace("Chks", "CRC")
+                # ----------------------------------------- 예외 처리
+
             elif name.startswith("Fid"):
                 impl_name = name.replace("Fid_", "") + "_Fid"
                 lib = fid
+                # 예외 처리 -----------------------------------------
+                target = [
+                    "BMS5", "BMS6", "BMS7",
+                    "CVVD1", "CVVD2", "CVVD3", "CVVD4",
+                ]
+                if any([key for key in target if key in impl_name]):
+                    impl_name = impl_name \
+                                .replace("FD", "Can")
+                # ----------------------------------------- 예외 처리
             else:
                 continue
             if not impl_name in lib.index:
-                impl_name = impl_name.replace("0", "")
+                if impl_name.replace("0", "") in lib.index:
+                    impl_name = impl_name.replace("0", "")
             if not impl_name in lib.index:
                 self.logger(f'>>> * [MANUALLY] DSM MISSING: {impl_name}')
                 continue
@@ -266,7 +294,7 @@ class Template(Amd):
         else:
             chn = '2'
         if not db.hasCrc():
-            self.logger(f'>>> * [MANUALLY] DELETE CRC')
+            self.logger(f'>>>   * [MANUALLY] DELETE CRC')
         if not db.hasAliveCounter() or db['Send Type'] == 'PE':
             self.logger(f'>>>   * [MANUALLY] DELETE ALIVE COUNTER')
 
@@ -335,6 +363,90 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
                 continue
         return
 
+    def validate(self):
+        for message in self.messages:
+            if not message in self.db.messages:
+                raise KeyError(f'{message} NOT EXIST IN CAN DB.')
+        return
+
+    def exception(self):
+        if self.name == "CanBMSD_48V":
+            self.logger(f'>>> RENAME ELEMENTS FOR EXCEPTION')
+            rename = {
+                "FD_cVldBms5Alv": "Can_cVldAlvCtBms5",
+                "FD_cVldBms5Crc": "Can_cVldChksBms5",
+                "FD_cVldBms5Msg": "Can_cVldMsgCtBms5",
+                "FD_cVldBms6Alv": "Can_cVldAlvCtBms6",
+                "FD_cVldBms6Crc": "Can_cVldChksBms6",
+                "FD_cVldBms6Msg": "Can_cVldMsgCtBms6",
+                "FD_cVldBms7Alv": "Can_cVldAlvCtBms7",
+                "FD_cVldBms7Crc": "Can_cVldChksBms7",
+                "FD_cVldBms7Msg": "Can_cVldMsgCtBms7",
+                "EEP_stFDBMS5": "EEP_st48VBms5",
+                "EEP_stFDBMS6": "EEP_st48VBms6",
+                "EEP_stFDBMS7": "EEP_st48VBms7",
+                "EEP_FDBMS5": "EEP_48V_DCANBMS5",
+                "EEP_FDBMS6": "EEP_48V_DCANBMS6",
+                "EEP_FDBMS7": "EEP_48V_DCANBMS7",
+            }
+            self.rename_amd(self.main, 'Element', 'name', rename)
+            self.rename_amd(self.impl, '', 'elementName', rename)
+            self.rename_amd(self.data, '', 'elementName', rename)
+            self.rename_amd(self.spec, '', 'elementName', rename)
+
+            for elem in self.main.iter('Element'):
+                if elem.attrib['name'].startswith('CanD_cEnaDetBms'):
+                    attr = list(elem.iter('PrimitiveAttributes'))[0]
+                    attr.attrib.update({
+                        'kind':'message',
+                        'scope':'exported'
+                    })
+            objs = []
+            for elem in self.impl.strictFind('ImplementationSet', name="Impl"):
+                ei = list(elem.iter('ElementImplementation'))
+                if ei and ei[0].attrib['elementName'].startswith('CanD_cEnaDetBms'):
+                    self.impl.strictFind('ImplementationSet', name=self.name).append(elem)
+                    objs.append(elem)
+            for obj in objs:
+                self.impl.strictFind('ImplementationSet', name="Impl").remove(obj)
+
+            objs = []
+            for elem in self.data.strictFind('DataSet', name="Data"):
+                if elem.attrib.get('elementName', '').startswith('CanD_cEnaDetBms'):
+                    self.data.strictFind('DataSet', name=self.name).append(elem)
+                    objs.append(elem)
+            for obj in objs:
+                self.data.strictFind('DataSet', name="Data").remove(obj)
+        elif self.name == "CanCVVDD":
+            self.logger(f'>>> RENAME ELEMENTS FOR EXCEPTION')
+            rename = {
+                "FD_cVldCvvd1Alv": "Can_cVldAlvCntCvvd1",
+                "FD_cVldCvvd1Crc": "Can_cVldCRCCvvd1",
+                "FD_cVldCvvd1Msg": "Can_cVldMsgCntCvvd1",
+                "FD_cVldCvvd2Alv": "Can_cVldAlvCntCvvd2",
+                "FD_cVldCvvd2Crc": "Can_cVldCRCCvvd2",
+                "FD_cVldCvvd2Msg": "Can_cVldMsgCntCvvd2",
+                "FD_cVldCvvd3Alv": "Can_cVldAlvCntCvvd3",
+                "FD_cVldCvvd3Crc": "Can_cVldCRCCvvd3",
+                "FD_cVldCvvd3Msg": "Can_cVldMsgCntCvvd3",
+                "FD_cVldCvvd4Msg": "Can_cVldMsgCntCvvd4",
+                "EEP_stFDCVVD1": "EEP_stCVVD1",
+                "EEP_stFDCVVD2": "EEP_stCVVD2",
+                "EEP_stFDCVVD3": "EEP_stCVVD3",
+                "EEP_stFDCVVD4": "EEP_stCVVD4",
+                "EEP_FDCVVD1": "EEP_DCANCVVD1",
+                "EEP_FDCVVD2": "EEP_DCANCVVD2",
+                "EEP_FDCVVD3": "EEP_DCANCVVD3",
+                "EEP_FDCVVD4": "EEP_DCANCVVD4",
+            }
+            self.rename_amd(self.main, 'Element', 'name', rename)
+            self.rename_amd(self.impl, '', 'elementName', rename)
+            self.rename_amd(self.data, '', 'elementName', rename)
+            self.rename_amd(self.spec, '', 'elementName', rename)
+        else:
+            self.logger(f'>>> NO EXCEPTION FOUND')
+        return
+
     def create(self):
         self.validate()
 
@@ -363,6 +475,7 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
         self.copy_dsm()
         self.logger(f'>>> COPY CALIBRATION DATA FROM BASE MODEL')
         self.copy_data()
+        self.exception()
 
         self.main.export_to_downloads()
         self.impl.export_to_downloads()
@@ -374,11 +487,11 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
 if __name__ == "__main__":
     template = Template(
         CanDb(),
-        r"E:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\BMS\MessageDiag\CanFDBMSD_HEV\CanFDBMSD_HEV.zip",
+        r"E:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\BCM\MessageDiag\CanFDBCMD\CanFDBCMD.zip",
         "BCM_02_200ms",
         "BCM_07_200ms",
-        "BMS_01_100ms",
-        "BMS_02_100ms",
-        "BMS_03_100ms",
+        "BCM_10_200ms",
+        "BCM_20_200ms",
+        "BCM_22_200ms",
     )
     template.create()
