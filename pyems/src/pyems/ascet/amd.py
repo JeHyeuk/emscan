@@ -615,6 +615,21 @@ class AmdIO(ElementTree):
             return found[0]
         return found
 
+    def replace(self, tag:str='', attr_name:str='', attr_value:dict=None):
+        if attr_value is None:
+            return
+
+        for elem in self.iter():
+            if tag and elem.tag != tag:
+                continue
+            if not attr_name in elem.attrib:
+                continue
+            if not elem.attrib[attr_name] in attr_value:
+                continue
+            elem.attrib[attr_name] = attr_value[elem.attrib[attr_name]]
+        return
+
+
 
 class Amd:
     def __init__(self, file:str):

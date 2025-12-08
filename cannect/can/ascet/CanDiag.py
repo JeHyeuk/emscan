@@ -17,6 +17,7 @@ class Template(Amd):
     def __init__(self, db:CanDb, src:str="", *messages):
 
         # Template 파일 읽기
+        # Template 파일에 대해 필요한 정보들을 복사한다.
         super().__init__(ENV['CAN'][
             "CAN_Model/"
             "_29_CommunicationVehicle/"
@@ -25,6 +26,7 @@ class Template(Amd):
             "CanDiagTmplt/"
             "CanDiagTmplt.main.amd"
         ])
+
         self.dsm = ENV['MODEL'][
             "HMC_ECU_Library/"
             "HMC_DiagLibrary/"
@@ -52,12 +54,14 @@ class Template(Amd):
             self.logger(f"NEW MODEL GENERATION AS %{self.name} ")
             self.tx, self.hw, self.cal = "", "", {}
         self.logger(f">>> DB VERSION: {db.revision}")
+
         message_list = "\n- ".join(messages)
         self.main.find('Component/Comment').text = f"{INFO(db.revision)}[MESSAGE LIST]\n- {message_list}"
 
         self.db = db
         self.messages = list(messages)
         self.n = 1
+
         return
 
     @staticmethod
@@ -126,7 +130,7 @@ class Template(Amd):
         self.spec.name = base.main['name']
         self.rename_amd(self.spec, '', 'methodOID', replace_method)
 
-        tx = self.name.replace("_HEV", "").replace("CanFD", "")[:-1]
+        tx = self.name.replace("_HEV", "").replace("_48V", "").replace("CanFD", "").replace("Can", "")[:-1]
         hw = "HEV" if "HEV" in self.name else "ICE"
         return tx, hw, cal
 
@@ -236,36 +240,28 @@ class Template(Amd):
             if name.startswith("DEve"):
                 impl_name = name.replace("DEve_", "") + "_DEve"
                 lib = deve
-                # 예외 처리 -----------------------------------------
-                target = [
-                    "Bms5", "Bms6", "Bms7",
-                    "Cvvd1", "Cvvd2", "Cvvd3", "Cvvd4",
-                ]
-                if any([key for key in target if key in impl_name]):
-                    impl_name = impl_name \
-                                .replace("FD", "Can") \
-                                .replace("Crc", "Chks")
-                if "Cvvd" in impl_name and "Chks" in impl_name:
-                    impl_name = impl_name.replace("Chks", "CRC")
-                # ----------------------------------------- 예외 처리
 
             elif name.startswith("Fid"):
                 impl_name = name.replace("Fid_", "") + "_Fid"
                 lib = fid
-                # 예외 처리 -----------------------------------------
-                target = [
-                    "BMS5", "BMS6", "BMS7",
-                    "CVVD1", "CVVD2", "CVVD3", "CVVD4",
-                ]
-                if any([key for key in target if key in impl_name]):
-                    impl_name = impl_name \
-                                .replace("FD", "Can")
-                # ----------------------------------------- 예외 처리
             else:
                 continue
+
+            # MANUAL EXCEPTION CASE
+            if "cvvd" in impl_name.lower():
+                impl_name = impl_name.replace("FD", "Can").replace("Crc", "CRC")
+            elif "mhsg" in impl_name.lower():
+                impl_name = impl_name.replace("State", "").replace("STATE", "")
+
+            # AUTO EXCEPTION CASE
             if not impl_name in lib.index:
                 if impl_name.replace("0", "") in lib.index:
                     impl_name = impl_name.replace("0", "")
+                if impl_name.replace("FD", "Can") in lib.index:
+                    impl_name = impl_name.replace("FD", "Can")
+                if impl_name.replace("FD", "Can").replace("Crc", "Chks") in lib.index:
+                    impl_name = impl_name.replace("FD", "Can").replace("Crc", "Chks")
+
             if not impl_name in lib.index:
                 self.logger(f'>>> * [MANUALLY] DSM MISSING: {impl_name}')
                 continue
@@ -371,6 +367,33 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
         return
 
     def exception(self):
+
+        def _change_attr(element_name:str, **change_attr):
+            for elem in self.main.iter('Element'):
+                if elem.attrib.get('name', '') == element_name:
+                    attr = list(elem.iter('PrimitiveAttributes'))[0]
+                    attr.attrib.update(change_attr)
+
+            if change_attr.get('scope', '') == 'exported':
+                objs = []
+                for elem in self.impl.strictFind('ImplementationSet', name="Impl"):
+                    ei = list(elem.iter('ElementImplementation'))
+                    if ei and ei[0].attrib['elementName'] == element_name:
+                        self.impl.strictFind('ImplementationSet', name=self.name).append(elem)
+                        objs.append(elem)
+                for obj in objs:
+                    self.impl.strictFind('ImplementationSet', name="Impl").remove(obj)
+
+                objs = []
+                for elem in self.data.strictFind('DataSet', name="Data"):
+                    if elem.attrib.get('elementName', '') == element_name:
+                        self.data.strictFind('DataSet', name=self.name).append(elem)
+                        objs.append(elem)
+                for obj in objs:
+                    self.data.strictFind('DataSet', name="Data").remove(obj)
+            return
+
+
         if self.name == "CanBMSD_48V":
             self.logger(f'>>> RENAME ELEMENTS FOR EXCEPTION')
             rename = {
@@ -390,34 +413,72 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
                 "EEP_FDBMS6": "EEP_48V_DCANBMS6",
                 "EEP_FDBMS7": "EEP_48V_DCANBMS7",
             }
-            self.rename_amd(self.main, 'Element', 'name', rename)
-            self.rename_amd(self.impl, '', 'elementName', rename)
-            self.rename_amd(self.data, '', 'elementName', rename)
-            self.rename_amd(self.spec, '', 'elementName', rename)
 
+            detection = []
             for elem in self.main.iter('Element'):
                 if elem.attrib['name'].startswith('CanD_cEnaDetBms'):
-                    attr = list(elem.iter('PrimitiveAttributes'))[0]
-                    attr.attrib.update({
-                        'kind':'message',
-                        'scope':'exported'
-                    })
-            objs = []
-            for elem in self.impl.strictFind('ImplementationSet', name="Impl"):
-                ei = list(elem.iter('ElementImplementation'))
-                if ei and ei[0].attrib['elementName'].startswith('CanD_cEnaDetBms'):
-                    self.impl.strictFind('ImplementationSet', name=self.name).append(elem)
-                    objs.append(elem)
-            for obj in objs:
-                self.impl.strictFind('ImplementationSet', name="Impl").remove(obj)
+                    detection.append(elem.attrib['name'])
+            for var in detection:
+                _change_attr(var, kind='message', scope='exported')
 
-            objs = []
-            for elem in self.data.strictFind('DataSet', name="Data"):
-                if elem.attrib.get('elementName', '').startswith('CanD_cEnaDetBms'):
-                    self.data.strictFind('DataSet', name=self.name).append(elem)
-                    objs.append(elem)
-            for obj in objs:
-                self.data.strictFind('DataSet', name="Data").remove(obj)
+        elif self.name == "CanLDCD_48V":
+            self.logger(f'>>> RENAME ELEMENTS FOR EXCEPTION')
+            rename = {
+                "FD_cVldLdc1Alv": "Can_cVldAlvCtLdc1",
+                "FD_cVldLdc1Crc": "Can_cVldChksLdc1",
+                "FD_cVldLdc1Msg": "Can_cVldMsgCtLdc1",
+                "FD_cVldLdc2Alv": "Can_cVldAlvCtLdc2",
+                "FD_cVldLdc2Crc": "Can_cVldChksLdc2",
+                "FD_cVldLdc2Msg": "Can_cVldMsgCtLdc2",
+                "EEP_stFDLDC1": "EEP_st48VLdc1",
+                "EEP_stFDLDC2": "EEP_st48VLdc2",
+                "EEP_FDLDC1": "EEP_48V_DCANLDC1",
+                "EEP_FDLDC2": "EEP_48V_DCANLDC2",
+            }
+
+            detection = []
+            for elem in self.main.iter('Element'):
+                if elem.attrib['name'].startswith('CanD_cEnaDetLdc'):
+                    detection.append(elem.attrib['name'])
+            for var in detection:
+                _change_attr(var, kind='message', scope='exported')
+
+        elif self.name == "CanMHSGD_48V":
+            self.logger(f'>>> RENAME ELEMENTS FOR EXCEPTION')
+            rename = {
+                "FD_cVldMhsgState1Alv": "Can_cVldAlvCtStMhsg1",
+                "FD_cVldMhsgState2Alv": "Can_cVldAlvCtStMhsg2",
+                "FD_cVldMhsgState3Alv": "Can_cVldAlvCtStMhsg3",
+                "FD_cVldMhsgState4Alv": "Can_cVldAlvCtStMhsg4",
+                "FD_cVldMhsgState1Crc": "Can_cVldChksStMhsg1",
+                "FD_cVldMhsgState2Crc": "Can_cVldChksStMhsg2",
+                "FD_cVldMhsgState3Crc": "Can_cVldChksStMhsg3",
+                "FD_cVldMhsgState4Crc": "Can_cVldChksStMhsg4",
+                "FD_cVldMhsgState1Msg": "Can_cVldMsgCtStMhsg1",
+                "FD_cVldMhsgState2Msg": "Can_cVldMsgCtStMhsg2",
+                "FD_cVldMhsgState3Msg": "Can_cVldMsgCtStMhsg3",
+                "FD_cVldMhsgState4Msg": "Can_cVldMsgCtStMhsg4",
+                "EEP_stFDMHSGSTATE1": "EEP_st48VMhsg1",
+                "EEP_stFDMHSGSTATE2": "EEP_st48VMhsg2",
+                "EEP_stFDMHSGSTATE3": "EEP_st48VMhsg3",
+                "EEP_stFDMHSGSTATE4": "EEP_st48VMhsg4",
+                "EEP_FDMHSGSTATE1": "EEP_48V_DCANMHSG1",
+                "EEP_FDMHSGSTATE2": "EEP_48V_DCANMHSG2",
+                "EEP_FDMHSGSTATE3": "EEP_48V_DCANMHSG3",
+                "EEP_FDMHSGSTATE4": "EEP_48V_DCANMHSG4",
+                "CanD_cEnaDetMhsgState1": "CanD_cEnaDetMhsg1",
+                "CanD_cEnaDetMhsgState2": "CanD_cEnaDetMhsg2",
+                "CanD_cEnaDetMhsgState3": "CanD_cEnaDetMhsg3",
+                "CanD_cEnaDetMhsgState4": "CanD_cEnaDetMhsg4",
+            }
+
+            detection = []
+            for elem in self.main.iter('Element'):
+                if elem.attrib['name'].startswith('CanD_cEnaDetMhsg'):
+                    detection.append(elem.attrib['name'])
+            for var in detection:
+                _change_attr(var, kind='message', scope='exported')
+
         elif self.name == "CanCVVDD":
             self.logger(f'>>> RENAME ELEMENTS FOR EXCEPTION')
             rename = {
@@ -440,12 +501,22 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
                 "EEP_FDCVVD3": "EEP_DCANCVVD3",
                 "EEP_FDCVVD4": "EEP_DCANCVVD4",
             }
-            self.rename_amd(self.main, 'Element', 'name', rename)
-            self.rename_amd(self.impl, '', 'elementName', rename)
-            self.rename_amd(self.data, '', 'elementName', rename)
-            self.rename_amd(self.spec, '', 'elementName', rename)
+        elif self.name == "CanFDESCD":
+            rename = {
+                'Cfg_FDESCD_C':'Cfg_CanFDESCD_C'
+            }
+            _change_attr('CanD_cEnaDetEsc04', kind='message', scope='exported')
+            _change_attr('Cfg_FDESCD_C', scope='exported')
+            _change_attr('CanD_tiMonDetEsc_C', scope='exported')
+
         else:
             self.logger(f'>>> NO EXCEPTION FOUND')
+            return
+        self.rename_amd(self.main, 'Element', 'name', rename)
+        self.rename_amd(self.impl, '', 'elementName', rename)
+        self.rename_amd(self.data, '', 'elementName', rename)
+        self.rename_amd(self.spec, '', 'elementName', rename)
+
         return
 
     def create(self):
@@ -488,11 +559,9 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
 if __name__ == "__main__":
     template = Template(
         CanDb(),
-        r"E:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\BCM\MessageDiag\CanFDBCMD\CanFDBCMD.zip",
-        "BCM_02_200ms",
-        "BCM_07_200ms",
-        "BCM_10_200ms",
-        "BCM_20_200ms",
-        "BCM_22_200ms",
+        r"E:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\ESC\MessageDiag\CanFDESCD\CanFDESCD.zip",
+        "ESC_01_10ms",
+        "ESC_03_20ms",
+        "ESC_04_50ms",
     )
     template.create()
