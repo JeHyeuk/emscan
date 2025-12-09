@@ -199,7 +199,11 @@ class Template(Amd):
         for diagram in palette.findall('DiagramElement'):
             hierarchy = diagram.find('Hierarchy')
             if hierarchy.attrib['name'].startswith('__M1_NAME__'):
+                offset = max([int(tag.attrib.get('graphicOID', '0')) for tag in hierarchy.iter()])
                 copied = copy.deepcopy(diagram)
+                for tag in copied.iter():
+                    if 'graphicOID' in tag.attrib:
+                        tag.attrib['graphicOID'] = str(int(tag.attrib['graphicOID']) + (self.n - 1) * offset)
                 _hierarchy = copied.find('Hierarchy')
                 _hierarchy.attrib['name'] = f'__M{self.n}_NAME__'
                 if self.n <= 5:
@@ -565,19 +569,19 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
 
 if __name__ == "__main__":
 
-    proj = ProjectIO(r"D:\SVN\model\ascet\trunk\HNB_GASOLINE")
+    proj = ProjectIO(r"E:\SVN\model\ascet\trunk\HNB_GASOLINE")
     comm = proj.bcTree(29)
     CANDB = CanDb()
 
     # 단일 모델 뽑을 때 사용하세요.
-    # template = Template(
-    #     CanDb(),
-    #     r"E:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\ESC\MessageDiag\CanFDESCD\CanFDESCD.zip",
-    #     "ESC_01_10ms",
-    #     "ESC_03_20ms",
-    #     "ESC_04_50ms",
-    # )
-    # template.create()
+    template = Template(
+        CANDB,
+        r"E:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\ESC\MessageDiag\CanFDESCD\CanFDESCD.zip",
+        "ESC_01_10ms",
+        "ESC_03_20ms",
+        "ESC_04_50ms",
+    )
+    template.create()
 
 
     # 전체 모델 뽑을 때 사용하세요.
@@ -618,16 +622,16 @@ if __name__ == "__main__":
         "CanFDTMUD": ["TMU_01_200ms",],
     }
 
-    for model, messages in target.items():
-        tree = comm[comm['file'] == f'{model}.zip']
-        if tree.empty:
-            raise KeyError(f'MODEL: {model}.zip NOT FOUND')
-        if len(tree) >= 2:
-            print(tree)
-            n = input(f'DUPLICATED MODELS FOUND, SELECT INDEX OF THE LIST: ')
-            tree = tree.loc[int(n)]
-        else:
-            tree = tree.iloc[0]
-
-        template = Template(CANDB, tree['path'], *messages)
-        template.create()
+    # for model, messages in target.items():
+    #     tree = comm[comm['file'] == f'{model}.zip']
+    #     if tree.empty:
+    #         raise KeyError(f'MODEL: {model}.zip NOT FOUND')
+    #     if len(tree) >= 2:
+    #         print(tree)
+    #         n = input(f'DUPLICATED MODELS FOUND, SELECT INDEX OF THE LIST: ')
+    #         tree = tree.loc[int(n)]
+    #     else:
+    #         tree = tree.iloc[0]
+    #
+    #     template = Template(CANDB, tree['path'], *messages)
+    #     template.create()
