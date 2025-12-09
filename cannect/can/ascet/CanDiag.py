@@ -284,9 +284,9 @@ class Template(Amd):
 
     def copy_data(self):
         for data in self.data.iter('DataEntry'):
-            if data.attrib.get('name', '') in self.cal:
+            if data.attrib.get('elementName', '') in self.cal:
                 numeric = list(data.iter('Numeric'))[0]
-                numeric.attrib['value'] = self.cal[data.attrib.get('name', '')]
+                numeric.attrib['value'] = self.cal[data.attrib.get('elementName', '')]
         return
 
     def define_renamer(self, n:int, name:str):
