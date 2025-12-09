@@ -199,13 +199,14 @@ class Template(Amd):
         for diagram in palette.findall('DiagramElement'):
             hierarchy = diagram.find('Hierarchy')
             if hierarchy.attrib['name'].startswith('__M1_NAME__'):
-                offset = max([int(tag.attrib.get('graphicOID', '0')) for tag in hierarchy.iter()])
                 copied = copy.deepcopy(diagram)
-                for tag in copied.iter():
-                    if 'graphicOID' in tag.attrib:
-                        tag.attrib['graphicOID'] = str(int(tag.attrib['graphicOID']) + (self.n - 1) * offset)
+
+                # Graphic OID Offset
+                offset = max([int(tag.attrib.get('graphicOID', '0')) for tag in hierarchy.iter()])
+
                 _hierarchy = copied.find('Hierarchy')
                 _hierarchy.attrib['name'] = f'__M{self.n}_NAME__'
+                _hierarchy.attrib['graphicOID'] = str(int(_hierarchy.attrib['graphicOID']) + (self.n - 1) * offset)
                 if self.n <= 5:
                     for pos in ["Position", "LabelPosition"]:
                         _hierarchy.find(pos).attrib['x'] = hierarchy.find(pos).attrib['x']
