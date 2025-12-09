@@ -286,7 +286,7 @@ class Template(Amd):
         for data in self.data.iter('DataEntry'):
             if data.attrib.get('name', '') in self.cal:
                 numeric = list(data.iter('Numeric'))[0]
-                numeric.attrib['value'] = cal[data.attrib.get('name', '')]
+                numeric.attrib['value'] = self.cal[data.attrib.get('name', '')]
         return
 
     def define_renamer(self, n:int, name:str):
