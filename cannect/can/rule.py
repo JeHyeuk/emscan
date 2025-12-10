@@ -69,6 +69,8 @@ class naming(object):
             self.base = base = f"L_EMS{splits[-1]}"
         if self.message == "EMS_LDCBMS1":
             self.base = base = "EmsLdcBms1"
+        if self.message.startswith("MHSG"):
+            self.base = base = f"StMhsg{splits[-1][-1]}"
         self.pascal = base
 
         self.root = root = ''.join([char for char in base if char.isalpha()])
@@ -97,6 +99,8 @@ class naming(object):
         """
         splits = [split.upper() for split in splits]
         self.hierarchy = self.tag = self.upper = tag = ''.join(splits)
+        if self.message.startswith("MHSG"):
+            self.hierarchy = self.tag = self.upper = tag = f"MHSG{splits[-1][-1]}"
 
         """
         [Element Names]
@@ -162,6 +166,28 @@ class naming(object):
         """
         if self.message.startswith("EMS_CVVD"):
             self.buffer = f"Can_{base}_Buf_A"
+        if (self.message.startswith('BMS') or self.message.startswith('LDC')) and len(self.message) == 4:
+            self.messageCountValid = f"Can_cVldMsgCt{base}"
+            self.aliveCountValid = f"Can_cVldAlvCt{base}"
+            self.crcValid = f"Can_cVldChks{base}"
+            self.eep = f"EEP_st48V{base}"
+            self.eepIndex = f"EEP_48V_DCAN{tag}"
+        if self.message.startswith('MHSG'):
+            self.messageCountValid = f"Can_cVldMsgCt{base}"
+            self.aliveCountValid = f"Can_cVldAlvCt{base}"
+            self.crcValid = f"Can_cVldChks{base}"
+            self.eep = f"EEP_st48V{base.replace('St', '')}"
+            self.eepIndex = f"EEP_48V_DCAN{tag}"
+            self.detectionEnable = f"CanD_cEnaDet{base.replace('St', '')}"
+            self.deveMsg = f"DEve_Can{base.replace('St', '')}Msg"
+            self.deveCrc = f"DEve_Can{base.replace('St', '')}Chks"
+            self.deveAlv = f"DEve_Can{base.replace('St', '')}Alv"
+        if self.message.startswith('CVVD'):
+            self.messageCountValid = f"Can_cVldMsgCnt{base}"
+            self.aliveCountValid = f"Can_cVldAlvCnt{base}"
+            self.crcValid = f"Can_cVldCRC{base}"
+            self.eep = f"EEP_st{tag}"
+            self.eepIndex = f"EEP_DCAN{tag}"
         return
 
     def __str__(self) -> str:
