@@ -145,44 +145,47 @@ class xml:
         return attr
 
 
-def search(samples: Iterable[str], keyword: str) -> Union[str, List[str]]:
-    """
-    간단한 와일드카드 검색 함수.
-    - '*' 는 0글자 이상 임의의 문자열과 매칭됩니다.
-    - 대소문자를 구분하지 않습니다.
-    - 결과가 1개이면 str을, 그 외(0개 또는 2개 이상)면 List[str]를 반환합니다.
-    """
-    samples = list(samples)
-    if keyword is None:
-        return ""
-
-    kw = keyword.strip()
-    regex_fragments = []
-    for ch in kw:
-        if ch == '*':
-            regex_fragments.append(".*")
-        else:
-            regex_fragments.append(re.escape(ch))
-    regex_body = "".join(regex_fragments)
-    pattern = re.compile(f"^{regex_body}$", flags=re.IGNORECASE)
-    matches = [s for s in samples if pattern.match(s)]
-    if not matches:
-        return ""
-    elif len(matches) == 1:
-        return matches[0]
-    else:
-        return matches
-
 
 class KeywordSearch:
-
+    """
+    Dataset에 대한 키워드 검색
+    """
     def __init__(self, *samples):
         self._samples = list(samples)
         self._logger = Logger()
         return
 
     def __getitem__(self, item:str)-> str:
-        result = search(self._samples, item)
+        result = self.search(self._samples, item)
         if not result:
             self._logger.warning(f"NOT FOUND: '{item}' IN THE MODEL")
         return result
+
+    @classmethod
+    def search(cls, samples: Iterable[str], keyword: str) -> Union[str, List[str]]:
+        """
+        간단한 와일드카드 검색 함수.
+        - '*' 는 0글자 이상 임의의 문자열과 매칭됩니다.
+        - 대소문자를 구분하지 않습니다.
+        - 결과가 1개이면 str을, 그 외(0개 또는 2개 이상)면 List[str]를 반환합니다.
+        """
+        samples = list(samples)
+        if keyword is None:
+            return ""
+
+        kw = keyword.strip()
+        regex_fragments = []
+        for ch in kw:
+            if ch == '*':
+                regex_fragments.append(".*")
+            else:
+                regex_fragments.append(re.escape(ch))
+        regex_body = "".join(regex_fragments)
+        pattern = re.compile(f"^{regex_body}$", flags=re.IGNORECASE)
+        matches = [s for s in samples if pattern.match(s)]
+        if not matches:
+            return ""
+        elif len(matches) == 1:
+            return matches[0]
+        else:
+            return matches
