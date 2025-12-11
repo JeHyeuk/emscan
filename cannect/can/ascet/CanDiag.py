@@ -5,7 +5,8 @@ from pyems.logger import Logger
 from cannect.can.rule import naming
 from cannect.can.ascet.db2code import INFO
 
-from xml.etree.ElementTree import Element, ElementTree
+from typing import Dict, Tuple
+from xml.etree.ElementTree import Element
 import os, copy
 
 from pandas import set_option
@@ -14,18 +15,21 @@ set_option('display.expand_frame_repr', False)
 
 class Template(Amd):
 
-    def __init__(self, db:CanDb, src:str, *messages):
+    def __init__(self, db: CanDb, src: str, *messages):
 
-        # Template 파일 읽기
-        # Template 파일에 대해 필요한 정보들을 복사한다.
+        for message in messages:
+            if not message in db.messages:
+                raise KeyError(f'{message} NOT EXIST IN CAN DB.')
+
         super().__init__(ENV['CAN'][
-            "CAN_Model/"
-            "_29_CommunicationVehicle/"
-            "StandardDB/"
-            "StandardTemplate/"
-            "CanDiagTmplt/"
-            "CanDiagTmplt.main.amd"
-        ])
+                             "CAN_Model/"
+                             "_29_CommunicationVehicle/"
+                             "StandardDB/"
+                             "StandardTemplate/"
+                             "CanDiagTmplt/"
+                             "CanDiagTmplt.main.amd"
+                         ])
+        # super().__init__(r'D:\ETASData\ASCET6.1\Export\CanDiagTmplt\CanDiagTmplt.main.amd')
 
         self.dsm = ENV['MODEL'][
             "HMC_ECU_Library/"
@@ -33,64 +37,58 @@ class Template(Amd):
             "DSM_Types"
         ]
 
-        self.method_block = {}
-        self.element_block = {}
-
         # LOGGER 생성
         base = Amd(src)
-        name = base.name
-        os.makedirs(os.path.join(ENV['USERPROFILE'], f'Downloads/{name}'), exist_ok=True)
-        self.logger = Logger(os.path.join(ENV['USERPROFILE'], f'Downloads/{name}/log.log'), clean_record=True)
+        os.makedirs(os.path.join(ENV['USERPROFILE'], f'Downloads/{base.name}'), exist_ok=True)
+        self.logger = Logger(os.path.join(ENV['USERPROFILE'], f'Downloads/{base.name}/log.log'), clean_record=True)
+        self.logger(f"%{{{base.name}}} MODEL GENERATION")
+        self.logger(f">>> DB VERSION: {db.revision}")
+        self.logger(f">>> BASE MODEL: {src}")
 
-        # 소스 파일이 주어진 경우, Template의 기본 정보를 Base 모델 정보로 복사
-        # 복사 범위: 모델명, OID, nameSpace, method, method OID
+        # @self.n        : 메시지 순번
+        # @self.db       : CAN DB 객체
+        # @self.messages : 메시지 이름 리스트
+        self.n, self.db, self.messages = 1, db, list(messages)
+
         # @self.tx : 송출처 이름(Legacy); ABS, BMS, TCU, ...
         # @self.hw : 차량 프로젝트 타입; HEV, ICE
         # @self.cal: Default Cal. 데이터(값)
-        self.logger(f"%{{{name}}} MODEL GENERATION")
-        self.logger(f">>> DB VERSION: {db.revision}")
-        self.logger(f">>> BASE MODEL: {src}")
-        self.logger(f">>> COPY BASE MODEL PROPERTIES TO TEMPLATE")
-        self.tx, self.hw, self.cal = self.copy_from_basemodel(base)
+        self.tx, self.hw, self.cal = self.read_from_basemodel(base)
 
-        # 송출처 기반 변수명(메시지 무관 공용 변수명) 정의
-        self.element_block.update({
-            f"CanD_cEnaDetBus1__TX_Pascal__": f"CanD_cEnaDetBus1{self.tx.lower().capitalize()}",
-            f"CanD_cEnaDetBus2__TX_Pascal__": f"CanD_cEnaDetBus2{self.tx.lower().capitalize()}",
-            f"CanD_cEnaDetBus3__TX_Pascal__": f"CanD_cEnaDetBus3{self.tx.lower().capitalize()}",
-            f"CanD_ctDet__TX_Pascal___C": f"CanD_ctDet{self.tx.lower().capitalize()}_C",
-            f"CanD_RstEep__TX_Pascal___C": f"CanD_RstEep{self.tx.lower().capitalize()}_C",
-            f"CanD_tiMonDet__TX_Pascal___C": f"CanD_tiMonDet{self.tx.lower().capitalize()}_C",
-            f"Cfg_FD__TX_UPPER__D_C": f"Cfg_FD{self.tx.upper()}D_C"
-        })
-
-        # 모델 Comment 생성
-        _messages = "\n- ".join(messages)
-        self.main.find('Component/Comment').text = f"{INFO(db.revision)}[MESSAGE LIST]\n- {_messages}"
-
-        self.n = 1
-        self.db = db
-        self.messages = list(messages)
+        self.manual_instruction = []
+        self.base = base
         return
 
-    @staticmethod
-    def rename_amd(amd:ElementTree, tag:str='', attr_key:str='', renamer:dict=None):
-        if renamer is None:
-            return
-        for elem in amd.iter():
-            if tag and elem.tag != tag:
-                continue
-            if not attr_key in elem.attrib:
-                continue
-            if not elem.attrib[attr_key] in renamer:
-                continue
-            elem.attrib[attr_key] = renamer[elem.attrib[attr_key]]
-        return
+    @classmethod
+    def read_from_basemodel(cls, base: Amd) -> Tuple[str, str, Dict]:
+        """
+        BASE 모델의 송출처, 타입, Cal. 값 읽기
+        """
+        tx = base.name.replace("_HEV", "").replace("_48V", "").replace("CanFD", "").replace("Can", "")[:-1]
+        hw = "HEV" if "HEV" in base.name else "ICE"
+        cal = {}
+        for elem in base.main.iter('Element'):
+            attr = elem.find('ElementAttributes/ScalarType/PrimitiveAttributes')
+            if attr is not None:
+                if attr.get('scope', '') == 'imported':
+                    continue
+                if attr.get('kind', '') == 'parameter':
+                    data = base.data.strictFind('DataEntry', elementName=elem.get('name'))
+                    cal[elem.get('name')] = list(data.iter('Numeric'))[0].get('value')
+        return tx, hw, cal
 
-    def copy_from_basemodel(self, base:Amd):
+    def copy_from_basemodel(self, base: Amd):
         """
         BASE 모델의 기본 정보들을 Template으로 복사
         """
+        log = ''
+
+        # 모델 Comment 생성
+        message_list = "[MESSAGE LIST]\n- " + "\n- ".join(self.messages)
+        traceability = INFO(self.db.revision)
+        self.main.find('Component/Comment').text = f"{traceability}{message_list}"
+
+        # *.main.amd 파일 정보 복사
         self.name = self.main.name = base.main['name']
         self.main['name'] = base.main['name']
         self.main['nameSpace'] = base.main['nameSpace']
@@ -101,170 +99,318 @@ class Template(Amd):
         except KeyError:
             self.main['defaultProjectName'] = f'{self.name}_DEFAULT'
 
+        # BASE 모델의 MethodSignature 정보 복사
+        # : _100msRun, _Init, _fcmclr, _EEPRes
+        # *.main.amd
         base_method = base.main.dataframe('MethodSignature', depth='shallow')[['name', 'OID']]
         base_method = dict(zip(base_method['name'], base_method['OID']))
         for method in self.main.iter('MethodSignature'):
             if method.get('name') in base_method:
-                self.method_block[method.get('OID')] = method.attrib['OID'] = base_method[method.get('name')]
+                method.set('OID', base_method[method.get('name')])
 
+        # *.spec.amd
+        for elem in self.spec.iter():
+            if elem.get('methodName', '') in base_method:
+                elem.set('methodOID', base_method[elem.get('methodName')])
+
+        # Template에 정의되지 않은 MethodSignature 정보 복사
         main_method = [elem.get('name') for elem in self.main.iter('MethodSignature')]
         for elem in base.main.iter('MethodSignature'):
             if not elem.get('name') in main_method:
+                if len(elem):
+                    elem.remove(elem[0])
                 self.main.strictFind('MethodSignatures').append(elem)
                 self.spec.strictFind('MethodBodies').append(
-                    Element('MethodBody', methodName=elem.get('name'))
+                    Element('MethodBody', methodName=elem.get('name'), methodOID=elem.get('OID'))
                 )
+
+        # *.implementation.amd 파일 정보 복사
         self.impl.name = base.main['name']
         self.impl['name'] = base.impl['name']
         self.impl['OID'] = base.impl['OID']
         self.impl.strictFind('ImplementationSet', name='Impl').attrib['OID'] = \
             base.impl.strictFind('ImplementationSet', name='Impl').attrib['OID']
 
+        # *.data.amd 파일 정보 복사
         self.data.name = base.main['name']
         self.data['name'] = base.data['name']
         self.data['OID'] = base.data['OID']
         self.data.strictFind('DataSet', name='Data').attrib['OID'] = \
             base.data.strictFind('DataSet', name='Data').attrib['OID']
 
+        # *.specification.amd 파일 정보 복사
+        # BREAK 구문 존재 시, Hierarchy 및 관련 Element 복사
         self.spec.name = base.main['name']
 
-        # Default Cal. 값 복사
-        cal = {}
-        for elem in self.main.iter('Element'):
-            e_name = elem.attrib['name']
-            e_attr = elem.find('ElementAttributes/ScalarType/PrimitiveAttributes')
-            if (e_attr is not None) and e_attr.attrib.get('kind', '') == 'parameter':
-                d_elem = self.data.strictFind('DataEntry', elementName=e_name)
-                d_val = list(d_elem.iter('Numeric'))[0]
-                cal[e_name] = d_val.attrib['value']
-
-        # BREAK 구문 여부 판별
-        break_elem = None
+        breaker = None
         for elem in base.spec.iter():
             if len(elem) and elem[0].tag != "Hierarchy":
                 continue
             for _elem in elem.iter():
                 if _elem.tag == 'Control' and _elem.get('type') == 'Break':
-                    break_elem = copy.deepcopy(elem)
+                    breaker = copy.deepcopy(elem)
 
-        if break_elem:
-            self.logger(f'>>> - COPY BREAK HIERARCHY')
-            elems = [elem.get('elementName') for elem in break_elem.iter() if elem.get('elementName')]
+        if breaker is not None:
+            log = f'COPY BREAK HIERARCHY'
+            elements = [elem.get('elementName') for elem in breaker.iter() if elem.get('elementName')]
             for elem in base.main.iter('Element'):
-                if elem.get('name') in elems:
+                if elem.get('name') in elements:
                     self.main.strictFind('Elements').append(elem)
-            break_elem[0].attrib['name'] = 'Break'
-            break_elem[0].find('Size').attrib['x'] = "40"
-            break_elem[0].find('Size').attrib['y'] = "40"
-            break_elem[0].find('Position').attrib['x'] = "110"
-            break_elem[0].find('Position').attrib['y'] = "280"
-            break_elem[0].find('LabelPosition').attrib['x'] = "110"
-            break_elem[0].find('LabelPosition').attrib['y'] = "260"
-            self.spec.find('Specification/BlockDiagramSpecification/DiagramElements') \
-            .append(break_elem)
+            breaker[0].attrib['name'] = 'Break'
+            breaker[0].find('Size').attrib['x'] = "40"
+            breaker[0].find('Size').attrib['y'] = "40"
+            breaker[0].find('Position').attrib['x'] = "110"
+            breaker[0].find('Position').attrib['y'] = "280"
+            breaker[0].find('LabelPosition').attrib['x'] = "110"
+            breaker[0].find('LabelPosition').attrib['y'] = "260"
+            self.spec.find('Specification/BlockDiagramSpecification/DiagramElements').append(breaker)
+        return log
 
-        tx = self.name.replace("_HEV", "").replace("_48V", "").replace("CanFD", "").replace("Can", "")[:-1]
-        hw = "HEV" if "HEV" in self.name else "ICE"
-        return tx, hw, cal
+    def copy_common(self):
+        renamer = {
+            f"CanD_cEnaDetBus1__TX_Pascal__": f"CanD_cEnaDetBus1{self.tx.lower().capitalize()}",
+            f"CanD_cEnaDetBus2__TX_Pascal__": f"CanD_cEnaDetBus2{self.tx.lower().capitalize()}",
+            f"CanD_cEnaDetBus3__TX_Pascal__": f"CanD_cEnaDetBus3{self.tx.lower().capitalize()}",
+            f"CanD_ctDet__TX_Pascal___C": f"CanD_ctDet{self.tx.lower().capitalize()}_C",
+            f"CanD_RstEep__TX_Pascal___C": f"CanD_RstEep{self.tx.lower().capitalize()}_C",
+            f"CanD_tiMonDet__TX_Pascal___C": f"CanD_tiMonDet{self.tx.lower().capitalize()}_C",
+            f"Cfg_FD__TX_UPPER__D_C": f"Cfg_FD{self.tx.upper()}D_C"
+        }
+        self.main.replace('Element', 'name', renamer)
+        self.impl.replace('', 'elementName', renamer)
+        self.data.replace('', 'elementName', renamer)
+        self.spec.replace('', 'elementName', renamer)
+        return
 
-    def copy_elements(self):
-        self.n += 1
-        new_elements = {}
+    def copy_by_message(self, n:int, message:str):
+        log = ''
 
-        # *.main.amd 파일의 Element 요소를 Template으로부터 복사
-        main_elements = self.main.strictFind('Elements')
-        for elem in main_elements.findall('Element'):
-            if '__M1_' in elem.attrib['name']:
-                copied = copy.deepcopy(elem)
-                copied.attrib['name'] = elem.attrib['name'].replace("M1", f"M{self.n}")
-                copied.attrib['OID'] = generateOID(1)
-                if copied.find('Comment').text is not None:
-                    copied.find('Comment').text = elem.find('Comment').text.replace("M1", f"M{self.n}")
-                main_elements.append(copied)
-                new_elements[copied.attrib['name']] = copied.attrib['OID']
+        db = self.db.messages[message]
+        nm = naming(message)
 
-        # *.main.amd 파일의 Method 요소를 Template으로부터 복사
-        method = self.main.strictFind('MethodSignature', name=f'___M{self.n - 1}_Task__msRun')
-        copied = copy.deepcopy(method)
-        copied.attrib['name'] = f'___M{self.n}_Task__msRun'
-        copied.attrib['OID'] = generateOID()
-        new_elements[copied.attrib['name']] = copied.attrib['OID']
-        self.main.strictFind('MethodSignatures').append(copied)
+        # 메시지 채널 결정
+        chn = '1'
+        if "_48V" in self.name:
+            chn = '2'
+        if (str(nm) == "FPCM_01_100ms") or str(nm).startswith("CVVD"):
+            chn = '3'
+
+        # 메시지 진단 타입 별 Hierarchy 복사 및 치환
+        cp = "YY"
+        if not db.hasCrc():
+            cp = f"N{cp[1]}"
+            log += f'NO CRC(DB) / '
+        if db['Send Type'] == 'PE':
+            cp = f"{cp[0]}N"
+            log += f'NO A/C(PE TYPE) / '
+        if not db.hasAliveCounter():
+            cp = f"{cp[0]}N"
+            log += f'NO A/C(DB) / '
+
+        # 메시지 주기에 따른 Method 정의/교체
+        method = self.main.dataframe('MethodSignature', depth='shallow')[['name', 'OID']]
+        method = dict(zip(method['name'], method['OID']))
+        method_name = f"_{int(max(db['Cycle Time'], 100))}msRun"
+        if method_name in method:
+            method_oid = method[method_name]
+        else:
+            method_oid = generateOID(1)
+            new_method = copy.deepcopy(self.main.strictFind('MethodSignature', name='___M1_Task__msRun'))
+            new_method.set('name', method_name)
+            new_method.set('OID', method_oid)
+            self.main.strictFind('MethodSignatures').append(new_method)
+            new_method = Element('MethodBody', methodName=method_name)
+            self.spec.strictFind('MethodBodies').append(new_method)
+            self.manual_instruction.append(f'ADD IR/OS-TASK: {method_name}')
+
+        # 메시지 순서 별 변수 이름 재정의
+        replace_name = {
+            f'CanD_cEnaDiagBus__M1_Chn__': f'CanD_cEnaDiagBus{chn}',
+            f'CanD_cEnaDetBus__M1_Chn____TX_Pascal__': f'CanD_cEnaDetBus{chn}{self.tx.lower().capitalize()}',
+            f"CanD_cEnaDiag__M1_Pascal__": nm.diagnosisEnable,
+            f"CanD_cEnaDet__M1_Pascal__": nm.detectionEnable,
+            f"CanD_cErr__M1_Pascal__Msg": nm.diagnosisMsg,
+            f"CanD_ctDet__M1_Pascal__": nm.detectionCounter,
+            f"CanD_stRdEep__M1_Pascal__": nm.eepReader,
+            f"CanD_tiFlt__M1_Pascal___C": nm.debounceTime,
+            f"CanD_tiFlt__M1_Pascal__Msg": nm.debounceTimerMsg,
+            f"DEve_FD__M1_Pascal__Msg": nm.deveMsg,
+            f"EEP_FD__M1_UPPER__": nm.eepIndex,
+            f"EEP_stFD__M1_UPPER__": nm.eep,
+            f"FD_cVld__M1_Pascal__Msg": nm.messageCountValid,
+            f"Fid_FD__M1_UPPER__D": nm.fid
+        }
+        if cp[0] == 'Y':
+            replace_name.update({
+                f"CanD_cErr__M1_Pascal__Crc": nm.diagnosisCrc,
+                f"CanD_tiFlt__M1_Pascal__Crc": nm.debounceTimerCrc,
+                f"DEve_FD__M1_Pascal__Crc": nm.deveCrc,
+                f"FD_cVld__M1_Pascal__Crc": nm.crcValid,
+            })
+        if cp[1] == 'Y':
+            replace_name.update({
+                f"CanD_cErr__M1_Pascal__Alv": nm.diagnosisAlv,
+                f"CanD_tiFlt__M1_Pascal__Alv": nm.debounceTimerAlv,
+                f"DEve_FD__M1_Pascal__Alv": nm.deveAlv,
+                f"FD_cVld__M1_Pascal__Alv": nm.aliveCountValid,
+            })
+        replace_oid = {}
+
+        # *.main.amd 요소 복사 및 치환
+        main = self.main.strictFind('Elements')
+        for pre, cur in replace_name.items():
+            from_template = self.main.strictFind('Element', name=pre)
+            required = self.main.strictFind('Element', name=cur)
+            if not required:
+                replace_oid[from_template.get('OID')] = oid = generateOID(1)
+                copied = copy.deepcopy(from_template)
+                copied.set('name', cur)
+                copied.set('OID', oid)
+                main.append(copied)
+            else:
+                replace_oid[from_template.get('OID')] = required.get('OID')
 
         # *.implementation.amd 파일의 ImplementationEntry 요소를 복사
         # global 변수와 local 변수를 구분해서 복사함
-        for name in [self.name, 'Impl']:
-            impl_entries = self.impl.strictFind('ImplementationSet', name=name)
-            for elem in impl_entries.findall('ImplementationEntry'):
-                entry = elem.find('ImplementationVariant/ElementImplementation')
-                if '__M1_' in entry.attrib['elementName']:
-                    copied = copy.deepcopy(elem)
-                    copied_entry = copied.find('ImplementationVariant/ElementImplementation')
-                    copied_entry.attrib['elementName'] = entry.attrib['elementName'].replace("M1", f"M{self.n}")
-                    copied_entry.attrib['elementOID'] = new_elements[copied_entry.attrib['elementName']]
-                    impl_entries.append(copied)
+        impl_global = self.impl.strictFind('ImplementationSet', name=self.name)
+        impl_local = self.impl.strictFind('ImplementationSet', name='Impl')
+        for pre, cur in replace_name.items():
+            if self.impl.strictFind('elementName', name=cur):
+                continue
+
+            elem = self.main.strictFind('Element', name=cur)
+            attr = elem.find('ElementAttributes/ScalarType/PrimitiveAttributes')
+            if attr is not None and attr.get('scope') == 'imported':
+                continue
+
+            copied = copy.deepcopy(self.impl.strictFind('ElementImplementation', elementName=pre))
+            copied.set('elementName', cur)
+            copied.set('elementOID', elem.get('OID'))
+            impl = Element('ImplementationEntry')
+            impl.append(Element('ImplementationVariant', name='default'))
+            impl[0].append(copied)
+            if "EEP" in cur:
+                impl_global.append(impl)
+            else:
+                impl_local.append(impl)
 
         # *.data.amd 파일의 DataEntry 요소를 복사
         # global 변수와 local 변수를 구분해서 복사함
+        data_global = self.data.strictFind('DataSet', name=self.name)
+        data_local = self.data.strictFind('DataSet', name='Data')
+        for pre, cur in replace_name.items():
+            if self.data.strictFind('elementName', name=cur):
+                continue
+
+            elem = self.main.strictFind('Element', name=cur)
+            attr = elem.find('ElementAttributes/ScalarType/PrimitiveAttributes')
+            if attr is not None and attr.get('scope') == 'imported':
+                continue
+
+            copied = copy.deepcopy(self.data.strictFind('DataEntry', elementName=pre))
+            copied.set('elementName', cur)
+            copied.set('elementOID', elem.get('OID'))
+            if "EEP" in cur:
+                data_global.append(copied)
+            else:
+                data_local.append(copied)
+
+        template = copy.deepcopy(self.spec.strictFind('Hierarchy', name=f'__M1_NAME__{cp}'))
+        offset = max([int(tag.attrib.get('graphicOID', '0')) for tag in template.iter()])
+        template.set('graphicOID', str(int(template.get('graphicOID')) + (n - 1) * offset))
+        template.set('name', f'{nm}')
+        if n <= 5:
+            template.find("Position").set('x', "260")
+            template.find("Position").set('y', str(100 + (n - 1) * 90))
+            template.find("LabelPosition").set('x', "260")
+            template.find("LabelPosition").set('y', str(80 + (n - 1) * 90))
+        else:
+            template.find("Position").set('x', "450")
+            template.find("Position").set('y', str(100 + (n - 6) * 90))
+            template.find("LabelPosition").set('x', "450")
+            template.find("LabelPosition").set('y', str(80 + (n - 6) * 90))
+
+        for elem in template.iter():
+            if elem.tag == 'SequenceCall':
+                if elem.get('methodName', '') == '_Init':
+                    elem.set('sequenceNumber', str(int(elem.get('sequenceNumber')) + (n - 1) * 2))
+                if elem.get('methodName', '') == '_fcmclr':
+                    elem.set('sequenceNumber', str(int(elem.get('sequenceNumber')) + (n - 1) * 3))
+                if elem.get('methodName', '') == '_EEPRes':
+                    elem.set('sequenceNumber', str(int(elem.get('sequenceNumber')) + (n - 1) * 1))
+                if elem.get('methodName', '') == '___M1_Task__msRun':
+                    elem.set('sequenceNumber', str(int(elem.get('sequenceNumber')) + (n - 1) * 10))
+                    elem.set('methodName', method_name)
+                    elem.set('methodOID', method_oid)
+                if elem.get('methodName', '') == '_100msRun':
+                    elem.set('sequenceNumber', str(int(elem.get('sequenceNumber')) + (n - 1) * 10))
+            if elem.tag == "Literal" and elem.get("value", "") == "__M1__":
+                elem.set('value', str(n - 1))
+            if elem.tag == "Text" and elem.text == "__M1_Comment__":
+                elem.text = f"""[ {nm} ]
+ID                 : {db['ID']}
+PERIOD        : {db['Cycle Time']}
+SEND TYPE   : {db['Send Type']}
+CHANNEL     : {db[f'{self.hw} Channel']}-CAN
+- DIAG.CRC : {db.hasCrc()}
+- DIAG.A/C  : {db.hasAliveCounter()}"""
+            if elem.get('elementName', '') in replace_name:
+                elem.set('elementName', replace_name[elem.get('elementName')])
+            if elem.get('elementOID', '') in replace_oid:
+                elem.set('elementOID', replace_oid[elem.get('elementOID')])
+
+        diagram = Element('DiagramElement')
+        diagram.append(template)
+        self.spec.find('Specification/BlockDiagramSpecification/DiagramElements').append(diagram)
+        return log
+
+    def clear(self):
+        # Template Hierarchy 제거
+        removals = []
+        for elem in self.spec.iter():
+            try:
+                if elem[0].get('name').startswith('__M1_NAME__'):
+                    removals.append(elem)
+            except (AttributeError, IndexError, KeyError):
+                continue
+        for diagram in removals:
+            self.spec.find('Specification/BlockDiagramSpecification/DiagramElements').remove(diagram)
+
+        # Template Method 제거
+        removals = []
+        for elem in self.main.iter('MethodSignature'):
+            if elem.get('name', '').startswith('___M1_Task__msRun'):
+                removals.append(elem)
+        for elem in removals:
+            self.main.strictFind('MethodSignatures').remove(elem)
+            self.spec.strictFind('MethodBodies') \
+                .remove(self.spec.strictFind('MethodBody', methodName=elem.get('name')))
+
+        # Template Element 제거
+        removals = []
+        for elem in self.main.iter('Element'):
+            if '__M1_' in elem.get('name', ''):
+                removals.append(elem)
+        for elem in removals:
+            self.main.strictFind('Elements').remove(elem)
+
+        for name in [self.name, 'Impl']:
+            impl = self.impl.strictFind('ImplementationSet', name=name)
+            removals = []
+            for elem in impl.iter('ImplementationEntry'):
+                if '__M1_' in elem[0][0].get('elementName', ''):
+                    removals.append(elem)
+            for elem in removals:
+                impl.remove(elem)
+
         for name in [self.name, 'Data']:
-            data_entries = self.data.strictFind('DataSet', name=name)
-            for elem in data_entries.findall('DataEntry'):
-                if '__M1_' in elem.attrib['elementName']:
-                    copied = copy.deepcopy(elem)
-                    copied.attrib['elementName'] = elem.attrib['elementName'].replace("M1", f"M{self.n}")
-                    copied.attrib['elementOID'] = new_elements[copied.attrib['elementName']]
-                    data_entries.append(copied)
-
-        # *.specification.amd 파일의 Hierarchy 요소를 복사
-        # MethodBody에 n번째 메시지의 Task 추가
-        self.spec.find('Specification/BlockDiagramSpecification/ESDLCode/MethodBodies') \
-        .append(Element('MethodBody', methodName=f"___M{self.n}_Task__msRun"))
-
-        # n번째 메시지의 Hierarchy 추가
-        palette = self.spec.find('Specification/BlockDiagramSpecification/DiagramElements')
-        for diagram in palette.findall('DiagramElement'):
-            hierarchy = diagram.find('Hierarchy')
-            if hierarchy.attrib['name'].startswith('__M1_NAME__'):
-                copied = copy.deepcopy(diagram)
-
-                # Graphic OID Offset
-                offset = max([int(tag.attrib.get('graphicOID', '0')) for tag in hierarchy.iter()])
-
-                _hierarchy = copied.find('Hierarchy')
-                _hierarchy.attrib['name'] = f'__M{self.n}_NAME__'
-                _hierarchy.attrib['graphicOID'] = str(int(_hierarchy.attrib['graphicOID']) + (self.n - 1) * offset)
-                if self.n <= 5:
-                    for pos in ["Position", "LabelPosition"]:
-                        _hierarchy.find(pos).attrib['x'] = hierarchy.find(pos).attrib['x']
-                        _hierarchy.find(pos).attrib['y'] = str(int(hierarchy.find(pos).attrib['y']) + (self.n - 1) * 90)
-                else:
-                    for pos in ["Position", "LabelPosition"]:
-                        _hierarchy.find(pos).attrib['x'] = str(int(hierarchy.find(pos).attrib['x']) + 190)
-                        _hierarchy.find(pos).attrib['y'] = str(int(hierarchy.find(pos).attrib['y']) + (self.n - 6) * 90)
-                for elem in copied.iter():
-                    if 'elementName' in elem.attrib and '__M1_' in elem.attrib['elementName']:
-                        elem.attrib['elementName'] = elem.attrib['elementName'].replace("M1", f"M{self.n}")
-                        elem.attrib['elementOID'] = new_elements[elem.attrib['elementName']]
-                    if elem.tag == "Text" and elem.text == "__M1_Comment__":
-                        elem.text = f"__M{self.n}_Comment__"
-                    if elem.tag == 'SequenceCall':
-                        if not 'methodName' in elem.attrib:
-                            continue
-                        if elem.attrib['methodName'] == '_Init':
-                            elem.attrib['sequenceNumber'] = str(int(elem.attrib['sequenceNumber']) + (self.n - 1) * 2)
-                        if elem.attrib['methodName'] == '_fcmclr':
-                            elem.attrib['sequenceNumber'] = str(int(elem.attrib['sequenceNumber']) + (self.n - 1) * 3)
-                        if elem.attrib['methodName'] == '_EEPRes':
-                            elem.attrib['sequenceNumber'] = str(int(elem.attrib['sequenceNumber']) + (self.n - 1) * 1)
-                        if elem.attrib['methodName'] == '_100msRun':
-                            elem.attrib['sequenceNumber'] = str(int(elem.attrib['sequenceNumber']) + (self.n - 1) * 10)
-                        if elem.attrib['methodName'] == '___M1_Task__msRun':
-                            elem.attrib['sequenceNumber'] = str(int(elem.attrib['sequenceNumber']) + (self.n - 1) * 10)
-                            elem.attrib['methodName'] = f'___M{self.n}_Task__msRun'
-                            elem.attrib['methodOID'] = new_elements[elem.attrib['methodName']]
-                    if elem.tag == "Literal" and elem.attrib.get("value", "") == "__M1__":
-                        elem.attrib['value'] = str(self.n - 1)
-                palette.append(copied)
+            data = self.data.strictFind('DataSet', name=name)
+            removals = []
+            for elem in data.iter('DataEntry'):
+                if '__M1_' in elem.get('elementName', ''):
+                    removals.append(elem)
+            for elem in removals:
+                data.remove(elem)
         return
 
     def copy_dsm(self):
@@ -286,11 +432,7 @@ class Template(Amd):
                 continue
 
             # MANUAL EXCEPTION CASE
-            if "cvvd" in impl_name.lower():
-                impl_name = impl_name.replace("FD", "Can").replace("Crc", "CRC")
-            elif "mhsg" in impl_name.lower():
-                impl_name = impl_name.replace("State", "").replace("STATE", "")
-            elif "AbsEsc" in impl_name:
+            if "AbsEsc" in impl_name:
                 impl_name = impl_name.replace("AbsEsc", "Abs")
             elif "HFEOP" in impl_name.upper():
                 impl_name = impl_name.replace("L", "")
@@ -298,6 +440,13 @@ class Template(Amd):
                     impl_name = impl_name.replace("DEve", "Deve")
             elif "IlcuRh01" in impl_name:
                 impl_name = impl_name.replace("Ilcu", "ILcu")
+            elif self.name == "CanLDCD_48V":
+                if impl_name.endswith("Fid"):
+                    impl_name = impl_name.replace("FD", "Can").replace("Fid", "Fid")
+            elif self.name == "CanCVVDD":
+                impl_name = impl_name.replace("FD", "Can").replace("Crc", "CRC")
+            elif self.name == "CanMHSGD_48V":
+                impl_name = impl_name.replace("State", "").replace("STATE", "")
 
             # AUTO EXCEPTION CASE
             if not impl_name in lib.index:
@@ -309,7 +458,7 @@ class Template(Amd):
                     impl_name = impl_name.replace("FD", "Can").replace("Crc", "Chks")
 
             if not impl_name in lib.index:
-                self.logger(f'>>> * [MANUALLY] DSM MISSING: {impl_name}')
+                self.manual_instruction.append(f'DSM MISSING: {impl_name}')
                 continue
             elem[0].attrib.update({
                 "implementationName": impl_name,
@@ -324,109 +473,9 @@ class Template(Amd):
                 numeric.attrib['value'] = self.cal[data.attrib.get('elementName', '')]
         return
 
-    def define_renamer(self, n:int, name:str):
-        """
-        @param n    : [int] n번째 메시지
-        @param name : [str] 메시지 이름
-        """
-        db = self.db.messages[name]
-        nm = naming(name)
-
-        if db[f'{self.hw} Channel'] == "P":
-            chn = '1'
-        else:
-            chn = '2'
-        if not db.hasCrc():
-            self.logger(f'>>>   * [MANUALLY] DELETE CRC (NO CRC)')
-        if not db.hasAliveCounter():
-            self.logger(f'>>>   * [MANUALLY] DELETE ALIVE COUNTER (NO A/C)')
-        if  db['Send Type'] == 'PE':
-            self.logger(f'>>>   * [MANUALLY] DELETE ALIVE COUNTER (PE TYPE)')
-
-        # 채널 Enable 변수(공용 변수) 확인 후 치환/삭제
-        renamer = {
-            f'CanD_cEnaDiagBus__M{n}_Chn__': f'CanD_cEnaDiagBus{chn}',
-            f'CanD_cEnaDetBus__M{n}_Chn____TX_Pascal__': f'CanD_cEnaDetBus{chn}__TX_Pascal__',
-        }
-        for pre, cur in renamer.copy().items():
-            pre_elem = self.main.strictFind('Element', name=pre)
-            cur_elem = self.main.strictFind('Element', name=cur)
-            self.element_block[pre_elem.attrib['OID']] = cur_elem.attrib['OID']
-            self.element_block[pre_elem.attrib['name']] = cur_elem.attrib['name'] \
-                                                           .replace('__TX_Pascal', self.tx.lower().capitalize())
-            self.main.strictFind('Elements').remove(pre_elem)
-        
-        # 메시지 순서 별 변수 이름 재정의
-        self.element_block.update({
-            f"CanD_cEnaDiag__M{n}_Pascal__": nm.diagnosisEnable,
-            f"CanD_cEnaDet__M{n}_Pascal__": nm.detectionEnable,
-            f"CanD_cErr__M{n}_Pascal__Alv": nm.diagnosisAlv,
-            f"CanD_cErr__M{n}_Pascal__Crc": nm.diagnosisCrc,
-            f"CanD_cErr__M{n}_Pascal__Msg": nm.diagnosisMsg,
-            f"CanD_ctDet__M{n}_Pascal__": nm.detectionCounter,
-            f"CanD_stRdEep__M{n}_Pascal__": nm.eepReader,
-            f"CanD_tiFlt__M{n}_Pascal___C": nm.debounceTime,
-            f"CanD_tiFlt__M{n}_Pascal__Alv": nm.debounceTimerAlv,
-            f"CanD_tiFlt__M{n}_Pascal__Crc": nm.debounceTimerCrc,
-            f"CanD_tiFlt__M{n}_Pascal__Msg": nm.debounceTimerMsg,
-            f"DEve_FD__M{n}_Pascal__Alv": nm.deveAlv,
-            f"DEve_FD__M{n}_Pascal__Crc": nm.deveCrc,
-            f"DEve_FD__M{n}_Pascal__Msg": nm.deveMsg,
-            f"EEP_FD__M{n}_UPPER__": nm.eepIndex,
-            f"EEP_stFD__M{n}_UPPER__": nm.eep,
-            f"FD_cVld__M{n}_Pascal__Alv": nm.aliveCountValid,
-            f"FD_cVld__M{n}_Pascal__Crc": nm.crcValid,
-            f"FD_cVld__M{n}_Pascal__Msg": nm.messageCountValid,
-            f"Fid_FD__M{n}_UPPER__D": nm.fid
-        })
-
-        method = self.main.dataframe('MethodSignature', depth='shallow')[['name', 'OID']]
-        method = dict(zip(method['name'], method['OID']))
-        current_task = f'___M{n}_Task__msRun'
-        require_task = f"_{int(max(db['Cycle Time'], 100))}msRun"
-        current_tag = self.main.strictFind('MethodSignature', name=current_task)
-        self.method_block[current_task] = require_task
-        if require_task in method:
-            self.method_block[current_tag.get('OID')] = method[require_task]
-            self.main.strictFind('MethodSignatures').remove(current_tag)
-            self.spec.strictFind('MethodBodies') \
-                .remove(self.spec.strictFind('MethodBody', methodName=current_task))
-        else:
-            current_tag.attrib['name'] = require_task
-            self.logger(f'>>>   * [MANUALLY] ADD IR/OS-TASK: {require_task}')
-
-        main_elements = self.main.strictFind('Elements')
-        for elem in main_elements.findall('Element'):
-            if elem.find('Comment').text is not None:
-                elem.find('Comment').text = elem.find('Comment').text.replace(f'__M{n}_NAME__', f'{nm}')
-
-        for elem in self.spec.iter():
-            if elem.attrib.get('name', '') == f'__M{n}_NAME__':
-                elem.attrib['name'] = str(nm)
-                continue
-            if elem.tag == "Literal" and elem.attrib.get("value", "") == f"__M{n}__":
-                elem.attrib['value'] = str(n - 1)
-                continue
-            if str(elem.text) == f'__M{n}_Comment__':
-                elem.text = f"""[ {nm} ]
-ID                 : {db['ID']}
-PERIOD        : {db['Cycle Time']}
-SEND TYPE   : {db['Send Type']}
-CHANNEL     : {db[f'{self.hw} Channel']}-CAN
-- DIAG.CRC : {db.hasCrc()}
-- DIAG.A/C  : {db.hasAliveCounter()}"""
-                continue
-        return
-
-    def validate(self):
-        for message in self.messages:
-            if not message in self.db.messages:
-                raise KeyError(f'{message} NOT EXIST IN CAN DB.')
-        return
-
     def exception(self):
 
-        def _change_attr(element_name:str, **change_attr):
+        def _change_attr(element_name: str, **change_attr):
             for elem in self.main.iter('Element'):
                 if elem.attrib.get('name', '') == element_name:
                     attr = list(elem.iter('PrimitiveAttributes'))[0]
@@ -452,7 +501,7 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
             return
 
         if "_48V" in self.name:
-            self.logger(f'>>> CHANGING DETECTION ENABLE SCOPE')
+            self.logger(f'>>> ... CHANGING DETECTION ENABLE SCOPE')
             detection = []
             for elem in self.main.iter('Element'):
                 if elem.attrib['name'].startswith(f'CanD_cEnaDet{self.tx.lower().capitalize()}'):
@@ -461,50 +510,51 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
                 _change_attr(var, kind='message', scope='exported')
 
         elif self.name == "CanFDESCD":
-            rename = {'Cfg_FDESCD_C':'Cfg_CanFDESCD_C'}
-            self.rename_amd(self.main, 'Element', 'name', rename)
-            self.rename_amd(self.impl, '', 'elementName', rename)
-            self.rename_amd(self.data, '', 'elementName', rename)
-            self.rename_amd(self.spec, '', 'elementName', rename)
+            self.logger(f'>>> ... CHANGING DETECTION ENABLE SCOPE')
+            rename = {'Cfg_FDESCD_C': 'Cfg_CanFDESCD_C'}
+            self.main.replace('Element', 'name', rename)
+            self.impl.replace('', 'elementName', rename)
+            self.data.replace('', 'elementName', rename)
+            self.spec.replace('', 'elementName', rename)
 
             _change_attr('CanD_cEnaDetEsc04', kind='message', scope='exported')
             _change_attr('Cfg_CanFDESCD_C', scope='exported')
             _change_attr('CanD_tiMonDetEsc_C', scope='exported')
         else:
-            self.logger(f'>>> NO EXCEPTION FOUND')
+            self.logger(f'>>> ... NO EXCEPTION FOUND')
         return
 
     def create(self):
-        self.validate()
 
-        self.logger(f'>>> COPY TEMPLATE BLOCK BY MESSAGES N={len(self.messages)}')
-        for n in range(len(self.messages) - 1):
-            self.copy_elements()
+        # BASE 모델의 기본 정보들을 Template으로 복사
+        self.logger('>>> COPY BASE MODEL TO TEMPLATE')
+        log = self.copy_from_basemodel(self.base)
+        if log: self.logger(f'>>> ... {log}')
 
-        self.logger(f'>>> DEFINE ELEMENTS TO RENAME')
+        # 공용 변수 Naming Rule 적용
+        self.copy_common()
+
+        # 메시지별 템플릿 적용
+        self.logger(f'>>> GENERATE HIERARCHY BY MESSAGES N={len(self.messages)}')
         for n, message in enumerate(self.messages, start=1):
-            self.logger(f'>>> - {message}')
-            self.define_renamer(n, message)
+            log = self.copy_by_message(n, message)
+            self.logger(f'>>> ... [{n} / {len(self.messages)}] {message}: {log}')
 
-        self.logger(f'>>> EXECUTE RENAMING')
-        self.rename_amd(self.main, 'Element', 'name', self.element_block)
-        self.rename_amd(self.main, 'Element', 'OID', self.element_block)
-        self.rename_amd(self.main, 'MethodSignature', 'name', self.method_block)
-        self.rename_amd(self.main, 'MethodSignature', 'OID', self.method_block)
-        self.rename_amd(self.impl, '', 'elementName', self.element_block)
-        self.rename_amd(self.impl, '', 'elementOID', self.element_block)
-        self.rename_amd(self.data, '', 'elementName', self.element_block)
-        self.rename_amd(self.data, '', 'elementOID', self.element_block)
-        self.rename_amd(self.spec, '', 'elementName', self.element_block)
-        self.rename_amd(self.spec, '', 'elementOID', self.element_block)
-        self.rename_amd(self.spec, '', 'methodName', self.method_block)
-        self.rename_amd(self.spec, '', 'methodOID', self.method_block)
+        # 템플릿 삭제
+        self.clear()
 
         self.logger(f'>>> COPY DSM LIBRARY IMPLEMENTATION')
         self.copy_dsm()
+
         self.logger(f'>>> COPY CALIBRATION DATA FROM BASE MODEL')
         self.copy_data()
+
+        self.logger(f'>>> RUN EXCEPTION HANDLING')
         self.exception()
+
+        # 수동 예외처리 로그
+        for instruction in self.manual_instruction:
+            self.logger(f'>>> [MANUALLY] {instruction}')
 
         self.main.export_to_downloads()
         self.impl.export_to_downloads()
@@ -559,8 +609,8 @@ if __name__ == "__main__":
     # : 모델명 입력 시, 단일 모델 생성
     # : 모델명 공백 시, 전체 모델 생성
     # * 수기로 수정해야하는 사항을 꼭 파악한 후 반영하세요.
-    # unit = "CanFDHFEOPD"
-    unit = ''
+    unit = "CanFDBCMD"
+    # unit = ''
     for model, messages in target.items():
         if unit and unit != model:
             continue
