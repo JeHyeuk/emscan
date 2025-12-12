@@ -519,8 +519,8 @@ def clear_edr(message:str, variables:List[str]=None, **override) -> UnitTestCase
         "TE-Variable": f"{te}",
         "TE-Compare": "'=",
         "TE-Value": f"{tv}",
-        "Expected Results (ER) - Description": f"1) When EEP RESET, Clear EDR array for the DEve\n"
-                                               f"2) When EEP SET, Set EDR array for the DEve" ,
+        "Expected Results (ER) - Description": f"1) When EEP RESET, Clear EDR  bit corresponding to the Deve\n"
+                                               f"2) When EEP SET, Set EDR bit corresponding to the Deve" ,
         "ER-Variable": f"{er}",
         "ER-Compare": "'=",
         "ER-Value": f"{ev}",
