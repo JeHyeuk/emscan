@@ -461,8 +461,7 @@ def error_clear(message:str, variables:List[str]=None, **override) -> UnitTestCa
                                    f"2) When EEP RESET, Clear DTC\n"
                                    f" - Clear DTC Successfully: Error Cleared\n"
                                    f" - {dd.eep} = 0\n"
-                                   f" - Error Diagnosis bit = 0\n"
-                                   f" - DFRM_DEveID_A_[] = 0\n"
+                                   f" - Error Diagnosis bit = 0"
     }
     kwargs.update(override)
     return UnitTestCase(**kwargs)

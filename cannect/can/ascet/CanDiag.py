@@ -261,7 +261,7 @@ class Template(Amd):
         for pre, cur in replace_name.items():
             from_template = self.main.strictFind('Element', name=pre)
             required = self.main.strictFind('Element', name=cur)
-            if not required:
+            if not len(required):
                 replace_oid[from_template.get('OID')] = oid = generateOID(1)
                 copied = copy.deepcopy(from_template)
                 copied.set('name', cur)
@@ -590,6 +590,7 @@ if __name__ == "__main__":
         "CanLDCD_48V": ["LDC1", "LDC2", ],
         "CanFDMDPSD": ["MDPS_01_10ms", "SAS_01_10ms", ],
         "CanMHSGD_48V": ["MHSG_STATE1", "MHSG_STATE2", "MHSG_STATE3", "MHSG_STATE4", ],
+        "CanFDODSD": ["ODS_01_1000ms", ],
         "CanFDOPID": ["L_OPI_01_100ms", ],
         "CanFDPDCD": ["PDC_FD_01_200ms", "PDC_FD_03_200ms", "PDC_FD_10_200ms", "PDC_FD_11_200ms", ],
         "CanFDSBCMD": ["SBCM_DRV_03_200ms", "SBCM_DRV_FD_01_200ms", ],
@@ -599,6 +600,7 @@ if __name__ == "__main__":
         "CanFDLTCUD": ["L_TCU_01_10ms", "L_TCU_02_10ms", "L_TCU_03_10ms", "L_TCU_04_10ms", ],
         "CanFDTCUD": ["TCU_01_10ms", "TCU_02_10ms", "TCU_03_100ms", ],
         "CanFDTMUD": ["TMU_01_200ms", ],
+        "CanNOXD": ["Main_Status_Rear", "O2_Rear"]
     }
 
     proj = ProjectIO(r"E:\SVN\model\ascet\trunk\HNB_GASOLINE")
@@ -609,7 +611,7 @@ if __name__ == "__main__":
     # : 모델명 입력 시, 단일 모델 생성
     # : 모델명 공백 시, 전체 모델 생성
     # * 수기로 수정해야하는 사항을 꼭 파악한 후 반영하세요.
-    unit = "CanFDBCMD"
+    unit = "CanNOXD"
     # unit = ''
     for model, messages in target.items():
         if unit and unit != model:

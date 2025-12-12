@@ -34,6 +34,10 @@ class naming(object):
         """
         if self.message.startswith("EGSNXUpStream"):
             self.message = self.message.replace("UpStream", "")
+        if self.message == "Main_Status_Rear":
+            self.message = "NOx1Down"
+        if self.message == "O2_Rear":
+            self.message = "NOx1Ext"
         if self.message.startswith("LEMS"):
             self.message = f"L_{self.message[1:]}"
         if self.message in MESSAGE_RENAME:
@@ -63,6 +67,8 @@ class naming(object):
         splits = [split.lower().capitalize() for split in splits if not 'ms' in split]
         self.base = base = ''.join(splits)
         self.number = ''.join(re.findall(r'\d+', base))
+        if self.message.startswith("NOx"):
+            self.base = base = self.message
         if "Htcu" in base:
             self.base = base = base.replace("Htcu", "HTcu")
         if self.message.startswith("L_EMS"):
@@ -187,6 +193,14 @@ class naming(object):
             self.aliveCountValid = f"Can_cVldAlvCnt{base}"
             self.crcValid = f"Can_cVldCRC{base}"
             self.eep = f"EEP_st{tag}"
+            self.eepIndex = f"EEP_DCAN{tag}"
+        if self.message == "NOx1Down":
+            self.fid = "Fid_CanNOx1DownD"
+            self.deveMsg = "DEve_CanNOx1DownMsg"
+            self.eepIndex = f"EEP_DCAN{tag}"
+        if self.message == "NOx1Ext":
+            self.fid = "Fid_CanNOx1ExtD"
+            self.deveMsg = "DEve_CanNOx1ExtMsg"
             self.eepIndex = f"EEP_DCAN{tag}"
         return
 
