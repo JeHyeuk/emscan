@@ -454,14 +454,18 @@ def error_clear(message:str, variables:List[str]=None, **override) -> UnitTestCa
                                    f" - {dd.eep} = 1\n"
                                    f" - {dd.diagnosis_bit_msg} = 0 → 1\n"
                                    f" - {dd.diagnosis_bit_alv} = 0 → 1\n"
-                                   f" - {dd.diagnosis_bit_crc} = '0 → 1'\n"
+                                   f" - {dd.diagnosis_bit_crc} = 0 → 1\n"
                                    f" - {dd.deve_msg} = 0 → 1.6E+04\n"
                                    f" - {dd.deve_alv} = 0 → 1.6E+04\n"
                                    f" - {dd.deve_crc} = 0 → 1.6E+04\n"
                                    f"2) When EEP RESET, Clear DTC\n"
                                    f" - Clear DTC Successfully: Error Cleared\n"
                                    f" - {dd.eep} = 0\n"
-                                   f" - Error Diagnosis bit = 0"
+                                   f" - {dd.diagnosis_bit_msg} = 0\n"
+                                   f" - {dd.diagnosis_bit_alv} = 0\n"
+                                   f" - {dd.diagnosis_bit_crc} = 0\n"
+                                   f" - DFRM_DEveID_A_[] = 0\n"
+
     }
     kwargs.update(override)
     return UnitTestCase(**kwargs)
