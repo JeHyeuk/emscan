@@ -237,6 +237,10 @@ class Template(Amd):
             f"FD_cVld__M1_Pascal__Msg": nm.messageCountValid,
             f"Fid_FD__M1_UPPER__D": nm.fid
         }
+        if self.hw == "HEV":
+            replace_name[f"EEP_stFD__M1_UPPER__"] = nm.eep.replace("stFD", "stHevFD")
+            replace_name[f"EEP_FD__M1_UPPER__"] = nm.eepIndex.replace("_FD", "_HEV_FD")
+
         if cp[0] == 'Y':
             replace_name.update({
                 f"CanD_cErr__M1_Pascal__Crc": nm.diagnosisCrc,
