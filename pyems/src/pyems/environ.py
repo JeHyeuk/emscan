@@ -21,10 +21,10 @@ if os.getenv('SVN_PATH', None) is None:
     raise OSError('SVN_PATH environment variable is not set')
 
 ENV = DataDictionary(os.environ)
+ENV["DOWNLOADS"] = os.path.join(ENV["USERPROFILE"], "Downloads")
 ENV["COMPANY"] = COMPANY = CORPORATION = os.getenv('COMPANY', 'HYUNDAI KEFICO Co.,Ltd.')
 ENV["DIVISION"] = DIVISION = TEAM = os.getenv('DIVISION', 'ENGINE CONTROL TEAM')
 ENV["COPYRIGHT"] = f"Copyright {COMPANY} 2020-{datetime.today().year}. All Rights Reserved."
-
 ENV["SVN"] = SVN = Path(os.getenv('SVN_PATH'), readonly=True)
 ENV["CAN"] = CAN = SVN[r'dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement']
 ENV["CONF"] = CONF = SVN[r'GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename']

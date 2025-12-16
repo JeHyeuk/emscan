@@ -54,7 +54,7 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    rd = MdfReader(r"D:\Archive\00_프로젝트\2017 통신개발-\2025\IS0930 BC4b MPI FFV\22-09-2025_BC4b_MPI_E100_10FFV_MT_NISG_053T_L8_C0306_CSW_TESTE-COMN-HMHS_01.mf4")
+    rd = MdfReader(r"\\kefico\keti\ENT\Softroom\Temp\J.H.Lee\00 CR\CR10785931 J1979-2 CAN 진단 대응 ICE CANFD\08_Verification\Data\CanFDABSD_Det_Diag.dat")
     print(rd)
     print(rd.columns)
 

@@ -9,9 +9,6 @@ from typing import Dict, Tuple
 from xml.etree.ElementTree import Element
 import os, copy
 
-from pandas import set_option
-set_option('display.expand_frame_repr', False)
-
 
 class Template(Amd):
 
@@ -564,6 +561,9 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
 
 
 if __name__ == "__main__":
+
+    from pandas import set_option
+    set_option('display.expand_frame_repr', False)
 
     # ICE
     target = {

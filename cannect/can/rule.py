@@ -84,6 +84,8 @@ class naming(object):
             self.root = root = root.replace("Fd", "")
         if root == "BdcSmk":
             self.root = root = "Bdc"
+        if self.message == "WHL_01_10ms":
+            self.root = root = "Abs"
         for key in ["Bdc", "Hu", "Ilcu", "Pdc", "Sbcm", "Swrc"]:
             if root.startswith(key):
                 self.root = root = key
@@ -119,7 +121,6 @@ class naming(object):
         6. Validity      : FD_cVld{base}{Msg or Alv or Crc}
         7. Message Valid : FD_cVld{base}
         8. Status        : Com_st{base}
-
 
         """
         self.method = f'_{self.message}'
@@ -202,6 +203,10 @@ class naming(object):
             self.fid = "Fid_CanNOx1ExtD"
             self.deveMsg = "DEve_CanNOx1ExtMsg"
             self.eepIndex = f"EEP_DCAN{tag}"
+        if self.message == "ABS_ESC_01_10ms":
+            self.deveMsg = "DEve_FDAbs01Msg"
+            self.deveCrc = "DEve_FDAbs01Crc"
+            self.deveAlv = "DEve_FDAbs01Alv"
         return
 
     def __str__(self) -> str:
