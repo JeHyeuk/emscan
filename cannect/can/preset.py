@@ -153,3 +153,111 @@ DIAGNOSIS_ICE = {
         "O2_Rear"
     ]
 }
+
+DIAGNOSIS_HEV = {
+    "CanFDACUD_HEV": [
+        "IMU_01_10ms",
+    ],
+    "CanFDBDCD_HEV": [
+        "BDC_FD_06_200ms",
+        "BDC_FD_SMK_02_200ms",
+    ],
+    "CanFDBMSD_HEV": [
+        "BMS_01_100ms",
+        "BMS_02_100ms",
+        "BMS_03_100ms",
+        "BMS_26_500ms",
+        "BMS_32_500ms",
+        "BMS_OBM_34_500ms",
+        "L_BMS_21_100ms",
+        "L_BMS_22_100ms",
+    ],
+    "CanFDCCUD_HEV": [
+        "CCU_OBM_01_1000ms",
+    ],
+    "CanFDCLUD_HEV": [
+        "BCM_12_200ms",
+        "BCM_13_200ms",
+        "CCU_OTA_01_200ms",
+        "CLU_02_100ms",
+    ],
+    "CanFDDATCD_HEV": [
+        "DATC_01_20ms",
+        "DATC_05_200ms",
+        "DATC_07_200ms",
+        "DATC_17_200ms",
+        "DATC_31_1000ms",
+    ],
+    "CanFDEPBD_HEV": [
+        "EPB_01_50ms",
+    ],
+    "CanFDESCD_HEV": [
+        "ESC_01_10ms",
+        "IEB_01_10ms",
+        "ABS_ESC_01_10ms",
+    ],
+    "CanHSFPCMD_HEV": [
+        "FPCM_01_100ms",
+    ],
+    "CanFDHUD_HEV": [
+        "HU_TMU_02_200ms",
+    ],
+    "CanFDICSCD_HEV": [
+        "ICSC_02_100ms",
+    ],
+    "CanFDICUD_HEV": [
+        "ICU_02_200ms",
+    ],
+    "CanFDLDCD_HEV": [
+        "LDC_01_100ms",
+    ],
+    "CanFDMCUD_HEV": [
+        "MCU_01_10ms",
+        "MCU_02_10ms",
+        "MCU_03_100ms",
+    ],
+    "CanFDMDPSD_HEV": [
+        "MDPS_01_10ms",
+        "SAS_01_10ms",
+    ],
+    "CanFDOBCD_HEV": [
+        "OBC_02_200ms",
+    ],
+    "CanFDPDCD_HEV": [
+        "PDC_FD_01_200ms",
+        "PDC_FD_03_200ms",
+    ],
+    "CanFDSBCMD_HEV": [
+        "SBCM_DRV_03_200ms",
+        "SBCM_DRV_FD_01_200ms",
+    ],
+    "CanFDSCUD_HEV": [
+        "SCU_FF_01_10ms",
+    ],
+    "CanFDSMKD_HEV": [
+        "SMK_02_200ms",
+    ],
+    "CanFDTCUD_HEV": [
+        "HTCU_04_10ms",
+        "HTCU_05_10ms",
+        "HTCU_07_100ms",
+        "L_HTCU_10_10ms",
+        "L_HTCU_11_10ms",
+    ],
+    "CanFDTMUD_HEV": [
+        "TMU_01_200ms",
+    ],
+    "CanFDHCUD_HEV": [
+        "HCU_01_10ms",
+        "HCU_02_10ms",
+        "HCU_03_10ms",
+        "HCU_04_100ms",
+        "HCU_05_100ms",
+        "HCU_09_1000ms",
+        "HCU_11_H_00ms",
+        "HCU_11_P_00ms",
+        "L_HCU_01_10ms",
+        "L_HCU_02_10ms",
+        "L_HCU_03_10ms",
+    ],
+}
