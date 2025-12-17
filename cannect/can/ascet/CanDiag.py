@@ -237,9 +237,6 @@ class Template(Amd):
             f"FD_cVld__M1_Pascal__Msg": nm.messageCountValid,
             f"Fid_FD__M1_UPPER__D": nm.fid
         }
-        if self.hw == "HEV":
-            replace_name[f"EEP_stFD__M1_UPPER__"] = nm.eep.replace("stFD", "stHevFD")
-            replace_name[f"EEP_FD__M1_UPPER__"] = nm.eepIndex.replace("_FD", "_HEV_FD")
 
         if cp[0] == 'Y':
             replace_name.update({
@@ -267,6 +264,9 @@ class Template(Amd):
                 copied = copy.deepcopy(from_template)
                 copied.set('name', cur)
                 copied.set('OID', oid)
+                if "__M1_NAME__" in str(copied.find('Comment').text):
+                    copied.find('Comment').text = copied.find('Comment').text \
+                                                  .replace("__M1_NAME__", str(nm))
                 main.append(copied)
             else:
                 replace_oid[from_template.get('OID')] = required.get('OID')
