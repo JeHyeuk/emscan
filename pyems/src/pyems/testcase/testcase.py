@@ -15,8 +15,11 @@ class TestCase:
         # self._template: str = PATH.SVN.CANTC("TESTCASE_TEMPLATE.xlsm")
         self._template: str = ENV["CAN"]["CAN_TestCase/TESTCASE_TEMPLATE.xlsm"]
         self._filename: str = f'TESTCASE @{str(datetime.now()).replace(" ", "_").replace(":", ";").split(".")[0]}'
+        self._data = ""
+        self._mdf = None
         for arg in args:
             self._units.append(arg)
+
         return
 
     def __repr__(self):
@@ -42,6 +45,18 @@ class TestCase:
             if not key in unit.index:
                 raise KeyError(f'Unknown key: {key}')
             unit[key] = value
+        return
+
+    @property
+    def data(self) -> str:
+        return self._data
+
+    @data.setter
+    def data(self, data:str):
+        from pyems.mdf import MdfReader
+        self._data = data
+        self._mdf = MdfReader(data)
+        self["Measure / Log File (.dat)"] = os.path.basename(data)
         return
 
     @property
@@ -142,6 +157,8 @@ class TestCase:
     def to_clipboard(self):
         self.cases.to_clipboard(index=False)
         return
+
+
 
 
 if __name__ == "__main__":

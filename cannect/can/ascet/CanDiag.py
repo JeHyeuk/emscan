@@ -183,7 +183,7 @@ class Template(Amd):
         log = ''
 
         db = self.db.messages[message]
-        nm = naming(message)
+        nm = naming(message, self.hw)
 
         # 메시지 채널 결정
         chn = '1'

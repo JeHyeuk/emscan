@@ -16,7 +16,7 @@ MESSAGE_RENAME = {
 }
 class naming(object):
 
-    def __init__(self, message: Union[str, Dict, Series, Hashable]):
+    def __init__(self, message: Union[str, Dict, Series, Hashable], hw:str='ICE'):
 
         if isinstance(message, Series) or isinstance(message, Dict):
             self.message = message["Message"]
@@ -171,6 +171,8 @@ class naming(object):
           3) DB 메시지 이름의 오타, 오탈 또는 길이 등의 사유로 인해 임의로 Naming을 변경한 경우
           4) 상기 사유 외 예외 처리가 인정되는 경우 
         """
+        if hw == "HEV":
+            self.eep = f"EEP_stHevFD{base}"
         if self.message.startswith("EMS_CVVD"):
             self.buffer = f"Can_{base}_Buf_A"
         if (self.message.startswith('BMS') or self.message.startswith('LDC')) and len(self.message) == 4:
