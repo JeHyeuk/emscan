@@ -177,6 +177,7 @@ class naming(object):
                 self.eep = "EEP_stHevFDAbs01"
             if self.message == "FPCM_01_100ms" :
                 self.eep = "EEP_stHevHSFpcm01"
+                self.eepIndex = "EEP_FPCM01"
             if self.message == "SBCM_DRV_03_200ms":
                 self.eep = "EEP_stFDSBCMDRV03"
             if self.message == "SBCM_DRV_FD_01_200ms":
