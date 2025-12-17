@@ -173,6 +173,14 @@ class naming(object):
         """
         if hw == "HEV":
             self.eep = f"EEP_stHevFD{base}"
+            if self.message == "ABS_ESC_01_10ms":
+                self.eep = "EEP_stHevFDAbs01"
+            if self.message == "FPCM_01_100ms" :
+                self.eep = "EEP_stHevHSFpcm01"
+            if self.message == "SBCM_DRV_03_200ms":
+                self.eep = "EEP_stFDSBCMDRV03"
+            if self.message == "SBCM_DRV_FD_01_200ms":
+                self.eep = "EEP_stFDSBCMDRVFD01"
         if self.message.startswith("EMS_CVVD"):
             self.buffer = f"Can_{base}_Buf_A"
         if (self.message.startswith('BMS') or self.message.startswith('LDC')) and len(self.message) == 4:
