@@ -1,10 +1,17 @@
 from pyems.environ import ENV
 from pyems.testcase.style import Style
+from pyems.testcase.plotter import Plot
+from pyems.mdf import MdfReader
 from numpy import nan
-from pandas import Series
+from pandas import DataFrame, Series
+from plotly.graph_objs import Scatter
 from typing import Any, Union, List
 from xlsxwriter import Workbook
-import os
+import warnings, os
+
+def custom_format(message, category, filename, lineno, line=None):
+    return f"{message}\n"
+warnings.formatwarning = custom_format
 
 LABEL = {
     "NO": nan,
@@ -53,11 +60,12 @@ LABEL = {
 
 class UnitTestCase(Series):
 
-    __wb__ = None
-    __rf__ = []
+    __wb__:Workbook = None
+    __dr__:MdfReader = None
 
     def __init__(self, **kwargs):
         self.__wb__ = None
+        self.__dr__ = None
 
         super().__init__({k: kwargs[k] if k in kwargs else v for k, v in LABEL.items()})
         if 'workbook' in kwargs:
@@ -73,15 +81,39 @@ class UnitTestCase(Series):
         self.__wb__ = workbook
 
     @property
-    def reference(self) -> List[str]:
-        return self.__rf__
+    def mdf(self) -> MdfReader:
+        return self.__dr__
 
-    @reference.setter
-    def reference(self, reference:List[str]):
-        self.__rf__ = reference
+    @mdf.setter
+    def mdf(self, mdf:Union[str, MdfReader]):
+        if isinstance(mdf, str):
+            self.__dr__ = MdfReader(mdf)
+        else:
+            self.__dr__ = mdf
+        self["Measure / Log File (.dat)"] = os.path.basename(self.__dr__.file)
+        return
 
     @property
-    def variable(self) -> list:
+    def data(self) -> DataFrame:
+        if self.__dr__ is None:
+            return DataFrame()
+        vars = []
+        for var in self.variable:
+            if var.startswith("DEve"):
+                var = f"DEve_St.{var}"
+            if var.startswith("Fid"):
+                var = f"Fim_st.{var}"
+            if not var in self.mdf:
+                warnings.warn(
+                    f'#{self["Test Case - ID"]}의 {var}(이)가 측정 파일: {self.mdf.file}내 없습니다.',
+                    category=UserWarning
+                )
+                continue
+            vars.append(var)
+        return self.mdf[vars]
+
+    @property
+    def variable(self) -> List[str]:
         var = []
         for k, v in self.items():
             if not str(k).endswith("Variable") or str(v) in ["nan", '']:
@@ -91,11 +123,8 @@ class UnitTestCase(Series):
                     var.append(_v)
         return var
 
-    def attach(self, key:str, value:str):
-        if not key in LABEL:
-            raise KeyError(f"No such key: {key} in Test Case")
-        self[key] += value
-        return
+    def figure(self, **kwargs) -> Plot:
+        return Plot(self.data, **kwargs)
 
     def to_report(self, row:int=1, attach:str=None):
         if isinstance(self.workbook, Workbook):

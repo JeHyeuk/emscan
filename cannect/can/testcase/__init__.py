@@ -1,0 +1,1 @@
+from cannect.can.testcase.diagnosis import Diagnosis
