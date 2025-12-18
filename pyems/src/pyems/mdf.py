@@ -19,6 +19,12 @@ class MdfReader(DataFrame):
             self[c] = self[c].astype(int if "int" in str(dat.get_channel_data(c).dtype) else float)
         return
 
+    def __repr__(self):
+        return repr(self.file)
+
+    def __str__(self):
+        return str(self.file)
+
     @property
     def mid(self) -> DataFrame:
         half, quarter = len(self) // 2, len(self) // 4

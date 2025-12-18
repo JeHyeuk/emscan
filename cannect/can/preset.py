@@ -254,7 +254,6 @@ DIAGNOSIS_HEV = {
         "HCU_04_100ms",
         "HCU_05_100ms",
         "HCU_09_1000ms",
-        "HCU_11_00ms",
         "L_HCU_01_10ms",
         "L_HCU_02_10ms",
         "L_HCU_03_10ms",

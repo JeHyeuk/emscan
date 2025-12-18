@@ -433,30 +433,26 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
                 continue
 
             # MANUAL EXCEPTION CASE
-            if "AbsEsc" in impl_name:
-                impl_name = impl_name.replace("AbsEsc", "Abs")
-            elif "HFEOP" in impl_name.upper():
-                impl_name = impl_name.replace("L", "")
-                if impl_name.endswith("Msg_DEve"):
-                    impl_name = impl_name.replace("DEve", "Deve")
-            elif "IlcuRh01" in impl_name:
-                impl_name = impl_name.replace("Ilcu", "ILcu")
-            elif self.name == "CanLDCD_48V":
-                if impl_name.endswith("Fid"):
-                    impl_name = impl_name.replace("FD", "Can").replace("Fid", "Fid")
-            elif self.name == "CanCVVDD":
-                impl_name = impl_name.replace("FD", "Can").replace("Crc", "CRC")
-            elif self.name == "CanMHSGD_48V":
-                impl_name = impl_name.replace("State", "").replace("STATE", "")
-
-            # AUTO EXCEPTION CASE
-            if not impl_name in lib.index:
+            if self.hw == "ICE":
+                if "AbsEsc" in impl_name:
+                    impl_name = impl_name.replace("AbsEsc", "Abs")
+                elif "HFEOP" in impl_name.upper():
+                    impl_name = impl_name.replace("L", "")
+                    if impl_name.endswith("Msg_DEve"):
+                        impl_name = impl_name.replace("DEve", "Deve")
+                elif "IlcuRh01" in impl_name:
+                    impl_name = impl_name.replace("Ilcu", "ILcu")
+                elif self.name.endswith("_48V"):
+                    impl_name = impl_name.replace("FD", "Can") \
+                                         .replace("State", "") \
+                                         .replace("STATE", "") \
+                                         .replace("Crc", "Chks")
+                elif self.name == "CanCVVDD":
+                    impl_name = impl_name.replace("FD", "Can") \
+                                         .replace("Crc", "CRC")
+            else:
                 if impl_name.replace("0", "") in lib.index:
                     impl_name = impl_name.replace("0", "")
-                if impl_name.replace("FD", "Can") in lib.index:
-                    impl_name = impl_name.replace("FD", "Can")
-                if impl_name.replace("FD", "Can").replace("Crc", "Chks") in lib.index:
-                    impl_name = impl_name.replace("FD", "Can").replace("Crc", "Chks")
 
             if not impl_name in lib.index:
                 self.manual_instruction.append(f'DSM MISSING: {impl_name}')

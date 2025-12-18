@@ -19,7 +19,6 @@ class TestCase:
         self._mdf = None
         for arg in args:
             self._units.append(arg)
-
         return
 
     def __repr__(self):
