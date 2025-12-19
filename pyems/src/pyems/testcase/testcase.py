@@ -102,7 +102,7 @@ class TestCase:
                 ws.set_column(n, n, lens + 2)
         return
 
-    def to_report(self, filename: Union[str, Hashable] = "", attachment:Dict=None):
+    def to_report(self, filename: Union[str, Hashable] = ""):
         if filename:
             self.filename = filename
         file = f"{self.directory.replace('TestCase', 'TestReport')}.xlsx"
@@ -115,13 +115,8 @@ class TestCase:
         styler = Style(tc, ws)
         styler.adjust_width()
         for n, testcase in enumerate(self):
-            _id = testcase["Test Case - ID"]
-            if _id in attachment:
-                attach = attachment[_id]
-            else:
-                attach = None
             testcase.workbook = tc
-            testcase.to_report(1 + (n * 32), attach=attach)
+            testcase.to_report(1 + (n * 32))
         tc.close()
         return
 

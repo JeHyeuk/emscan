@@ -1,6 +1,4 @@
 from pyems.testcase.testcase import TestCase
-from pyems.testcase.plot import TestCasePlot
-from pyems.mdf import MdfReader
 from pyems.candb.objs import CanMessage
 from pyems.candb import CAN_DB
 
@@ -13,7 +11,7 @@ from cannect.can.testcase.unit.diagnosis import (
     error_clear,
     clear_edr
 )
-from typing import Callable, List, Union, Hashable
+from typing import Callable, List, Union
 
 
 class Diagnosis(TestCase):
@@ -42,22 +40,6 @@ class Diagnosis(TestCase):
 
         super().__init__(*units)
         self.filename = f'{message.name}-TR_Rx-Diagnosis'
-        self.attachment = {}
-        return
-
-    def attachResult(self, mdf:str, **kwargs):
-        show = False
-        if "show" in kwargs:
-            show = kwargs['show']
-            del kwargs['show']
-        plotter = TestCasePlot(self, MdfReader(mdf), **kwargs)
-        if show:
-            plotter.show()
-        self.attachment.update(plotter.save())
-        return
-
-    def to_report(self, filename: Union[str, Hashable] = "", attachment=None):
-        super().to_report(filename=filename, attachment=self.attachment)
         return
 
 

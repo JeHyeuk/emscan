@@ -12,7 +12,7 @@ import os, copy
 
 class Template(Amd):
 
-    def __init__(self, db: CanDb, src: str, *messages):
+    def __init__(self, db: CanDb, src: str, *messages, **kwargs):
 
         for message in messages:
             if not message in db.messages:
@@ -41,6 +41,8 @@ class Template(Amd):
         self.logger(f"%{{{base.name}}} MODEL GENERATION")
         self.logger(f">>> DB VERSION: {db.revision}")
         self.logger(f">>> BASE MODEL: {src}")
+        if "revision" in kwargs:
+            self.logger(f">>> MODEL REVISION: {kwargs['revision']}")
 
         # @self.n        : 메시지 순번
         # @self.db       : CAN DB 객체
