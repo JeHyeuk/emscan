@@ -18,6 +18,7 @@ pyperclip
 python-can
 python-docx
 python-dotenv
+python-pptx
 python-multipart
 pywin32
 screeninfo

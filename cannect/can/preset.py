@@ -259,3 +259,52 @@ DIAGNOSIS_HEV = {
         "L_HCU_03_10ms",
     ],
 }
+
+
+if __name__ == "__main__":
+    from pandas import DataFrame
+    from pyems.ppt import Ppt, add_OLE
+    from pyems.candb import CAN_DB
+    import win32com.client as win32
+    import os, time
+
+    # ppt = Ppt()
+    # for md, msgs in DIAGNOSIS_ICE.items():
+    #     df = DataFrame(data={'Model': [md] * len(msgs), 'Message': msgs})
+    #     ids = []
+    #     crc = []
+    #     ac = []
+    #     for msg in msgs:
+    #         ob = CAN_DB.messages[msg]
+    #         ids.append(ob['ID'])
+    #         crc.append("Y" if ob.hasCrc() else "N")
+    #         ac.append("Y" if ob.hasAliveCounter() else "N")
+    #     df['ID'] = ids
+    #     df['CRC'] = crc
+    #     df['A/C'] = ac
+    #     df['P/F'] = "ALL PASS"
+    #     df['Result'] = ''
+    #     ppt.add_table(df)
+    #
+    #
+    # ppt.save(r"C:\Users\Administrator\Downloads\df2table.pptx")
+
+    # # --- PowerPoint 시작 ---
+    # path = r'C:\Users\Administrator\Downloads\0000_ICE_미학습프레임_IUMPR표출_예외처리.pptx'
+    # app = win32.Dispatch("PowerPoint.Application")
+    # app.Visible = True
+    # ppt = app.Presentations.Open(path)
+    #
+    # for n, (md, msgs) in enumerate(DIAGNOSIS_ICE.items()):
+    #     if not md == "CanFDDATCD":
+    #         continue
+    #     page = 49 + n
+    #     for y, msg in enumerate(msgs):
+    #         yy = 192 + 34 * y
+    #         xl = rf'C:\Users\Administrator\Downloads\{msg}-TR_Rx-Diagnosis.xlsx'
+    #         if not os.path.exists(xl):
+    #             continue
+    #         print(md, msg, end =" ")
+    #         add_OLE(ppt, xl, page, top=yy, close=False)
+    #         print("성공")
+    # ppt.save()

@@ -165,17 +165,16 @@ class Plot(Figure):
             hovertemplate=f'{series.name}: %{{y}}<extra></extra>'
         )
 
-    def save(self) -> Dict:
-        result = {}
-        for n, figure in self.figures.items():
-            # result[n] = file = PATH.DOWNLOADS.makefile(f'{self.filename}-{n}.png')
-            result[n] = file = os.path.join(ENV["USERPROFILE"], f"Downloads/{self.filename}-{n}.png")
-            figure.write_image(
-                file=file,
-                width=1920,
-                height=1080
-            )
-        return result
+    def save(self, filename:str='') -> str:
+        if not filename:
+            filename = self.filename
+        file = os.path.join(ENV["USERPROFILE"], f"Downloads/{filename}")
+        self.write_image(
+            file=file,
+            width=1920,
+            height=1080
+        )
+        return file
 
 if __name__ == "__main__":
     from pandas import set_option

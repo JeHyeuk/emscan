@@ -62,10 +62,12 @@ class UnitTestCase(Series):
 
     __wb__:Workbook = None
     __dr__:MdfReader = None
+    __pg__:str = ''
 
     def __init__(self, **kwargs):
         self.__wb__ = None
         self.__dr__ = None
+        self.__pg__ = ''
 
         super().__init__({k: kwargs[k] if k in kwargs else v for k, v in LABEL.items()})
         if 'workbook' in kwargs:
@@ -123,10 +125,22 @@ class UnitTestCase(Series):
                     var.append(_v)
         return var
 
+    @property
+    def attachment(self) -> str:
+        return self.__pg__
+
+    @attachment.setter
+    def attachment(self, attachment:str):
+        self.__pg__ = attachment
+
     def figure(self, **kwargs) -> Plot:
         return Plot(self.data, **kwargs)
 
-    def to_report(self, row:int=1, attach:str=None):
+    def to_report(self, row:int=1):
+        """
+        @param row: [int] 시작 행 번호
+        @param attach: [str] 그림 파일 경로
+        """
         if isinstance(self.workbook, Workbook):
             wb = self.workbook
             ws = wb.worksheets_objs[0]
@@ -182,8 +196,8 @@ class UnitTestCase(Series):
         ws.write(f'M{row + 4}', self['ER-Value'], styler.report_value["ER-Value"])
         ws.merge_range(f'N{row + 3}:P{row + 4}', self['Test Result'], styler.report_value["Test Result"])
         ws.merge_range(f'B{row + 6}:L{row + 26}', '', styler.report_value["Test Result Graph"])
-        if attach:
-            ws.insert_image(row + 5, 1, attach, {
+        if self.attachment:
+            ws.insert_image(row + 5, 1, self.attachment, {
                 'x_offset': 0,
                 'y_offset': 0,
                 'x_scale': 0.4,

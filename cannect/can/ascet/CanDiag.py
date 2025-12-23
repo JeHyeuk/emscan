@@ -12,7 +12,7 @@ import os, copy
 
 class Template(Amd):
 
-    def __init__(self, db: CanDb, src: str, *messages):
+    def __init__(self, db: CanDb, src: str, *messages, **kwargs):
 
         for message in messages:
             if not message in db.messages:
@@ -36,11 +36,13 @@ class Template(Amd):
 
         # LOGGER 생성
         base = Amd(src)
-        os.makedirs(os.path.join(ENV['USERPROFILE'], f'Downloads/{base.name}'), exist_ok=True)
-        self.logger = Logger(os.path.join(ENV['USERPROFILE'], f'Downloads/{base.name}/log.log'), clean_record=True)
+
+        self.logger = Logger()
         self.logger(f"%{{{base.name}}} MODEL GENERATION")
         self.logger(f">>> DB VERSION: {db.revision}")
         self.logger(f">>> BASE MODEL: {src}")
+        if "revision" in kwargs:
+            self.logger(f">>> MODEL REVISION: {kwargs['revision']}")
 
         # @self.n        : 메시지 순번
         # @self.db       : CAN DB 객체
@@ -95,6 +97,8 @@ class Template(Amd):
             self.main['defaultProjectOID'] = base.main['defaultProjectOID']
         except KeyError:
             self.main['defaultProjectName'] = f'{self.name}_DEFAULT'
+        self.main.digestValue = base.main.digestValue
+        self.main.signatureValue = base.main.signatureValue
 
         # BASE 모델의 MethodSignature 정보 복사
         # : _100msRun, _Init, _fcmclr, _EEPRes
@@ -108,7 +112,8 @@ class Template(Amd):
         # *.spec.amd
         for elem in self.spec.iter():
             if elem.get('methodName', '') in base_method:
-                elem.set('methodOID', base_method[elem.get('methodName')])
+                if 'methodOID' in elem.attrib:
+                    elem.set('methodOID', base_method[elem.get('methodName')])
 
         # Template에 정의되지 않은 MethodSignature 정보 복사
         main_method = [elem.get('name') for elem in self.main.iter('MethodSignature')]
@@ -119,6 +124,7 @@ class Template(Amd):
                 self.main.strictFind('MethodSignatures').append(elem)
                 self.spec.strictFind('MethodBodies').append(
                     Element('MethodBody', methodName=elem.get('name'), methodOID=elem.get('OID'))
+                    # Element('MethodBody', methodName=elem.get('name'))
                 )
 
         # *.implementation.amd 파일 정보 복사
@@ -127,6 +133,8 @@ class Template(Amd):
         self.impl['OID'] = base.impl['OID']
         self.impl.strictFind('ImplementationSet', name='Impl').attrib['OID'] = \
             base.impl.strictFind('ImplementationSet', name='Impl').attrib['OID']
+        self.impl.digestValue = base.impl.digestValue
+        self.impl.signatureValue = base.impl.signatureValue
 
         # *.data.amd 파일 정보 복사
         self.data.name = base.main['name']
@@ -134,10 +142,14 @@ class Template(Amd):
         self.data['OID'] = base.data['OID']
         self.data.strictFind('DataSet', name='Data').attrib['OID'] = \
             base.data.strictFind('DataSet', name='Data').attrib['OID']
+        self.data.digestValue = base.data.digestValue
+        self.data.signatureValue = base.data.signatureValue
 
         # *.specification.amd 파일 정보 복사
         # BREAK 구문 존재 시, Hierarchy 및 관련 Element 복사
         self.spec.name = base.main['name']
+        self.spec.digestValue = base.spec.digestValue
+        self.spec.signatureValue = base.spec.signatureValue
 
         breaker = None
         for elem in base.spec.iter():
@@ -521,7 +533,7 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
             self.logger(f'>>> ... NO EXCEPTION FOUND')
         return
 
-    def create(self):
+    def create(self, path:str=''):
 
         # BASE 모델의 기본 정보들을 Template으로 복사
         self.logger('>>> COPY BASE MODEL TO TEMPLATE')
@@ -553,10 +565,20 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
         for instruction in self.manual_instruction:
             self.logger(f'>>> [MANUALLY] {instruction}')
 
-        self.main.export_to_downloads()
-        self.impl.export_to_downloads()
-        self.data.export_to_downloads()
-        self.spec.export_to_downloads()
+        if not path:
+            self.main.export_to_downloads()
+            self.impl.export_to_downloads()
+            self.data.export_to_downloads()
+            self.spec.export_to_downloads()
+            with open(os.path.join(ENV['USERPROFILE'], f'Downloads/{self.name}/log.log'), 'w', encoding='utf-8') as f:
+                f.write(self.logger.stream)
+        else:
+            self.main.export(path)
+            self.impl.export(path)
+            self.data.export(path)
+            self.spec.export(path)
+            with open(os.path.join(path, f'log.log'), 'w', encoding='utf-8') as f:
+                f.write(self.logger.stream)
         return
 
 
