@@ -29,7 +29,13 @@ def unzip(src: str, to: str = "") -> bool:
         raise KeyError(f"src: {src}는 .zip 압축 파일만 입력할 수 있습니다.")
     return True
 
-def copyTo(file:str, dst:str) -> str:
+def zip(path:str):
+    name = os.path.basename(path)
+    shutil.make_archive(name, "zip", path)
+    shutil.move(f'{name}.zip', path)
+    return
+
+def copy_to(file:str, dst:str) -> str:
     shutil.copy(file, dst)
     return os.path.join(dst, os.path.basename(file))
 
