@@ -504,7 +504,7 @@ def clear_edr(message:str, variables:List[str]=None, **override) -> UnitTestCase
     er = "\n".join([v for v in [
         "DEve_stEDR93DTC_A[ ]",
     ] if v])
-    ev = "\n".join(['refer to ER']),
+    ev = "\n".join(["refer to ER"]),
 
     kwargs = {
         "Category": "UNIT",
@@ -515,7 +515,7 @@ def clear_edr(message:str, variables:List[str]=None, **override) -> UnitTestCase
                                      f"1) When EEP RESET : CLEAR EDR \n"
                                      f"2) When EEP SET : EDR SET \n",
         "Test Execution (TE) - Description": f"1) EEP RESET\n"
-                                             f" - {dd.eep_reset} : '255 → 0\n"
+                                             f" - {dd.eep_reset} : 255 → 0\n"
                                              f"2) EEP SET\n"
                                              f" - IgKey_On = True\n"
                                              f" - Message Auto-Detect and Store To EEPROM",
