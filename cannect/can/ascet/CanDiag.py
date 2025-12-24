@@ -63,7 +63,12 @@ class Template(Amd):
         """
         BASE 모델의 송출처, 타입, Cal. 값 읽기
         """
-        tx = base.name.replace("_HEV", "").replace("_48V", "").replace("CanFD", "").replace("Can", "")[:-1]
+        tx = base.name \
+             .replace("_HEV", "") \
+             .replace("_48V", "") \
+             .replace("CanFD", "") \
+             .replace("CanHS", "") \
+             .replace("Can", "")[:-1]
         hw = "HEV" if "HEV" in base.name else "ICE"
         cal = {}
         for elem in base.main.iter('Element'):
@@ -176,19 +181,34 @@ class Template(Amd):
         return log
 
     def copy_common(self):
+        pascal = self.tx.lower().capitalize()
+        if self.tx.lower() == "nox":
+            pascal = "NOx"
+        if self.tx.lower() == "frcmr":
+            pascal = "FrCmr"
         renamer = {
-            f"CanD_cEnaDetBus1__TX_Pascal__": f"CanD_cEnaDetBus1{self.tx.lower().capitalize()}",
-            f"CanD_cEnaDetBus2__TX_Pascal__": f"CanD_cEnaDetBus2{self.tx.lower().capitalize()}",
-            f"CanD_cEnaDetBus3__TX_Pascal__": f"CanD_cEnaDetBus3{self.tx.lower().capitalize()}",
-            f"CanD_ctDet__TX_Pascal___C": f"CanD_ctDet{self.tx.lower().capitalize()}_C",
-            f"CanD_RstEep__TX_Pascal___C": f"CanD_RstEep{self.tx.lower().capitalize()}_C",
-            f"CanD_tiMonDet__TX_Pascal___C": f"CanD_tiMonDet{self.tx.lower().capitalize()}_C",
-            f"Cfg_FD__TX_UPPER__D_C": f"Cfg_FD{self.tx.upper()}D_C"
+            f"CanD_cEnaDetBus1__TX_Pascal__": f"CanD_cEnaDetBus1{pascal}",
+            f"CanD_cEnaDetBus2__TX_Pascal__": f"CanD_cEnaDetBus2{pascal}",
+            f"CanD_cEnaDetBus3__TX_Pascal__": f"CanD_cEnaDetBus3{pascal}",
+            f"CanD_ctDet__TX_Pascal___C": f"CanD_ctDet{pascal}_C",
+            f"CanD_RstEep__TX_Pascal___C": f"CanD_RstEep{pascal}_C",
+            f"CanD_tiMonDet__TX_Pascal___C": f"CanD_tiMonDet{pascal}_C",
+            f"Cfg_Can__TX_UPPER__D_C": f"Cfg_CanFD{self.tx.upper()}D_C"
         }
+        if self.name.endswith("_48V") or self.tx.upper() in ["CVVD", "FPCM"]:
+            renamer[f"Cfg_Can__TX_UPPER__D_C"] = f"Cfg_Can{self.tx.upper()}D_C"
+        if self.tx.upper() == "NOX":
+            renamer[f"Cfg_Can__TX_UPPER__D_C"] = f"Cfg_Can{pascal}D_C"
+
+
         self.main.replace('Element', 'name', renamer)
         self.impl.replace('', 'elementName', renamer)
         self.data.replace('', 'elementName', renamer)
         self.spec.replace('', 'elementName', renamer)
+        for elem in self.main.iter('Element'):
+            if "__TX_UPPER__" in str(elem.find('Comment').text):
+                elem.find('Comment').text = elem.find('Comment').text \
+                                            .replace("__TX_UPPER__", self.tx.upper())
         return
 
     def copy_by_message(self, n:int, message:str):
@@ -233,9 +253,12 @@ class Template(Amd):
             self.manual_instruction.append(f'ADD IR/OS-TASK: {method_name}')
 
         # 메시지 순서 별 변수 이름 재정의
+        pascal = self.tx.lower().capitalize()
+        if self.tx.lower() == "nox":
+            pascal = "NOx"
         replace_name = {
             f'CanD_cEnaDiagBus__M1_Chn__': f'CanD_cEnaDiagBus{chn}',
-            f'CanD_cEnaDetBus__M1_Chn____TX_Pascal__': f'CanD_cEnaDetBus{chn}{self.tx.lower().capitalize()}',
+            f'CanD_cEnaDetBus__M1_Chn____TX_Pascal__': f'CanD_cEnaDetBus{chn}{pascal}',
             f"CanD_cEnaDiag__M1_Pascal__": nm.diagnosisEnable,
             f"CanD_cEnaDet__M1_Pascal__": nm.detectionEnable,
             f"CanD_cErr__M1_Pascal__Msg": nm.diagnosisMsg,

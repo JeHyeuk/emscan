@@ -221,3 +221,9 @@ class naming(object):
 
     def __str__(self) -> str:
         return self.message
+
+
+if __name__ == "__main__":
+
+    rule = naming("FPCM_01_100ms")
+    print(rule.root)
