@@ -47,4 +47,6 @@ if __name__ == "__main__":
     print(COMPANY)
     print(DIVISION)
     print(ENV)
+    print(ENV["CANDB"])
+    print(ENV["POLYSPACE"])
 

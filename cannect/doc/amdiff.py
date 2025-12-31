@@ -1,6 +1,7 @@
 from pyems.ascet import Amd
 from pandas import DataFrame
 from typing import List
+import os, hashlib
 
 
 class AmdDiff:
@@ -11,9 +12,8 @@ class AmdDiff:
         post:str,
         exclude_imported:bool=True
     ):
-        prev = Amd(prev)
-        post = Amd(post)
-
+        self.prev = prev = Amd(prev)
+        self.post = post = Amd(post)
         self.prev_elem = prev.main.dataframe('Element')
         self.post_elem = post.main.dataframe('Element')
         if exclude_imported:
@@ -25,11 +25,25 @@ class AmdDiff:
         return
 
     @property
+    def is_equal(self) -> bool:
+        def _hash(file):
+            _md5 = hashlib.md5()
+            with open(file, "rb") as f:
+                for chunk in iter(lambda: f.read(4096), b""):
+                    _md5.update(chunk)
+            return _md5.hexdigest()
+        if os.path.getsize(self.prev.main.path) != os.path.getsize(self.post.main.path):
+            return False
+        return _hash(self.prev.main.path) == _hash(self.post.main.path)
+
+    @property
     def deleted(self) -> List[str]:
         return list(set(self.prev_elem['name']) - set(self.post_elem['name']))
 
     @property
     def added(self) -> List[str]:
+        if self.is_equal:
+            return self.post_elem['name'].tolist()
         return list(set(self.post_elem['name']) - set(self.prev_elem['name']))
 
     @property
@@ -47,7 +61,6 @@ class AmdDiff:
         elem['Default Cal'] = elem['Recommendation Cal']
         elem['Disable Cal'] = '-'
         elem['Remark'] = '-'
-        elem.index = [""] * len(elem)
         return elem
 
 

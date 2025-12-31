@@ -38,6 +38,7 @@ class TestCase:
             for unit in self._units:
                 if unit["Test Case - ID"] == item:
                     return unit
+        raise KeyError
 
     def __setitem__(self, key: str, value):
         for unit in self._units:
@@ -106,7 +107,7 @@ class TestCase:
         if filename:
             self.filename = filename
         file = f"{self.directory.replace('TestCase', 'TestReport')}.xlsx"
-        if not "TCU" in file and "TC" in file:
+        if not "TCU" in file and not "DATC" in file and "TC" in file:
             file = file.replace("TC", "TR")
 
         tc = xlsx.Workbook(filename=file)

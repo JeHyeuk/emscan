@@ -427,8 +427,8 @@ class IntegrationRequest:
                 log += f' {len(diff.added_parameters):>2} PARAMETERS ADDED'
             self.logger(log)
 
-        if copy_to_clipboard:
-            pd.concat(objs, axis=0).to_clipboard(index=False)
+        if copy_to_clipboard and objs:
+            pd.concat(objs, axis=0).sort_values(by=['Name']).to_clipboard(index=False)
         return
 
     def fill(self):
@@ -488,17 +488,15 @@ if __name__ == "__main__":
 
 
     from cannect.can.preset import DIAGNOSIS_ICE, DIAGNOSIS_HEV
-    md = ["autodetection_CW_STD"] + list(DIAGNOSIS_ICE.keys())
+    md = ["autodetection_CW_STD"] + list(DIAGNOSIS_HEV.keys())
 
 
     # ir = IntegrationRequest(*md)
     ir = IntegrationRequest(*md)
-    ir.deliverables      = r'D:\Archive\00_프로젝트\2017 통신개발-\2025\DS1201 IUMPR 미표출 ICE CANFD'
+    ir.deliverables      = r'D:\Archive\00_프로젝트\2017 통신개발-\2025\DS1201 IUMPR 미표출 HEV CANFD'
     ir.User              = "이제혁, 조재형, 조규나"
-    ir.Comment           = "VCDM CR10785931, 10785933 미학습 프레임 IUMPR 표출 예외 처리"
-    # ir.Comment           = "VCDM CR10785930 미학습 프레임 IUMPR 표출 예외 처리"
-    ir.ChangeHistoryName = "8615_CANFD_ICE_미학습프레임_IUMPR표출_예외처리.pptx"
-
+    ir.Comment           = "VCDM CR10785930 미학습 프레임 IUMPR 표출 예외 처리"
+    # ir.ChangeHistoryName = "8615_CANFD_ICE_미학습프레임_IUMPR표출_예외처리.pptx"
 
     # PRE-ACTION
     # ir.copy_model_to_local(local_path='', revision=True, unzip=True)
@@ -509,7 +507,7 @@ if __name__ == "__main__":
 
     # COMMIT
     # ir.copy_model_to_svn(local_path='')
-    # ir.commit_model(log=f'[{ENV["NAME"]}] CR10785931 IUMPR Exception CW Renamed') # 반드시 영문 표기, "[", "]" 외 특수문자 불가
+    # ir.commit_model(log=f'[{ENV["NAME"]}] CR10785930 IUMPR Exception') # 반드시 영문 표기, "[", "]" 외 특수문자 불가
     # ir.copy_sdd_to_svn(local_path='') # TODO
     # ir.commit_sdd(log='') # TODO
 
