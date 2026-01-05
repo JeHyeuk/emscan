@@ -177,7 +177,7 @@ class confReader(ElementTree):
                     group_syscon = _get_text(info, 'SW-SYSCOND')
 
                     data[key] += [group_name.replace(f'({group_mask})', '')].copy()
-                    if key != "PROVIDED":
+                    if not key in ["PROVIDED", "IUMPR_EVENT", "EVENT"]:
                         data[f'{key}_MASK'] += [group_mask]
                     data[f'{key}_SYSCON'] += [group_syscon]
                     continue
@@ -346,17 +346,22 @@ if __name__ == "__main__":
     import os, re
 
 
-    for f in os.listdir(ENV["CONF"]):
-        if not f.endswith('.xml'):
-            continue
-        file = os.path.join(ENV["CONF"], f)
-        read = confReader(file)
-        print("*"*80)
-        print(read.admin["Model"], read.admin["Filename"])
-        # print(read.history, "\n")
-        parsed = re.compile(
-            r"^\s*(?P<version>\d+(?:\.\d+)+);\s*\d+\s+(?P<date>\d{4}\.\d{2}\.\d{2})\s+(?P<name>.+?)\s*$"
-        )
+    # for f in os.listdir(ENV["CONF"]):
+    #     if not f.endswith('.xml'):
+    #         continue
+    #     file = os.path.join(ENV["CONF"], f)
+    #     read = confReader(file)
+    #     print("*"*80)
+    #     print(read.admin["Model"], read.admin["Filename"])
+    #     # print(read.history, "\n")
+    #     parsed = re.compile(
+    #         r"^\s*(?P<version>\d+(?:\.\d+)+);\s*\d+\s+(?P<date>\d{4}\.\d{2}\.\d{2})\s+(?P<name>.+?)\s*$"
+    #     )
 
-
+    conf = confReader(ENV["CONF"]['afimd_confdata.xml'])
+    # print(pprint(conf.dem('EVENT')))
+    # print(pprint(conf.dem('PATH')))
+    # print(pprint(conf.dem('FID')))
+    # print(pprint(conf.dem('DTR')))
+    print(pprint(conf.dem('SIG')))
 
