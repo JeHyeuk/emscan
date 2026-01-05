@@ -31,6 +31,8 @@ ENV["CONF"] = CONF = SVN[r'GSL_Build\1_AswCode_SVN\PostAppSW\0_XML\DEM_Rename']
 ENV["SDD"] = SDD = SVN[r'GSL_Build\7_Notes']
 ENV["MODEL"] = MODEL = SVN[r'model\ascet\trunk']
 ENV["CANDB"] = CANDB = SVN[r'dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database']
+ENV["POLYSPACE"] = POLYSPACE = SVN[r'Autron_CoWork\사이버보안\Module_Test_Results']
+ENV["HISTORY"] = HISTORY = SVN[r'GSL_Release\4_SW변경이력']
 ENV["SVN_PATH"] = SVN_PATH = DataDictionary(
     ROOT=SVN,
     CAN=CAN,
@@ -45,4 +47,6 @@ if __name__ == "__main__":
     print(COMPANY)
     print(DIVISION)
     print(ENV)
+    print(ENV["CANDB"])
+    print(ENV["POLYSPACE"])
 

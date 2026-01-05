@@ -98,7 +98,7 @@ class Plot(Figure):
 
         if separate:
             self.set_subplots(
-                rows=len(data.columns),
+                rows=max(len(data.columns), 1),
                 cols=1,
                 shared_xaxes=True,
                 vertical_spacing=0.01

@@ -1,9 +1,10 @@
+from typing import Any, SupportsBytes, Union
 import os, string
 
 
 class SddReader:
 
-    def __init__(self, sdd:str):
+    def __init__(self, sdd:Union[Any, str, SupportsBytes]):
         self.fullpath = ''
         if sdd.endswith('.rtf'):
             self.fullpath = sdd

@@ -3,8 +3,10 @@ from pptx.util import Inches, Pt
 from pptx.enum.text import PP_ALIGN
 from pptx.dml.color import RGBColor
 from pandas import DataFrame
+from pywintypes import com_error
 import win32com.client as win32
 import pandas as pd
+import os
 
 
 class Ppt:
@@ -129,59 +131,151 @@ def add_OLE(
         ppt_win32.close()
     return
 
-#
-# import os
-#
-# # --- 설정 ---
-# ppt_path = r"C:\Users\Administrator\Downloads\0000_ICE_미학습프레임_IUMPR표출_예외처리.pptx"   # 결과 PPT 경로
-# excel_path = r"C:\Users\Administrator\Downloads\ABS_ESC_01_10ms-TR_Rx-Diagnosis.xlsx"           # 삽입할 엑셀 파일 경로
-# # left, top, width, height = 470, 192, 100, 100  # 위치/크기 (포인트 단위)
-# left, top, width, height = 475, 226, 100, 100  # 위치/크기 (포인트 단위)
-#
-# # --- PowerPoint 시작 ---
-# app = win32.Dispatch("PowerPoint.Application")
-# app.Visible = True
-#
-# # 새 프레젠테이션 (기존 파일 열고 싶으면 Presentations.Open)
-# pres = app.Presentations.Open(ppt_path)
-# slide = pres.Slides.Item(49)
-#
-# # 아이콘으로 표시 여부 / 링크 여부
-# display_as_icon = True
-# link = False  # True면 링크, False면 프레젠테이션에 임베드
-#
-# # AddOLEObject (파일 확장자에 따라 ProgID 자동 판단; 명시 가능)
-# shape = slide.Shapes.AddOLEObject(
-#     Left=left, Top=top, Width=width, Height=height,
-#     ClassName="",              # 예: "Excel.Sheet.12" (Office 2007+)
-#     FileName=excel_path,
-#     DisplayAsIcon=display_as_icon,
-#     IconFileName=" ",           # 아이콘 파일 지정 가능(생략 시 기본)
-#     IconIndex=0,
-#     IconLabel=os.path.basename(excel_path),
-#     Link=link
-# )
-#
-# # 저장
-# pres.SaveAs(ppt_path)
-# pres.close()
-# # app.Quit()  # 필요 시 종료
-# print("Saved:", ppt_path)
-#
+
+class PptRW:
+
+    app = None
+    app_close:bool = False
+    def __new__(cls, *args, **kwargs):
+        try:
+            cls.app = win32.GetActiveObject("PowerPoint.Application")
+        except com_error:
+            cls.app = win32.Dispatch("PowerPoint.Application")
+            cls.app_close = True
+        cls.app.Visible = True
+        return super().__new__(cls)
+
+    def __init__(self, path:str):
+        if self.app.Presentations.Count > 0:
+            for n in range(1, self.app.Presentations.Count + 1):
+                _ppt = self.app.Presentations.Item(n)
+                if os.path.join(_ppt.Path, _ppt.Name) == path:
+                    self.ppt = _ppt
+                    return
+        self.ppt = self.app.Presentations.Open(path)
+        return
+
+    def _get_table(self, n_slide:int, n_table:int):
+        slide = self.ppt.Slides.Item(n_slide)
+        n = 0
+        for shape in slide.Shapes:
+            if shape.HasTable:
+                n += 1
+                if not n == n_table:
+                    continue
+                return shape.Table
+        raise com_error(f'Table Not Found')
+
+    def set_width(self, n_slide:int, n_shape:int, width:float):
+        self.ppt.Slides.Item(n_slide).Shapes(n_shape).Width = width
+        return
+
+    def set_table_height(self, n_slide:int, n_table:int, row:int, height:float):
+        self._get_table(n_slide, n_table).Rows(row).Height = height
+        return
+
+    def set_table_text_align(
+        self,
+        n_slide:int,
+        n_table:int,
+        cell:tuple,
+        horizontal:int=1,
+        vertical:int=1
+    ):
+        cell = self._get_table(n_slide, n_table).Cell(*cell)
+        # text_frame =
+        # text_range = text_frame.TextRange
+
+        cell.Shape.TextFrame.TextRange.ParagraphFormat.Alignment = horizontal
+        cell.Shape.TextFrame.VerticalAnchor = vertical
+        return
+
+    def set_table_font(
+        self,
+        n_slide:int,
+        n_table:int,
+        cell:tuple,
+        name:str=None,
+        size:int=None,
+        bold:bool=None,
+        color:str=None,
+    ):
+        font = self._get_table(n_slide, n_table).Cell(*cell).Shape.TextFrame.TextRange.Font
+        if name is not None:
+            font.Name = name
+        if size is not None:
+            font.Size = size
+        if bold is not None:
+            font.Bold = bold
+        if color is not None:
+            font.Color.RGB = color
+        return
+
+    def set_text(
+        self,
+        n_slide:int,
+        n_shape:int,
+        text:str,
+        pos:str='new'
+    ):
+        shape = self.ppt.Slides.Item(n_slide).Shapes(n_shape)
+        if shape.HasTextFrame:
+            if pos.lower() == 'after':
+                shape.TextFrame.TextRange.InsertAfter(text)
+            elif pos.lower() == 'before':
+                shape.TextFrame.TextRange.InsertBefore(text)
+            else:
+                shape.TextFrame.TextRange.Text = text
+        return
+
+    def set_text_in_table(
+        self,
+        n_slide:int,
+        n_table:int,
+        cell:tuple,
+        text:str,
+        pos:str='new'
+    ):
+        table = self._get_table(n_slide, n_table)
+        if pos.lower() == 'after':
+            table.Cell(cell[0], cell[1]).Shape.TextFrame.TextRange.InsertAfter(text)
+        elif pos.lower() == 'before':
+            table.Cell(cell[0], cell[1]).Shape.TextFrame.TextRange.InsertBefore(text)
+        else:
+            table.Cell(cell[0], cell[1]).Shape.TextFrame.TextRange.Text = text
+        return
+
+    def replace_text_in_table(
+        self,
+        n_slide:int,
+        n_table:int,
+        cell:tuple,
+        prev:str,
+        post:str
+    ):
+        self._get_table(n_slide, n_table) \
+            .Cell(cell[0], cell[1]) \
+            .Shape \
+            .TextFrame \
+            .TextRange \
+            .Replace(prev, post)
+        return
+
+    def close(self):
+        self.ppt.Save()
+        self.ppt.Close()
+        if self.app_close:
+            self.app.Quit()
+        return
 
 
-# if __name__ == "__main__":
-#     # --- Demo ---
-#     sample_df = pd.DataFrame({
-#         "Model": ["A1", "A2", "B1", "B2"],
-#         "Units": [1200, 950, 14350, 2750],
-#         "Yield": [0.9825, 0.9751, 0.9912, 0.9680],
-#         "Owner": ["Team Red", "Team Blue", "Team Red", "Team Green"],
-#     })
-#
-#     prs = Presentation()
-#     add_table_slide_from_df(prs, sample_df)
-#
-#     output_path = r"C:\Users\Administrator\Downloads\dataframe_to_table_demo.pptx"
-#     prs.save(output_path)
-#     print(f"Saved: {output_path}")
+
+
+if __name__ == "__main__":
+    # ppt = PptRW(r"D:\Archive\00_프로젝트\2017 통신개발-\2025\DS1229 CR10785896 CNG PIO\0000_변경내역서 양식.pptx")
+    # ppt.set_text(1, 1, "Hello World", insert=False)
+    # ppt.set_text_in_table(2, (2, 1), "Testing", insert=False)
+    # ppt.close()
+
+    print(win32.constants)
+    print(win32.constants.msoAnchorTop)

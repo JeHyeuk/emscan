@@ -1,5 +1,4 @@
 from pyems.environ import ENV
-from pyems.typesys import DataDictionary
 from pyems.svn import update, log
 from pyems.candb import CAN_DB
 
@@ -146,7 +145,9 @@ def read_conf(conf:str=Form(...)):
         "keys": dumps(CONF_SCHEMA)
     }
     for key in ["EVENT", "PATH", "FID", "DTR", "SIG"]:
-        data[key] = read.html(key)
+        data[key] = html = read.html(key)
+        # if key == "DTR":
+        #     print(html)
         data[f'N{key}'] = len(read.dem(key))
     return JSONResponse(content=jsonable_encoder(data))
 

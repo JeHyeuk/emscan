@@ -307,6 +307,20 @@ FID:Dict[str, Dict[str, str]] = {
         "write": "writable",
         "note": "THIS IS GUIDE NOTE"
     },
+    "IUMPR_EVENT": {
+        "label": "IUMPR 관련 EVENT",
+        "class": "mandatory",
+        "group": "IUMPR_EVENT",
+        "write": "writable",
+        "note": "THIS IS GUIDE NOTE"
+    },
+    "IUMPR_EVENT_SYSCON": {
+        "label": "상기 Event 요건의 System Constant",
+        "class": "optional-strong",
+        "group": "IUMPR_EVENT",
+        "write": "writable",
+        "note": "THIS IS GUIDE NOTE"
+    },
     "EXCLUSION": {
         "label": "배타적 FID 관계",
         "class": "mandatory",
@@ -439,6 +453,14 @@ DTR: Dict[str, Dict[str, str]] = {
     "EVENT": {
         "label": "관련 Event",
         "class": "optional-demdoc",
+        "group": "EVENT",
+        "write": "writable",
+        "note": "THIS IS GUIDE NOTE"
+    },
+    "EVENT_SYSCON": {
+        "label": "Event System Constant 조건",
+        "class": "optional-strong",
+        "group": "EVENT",
         "write": "writable",
         "note": "THIS IS GUIDE NOTE"
     },

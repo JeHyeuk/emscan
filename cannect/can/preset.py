@@ -269,7 +269,7 @@ if __name__ == "__main__":
     import os, time
 
     # ppt = Ppt()
-    # for md, msgs in DIAGNOSIS_ICE.items():
+    # for md, msgs in DIAGNOSIS_HEV.items():
     #     df = DataFrame(data={'Model': [md] * len(msgs), 'Message': msgs})
     #     ids = []
     #     crc = []
@@ -289,16 +289,16 @@ if __name__ == "__main__":
     #
     # ppt.save(r"C:\Users\Administrator\Downloads\df2table.pptx")
 
-    # # --- PowerPoint 시작 ---
-    # path = r'C:\Users\Administrator\Downloads\0000_ICE_미학습프레임_IUMPR표출_예외처리.pptx'
+    # --- PowerPoint 시작 ---
+    # path = r'C:\Users\Administrator\Downloads\0000_CANFD_HEV_미학습프레임_IUMPR표출_예외처리.pptx'
     # app = win32.Dispatch("PowerPoint.Application")
     # app.Visible = True
     # ppt = app.Presentations.Open(path)
     #
-    # for n, (md, msgs) in enumerate(DIAGNOSIS_ICE.items()):
-    #     if not md == "CanFDDATCD":
+    # for n, (md, msgs) in enumerate(DIAGNOSIS_HEV.items()):
+    #     page = 47 + n
+    #     if not md == "CanFDDATCD_HEV":
     #         continue
-    #     page = 49 + n
     #     for y, msg in enumerate(msgs):
     #         yy = 192 + 34 * y
     #         xl = rf'C:\Users\Administrator\Downloads\{msg}-TR_Rx-Diagnosis.xlsx'

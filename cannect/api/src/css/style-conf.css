@@ -381,18 +381,22 @@ textarea {
 .fid-package {
   border: var(--fid-package);
 }
+.IUMPR_EVENT,
 .EXCLUSION,
 .INHIBITED_EVENT,
 .INHIBITED_SUM_EVENT,
 .INHIBITED_SIG,
-.PROVIDED {
+.PROVIDED,
+.EVENT{
   border-top: var(--fid-package);
 }
+.IUMPR_EVENT_SYSCON,
 .EXCLUSIVE_SYSCON,
 .INHIBITED_EVENT_SYSCON,
 .INHIBITED_SUM_EVENT_SYSCON,
 .INHIBITED_SIG_SYSCON,
-.PROVIDED_SYSCON {
+.PROVIDED_SYSCON,
+.EVENT_SYSCON {
   border-bottom: var(--fid-package);
 }
 

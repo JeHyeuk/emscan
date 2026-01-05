@@ -476,13 +476,22 @@ $(document)
 	var $row = $(this).parent();
 	var $rowN = $row.index();
 	var $tbody = $row.parent();	
-	
-	for (var i = $rowN; i >= 14; i--) {
+	var _n = 14;
+	if ($('table.active').attr('id') === 'DTR') {
+	    _n = 4;
+	}
+	for (var i = $rowN; i >= _n; i--) {
 		let $_row = $tbody.children().eq(i);
 		if ($_row.attr('class').replace(' row-selected', '') === $_row.attr('data-group')) {
 			$_row.toggleClass('row-selected');
 			$tbody.children().eq(i + 1).toggleClass('row-selected');
-			$tbody.children().eq(i + 2).toggleClass('row-selected');
+			if (
+			    ($_row.attr('data-group') != 'PROVIDED') &&
+			    ($_row.attr('data-group') != 'IUMPR_EVENT') &&
+			    ($_row.attr('data-group') != 'EVENT')
+            ){
+                $tbody.children().eq(i + 2).toggleClass('row-selected');
+            }
 			break;
 		}
 	}

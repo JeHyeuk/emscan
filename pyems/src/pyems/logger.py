@@ -40,6 +40,7 @@ class Logger(logging.Logger):
             file_handler.setLevel(logging.DEBUG)
             file_handler.setFormatter(formatter)
             self.addHandler(file_handler)
+        self._held = ''
         return
 
     def __call__(self, io:str):
@@ -49,11 +50,21 @@ class Logger(logging.Logger):
     def stream(self) -> str:
         return self._buffer.getvalue()
 
+    def log(self, msg:str='', *args, **kwargs):
+        if self._held:
+            msg = self._held + msg
+        super().info(msg, *args, **kwargs)
+        self._held = ''
+        return
+
     def read(self, file:str=''):
         if not file:
             file = self.file
         with open(file, 'r', encoding="utf-8") as f:
             return f.read()
+
+    def hold(self, msg:str):
+        self._held += msg
 
     def run(self, context:str=''):
         if context:

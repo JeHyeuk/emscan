@@ -1,8 +1,9 @@
 from pyems import util, svn
 from pyems.environ import ENV
-from pyems.ascet import AmdSC, AmdIO
+from pyems.ascet import AmdSC, AmdIO, Amd
 from pyems.logger import Logger
 from cannect.doc.sddreader import SddReader
+from cannect.doc.amdiff import AmdDiff
 
 from datetime import datetime
 from pandas import DataFrame, Series
@@ -81,6 +82,7 @@ class IntegrationRequest:
         svn.update(ENV["MODEL"] + "\\", self.logger)
         svn.update(ENV["SDD"] + "\\", self.logger)
         svn.update(ENV["CONF"] + "\\", self.logger)
+        svn.update(ENV["POLYSPACE"] + "\\", self.logger)
 
         # 기본 테이블 생성
         self.logger(f'>>> INITIALIZE:')
@@ -135,6 +137,11 @@ class IntegrationRequest:
     def __setattr__(self, key, value):
         if key in SCHEMA:
             self.__setitem__(key, value)
+            if key == "ChangeHistoryName":
+                try:
+                    self._table['ChangeHistoryRev'] = svn.log(ENV["HISTORY"][value]).iloc[0, 0][1:]
+                except Exception as e:
+                    self.logger(f'FAILED TO GET REVISION OF CHANGE HISTORY: {value}')
         else:
             super().__setattr__(key, value)
 
@@ -241,7 +248,7 @@ class IntegrationRequest:
                 self.logger(f">>> ... %{name: <{self._mx}} -> {sdd} @FAILED TO READ SVN REVISION: {e} RESOLVED")
             util.unzip(file, path)
 
-        self.logger(f">>> {'.' * 50} READ SDD END : {time.perf_counter() - tic:.2f}s")
+        self.logger(f">>> {'.' * 50} COPY SDD END : {time.perf_counter() - tic:.2f}s")
         return
 
     def update_sdd(self, local_path:str=''):
@@ -284,7 +291,9 @@ class IntegrationRequest:
         local_path:str='',
     ):
         """
-        SVN 경로 상 모델(.zip)을 동일 경로에 압축 해제
+        SVN 경로 상 모델(.zip)을 동일 경로에 압축 해제 후 압축 파일 삭제
+        @local_path에 개발된 모델(*.amd) 파일을 SVN 경로로 복사(덮어쓰기) 후 압축
+
         ASCET-SCM 미사용, 직접 commit 시 *.amd 파일 덮어쓰기 목적
 
         @param local_path: svn으로 복사(commit)할 모델이 있는 경로
@@ -375,21 +384,70 @@ class IntegrationRequest:
         # TODO
         return
 
+    def compare_model(self, path_prev:str='', path_post:str=''):
+        self.logger(">>> COMPARING ELEMENTS:")
+        if not path_prev:
+            path_prev = os.path.join(self.model_path, 'Prev')
+        if not path_post:
+            path_post = os.path.join(self.model_path, 'Post')
+        for n, row in enumerate(self):
+            name = row['FunctionName']
+            prev_amd = util.find_file(path_prev, f'{name}.main.amd')
+            post_amd = util.find_file(path_post, f'{name}.main.amd')
+            if not (os.path.exists(prev_amd) and os.path.exists(post_amd)):
+                continue
+            diff = AmdDiff(prev_amd, post_amd, exclude_imported=True)
+            self._table.loc[n, 'ElementDeleted'] = ', '.join(diff.deleted)
+            self._table.loc[n, 'ElementAdded'] = ", ".join(diff.added)
+
+            self.logger(f">>> ... %{name: <{self._mx}}: DELETED ={len(diff.deleted): >3} / ADDED ={len(diff.added): >3}")
+        return
+
+    def compare_parameter(self, path_prev:str='', path_post:str='', copy_to_clipboard=True):
+        self.logger(">>> COMPARING PARAMETER:")
+        if not path_prev:
+            path_prev = os.path.join(self.model_path, 'Prev')
+        if not path_post:
+            path_post = os.path.join(self.model_path, 'Post')
+        objs = []
+        for n, row in enumerate(self):
+            name = row['FunctionName']
+            log = f">>> ... %{name: <{self._mx}}:"
+            prev_amd = util.find_file(path_prev, f'{name}.main.amd')
+            post_amd = util.find_file(path_post, f'{name}.main.amd')
+            if not (os.path.exists(prev_amd) and os.path.exists(post_amd)):
+                self.logger(log + " NO AMD TO COMPARE")
+                continue
+
+            diff = AmdDiff(prev_amd, post_amd, exclude_imported=True)
+            if diff.added_parameters.empty:
+                log += ' NO PARAMETERS ADDED'
+            else:
+                objs.append(diff.added_parameters)
+                log += f' {len(diff.added_parameters):>2} PARAMETERS ADDED'
+            self.logger(log)
+
+        if copy_to_clipboard and objs:
+            pd.concat(objs, axis=0).sort_values(by=['Name']).to_clipboard(index=False)
+        return
+
     def fill(self):
         tic = time.perf_counter()
-        self.logger(">>> WRITE MODELS:")
 
-        temp = os.path.join(ENV['TEMP'], '~cannect_sdd')
-        os.makedirs(temp, exist_ok=True)
+        if os.path.exists(os.path.join(self.root_path, r'09_Others\SDD')):
+            temp = os.path.join(self.root_path, r'09_Others\SDD')
+        else:
+            temp = os.path.join(ENV['TEMP'], '~cannect_sdd')
+            os.makedirs(temp, exist_ok=True)
         self.copy_sdd_to_local(temp)
 
-        ENV["MODEL"].readonly = True
+        self.logger(">>> FILL IR SHEET:")
         for n, row in enumerate(self):
             name = row['FunctionName']
             log = f">>> ... %{name: <{self._mx}}"
             try:
                 self._table.loc[n, "SCMRev"] = rev = svn.log(row['_path']).iloc[0, 0][1:]
-                log += ' @{rev}'
+                log += f' @{rev}'
             except Exception as e:
                 log += f' @FAILED TO READ SVN REVISION: {e}'
 
@@ -405,11 +463,18 @@ class IntegrationRequest:
                 if not pd.isna(conf):
                     file = ENV["CONF"][conf]
                     self._table.loc[n, 'DSMRev'] = svn.log(file).iloc[0, 0][1:]
-            except (FileExistsError, FileNotFoundError, Exception):
-                self.logger(f'... ERROR WHILE PARSING CONF: {name}')
-                pass
+            except Exception as e:
+                log += f'... ERROR WHILE READ CONF: {e}'
 
-        self.logger(f">>> {'.' * 50} WRITE MODELS END : {time.perf_counter() - tic:.2f}s")
+            try:
+                file = ENV["POLYSPACE"][row["PolyspaceName"]]
+                self._table.loc[n, 'PolyspaceRev'] = svn.log(file).iloc[0, 0][1:]
+            except Exception as e:
+                log += f'... ERROR WHILE READ POLYSPACE: {e}'
+
+            self.logger(log)
+        util.clear(temp, leave_path=True)
+        self.logger(f">>> {'.' * 50} FILL IR SHEET END : {time.perf_counter() - tic:.2f}s")
         return
 
 
@@ -422,16 +487,16 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
 
-    from cannect.can.preset import DIAGNOSIS_ICE
-    md = list(DIAGNOSIS_ICE.keys())
+    from cannect.can.preset import DIAGNOSIS_ICE, DIAGNOSIS_HEV
+    md = ["autodetection_CW_STD"] + list(DIAGNOSIS_HEV.keys())
 
 
+    # ir = IntegrationRequest(*md)
     ir = IntegrationRequest(*md)
-    ir.deliverables      = r'C:\Users\Administrator\Downloads\ir-testing'
+    ir.deliverables      = r'D:\Archive\00_프로젝트\2017 통신개발-\2025\DS1201 IUMPR 미표출 HEV CANFD'
     ir.User              = "이제혁, 조재형, 조규나"
-    ir.Comment           = "VCDM CR10785931, 10785933 미학습 프레임 IUMPR 표출 예외 처리"
-    ir.ChangeHistoryName = ""
-
+    ir.Comment           = "VCDM CR10785930 미학습 프레임 IUMPR 표출 예외 처리"
+    # ir.ChangeHistoryName = "8615_CANFD_ICE_미학습프레임_IUMPR표출_예외처리.pptx"
 
     # PRE-ACTION
     # ir.copy_model_to_local(local_path='', revision=True, unzip=True)
@@ -442,12 +507,16 @@ if __name__ == "__main__":
 
     # COMMIT
     # ir.copy_model_to_svn(local_path='')
-    # ir.commit_model(log=f'[{ENV["NAME"]}] CR10785931 IUMPR Exception') # 반드시 영문 표기, "[", "]" 외 특수문자 불가
+    # ir.commit_model(log=f'[{ENV["NAME"]}] CR10785930 IUMPR Exception') # 반드시 영문 표기, "[", "]" 외 특수문자 불가
     # ir.copy_sdd_to_svn(local_path='') # TODO
     # ir.commit_sdd(log='') # TODO
 
     # DOCUMENTATION TO EXCEL SHEET
+    ir.compare_model(path_prev='', path_post='')
     ir.fill()
 
-    print(ir)
-    # ir.to_clipboard(index=False)
+    # ADDITIONAL FUNCTION
+    # ir.compare_parameter(path_prev='', path_post='', copy_to_clipboard=True)
+    #
+    # print(ir)
+    ir.to_clipboard(index=False)
