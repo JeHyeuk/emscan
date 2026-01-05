@@ -309,7 +309,7 @@ class IntegrationRequest:
             self.table.loc[n, "FunctionVersion"] = sdd.version_doc
         return
 
-    def compare_model(self, prev:str='', post:str=''):
+    def compare_model(self, prev:str='', post:str='', exclude_imported:bool=True):
         self.logger("[COMPARE ELEMENTS]")
         if not prev:
             prev = self.deliverables.Model["Prev"]
@@ -321,7 +321,7 @@ class IntegrationRequest:
             post_amd = util.find_file(post, f'{name}.main.amd')
             if not (os.path.exists(prev_amd) and os.path.exists(post_amd)):
                 continue
-            diff = AmdDiff(prev_amd, post_amd, exclude_imported=True)
+            diff = AmdDiff(prev_amd, post_amd, exclude_imported=exclude_imported)
             self.table.loc[n, 'ElementDeleted'] = ', '.join(diff.deleted)
             self.table.loc[n, 'ElementAdded'] = ", ".join(diff.added)
             params = diff.added_parameters
@@ -498,19 +498,21 @@ if __name__ == "__main__":
     # PRE-ACTION
     ir.pre_action(path='')
 
-    # POST-ACTION
-    # ir.update_sdd(path='', comment=ir.Comment)
-    # ir.compare_model(prev='', post='')
-
     # ppt = ChangeHistoryManager(path=ir.deliverables.change_history)
     # # ppt.name        = "" # TODO
     # ppt.title       = "[CAN/ICE] CNG PIO CAN-FD 사양 대응"
     # ppt.developer   = "이제혁"
     # ppt.issue       = "VCDM CR10785896"
     # ppt.lcr         = "LCRPT251112004-1"
-    # ppt.ir          = ir.table          # compare_model()의 후행
-    # ppt.parameters  = ir.parameters     # compare_model()의 후행
+    # ppt.ir          = ir.table          # pre_action()의 후행
+
     # ppt.close()
+
+    # POST-ACTION
+    # ir.update_sdd(path='', comment=ir.Comment)
+    ir.compare_model(prev='', post='', exclude_imported=False)
+    # ppt.ir = ir.table  # pre_action()의 후행
+    # ppt.parameters = ir.parameters  # compare_model()의 후행
 
 
     # COMMIT
@@ -527,4 +529,6 @@ if __name__ == "__main__":
     # ir.compare_parameter(path_prev='', path_post='', copy_to_clipboard=True)
     #
     print(ir)
+    print(ir.table.loc[3, 'ElementDeleted'])
+    print(ir.table.loc[3, 'ElementAdded'])
     # ir.to_clipboard(index=False)

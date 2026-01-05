@@ -68,9 +68,6 @@ class confReader(ElementTree):
         self._admin.update({tag.attrib["GID"]: tag.text for tag in self.findall(TAGS.ADMIN)})
         return
 
-    # def columns(self, kind:str):
-    #     return COLUMNS[self.TABS[kind]]
-
     @constrain("EVENT", "PATH", "FID", "DTR", "SIG")
     def dem(self, kind:str) -> Dict[str, Dict[str, List]]:
         """
@@ -204,9 +201,8 @@ class confReader(ElementTree):
         for n, (key, spec) in enumerate(KEYS.items()):
             if key == "DEB_PARAM":
                 continue
-
             if ELEM and "group" in spec:
-                n_of_group = max([len(prop[key]) for prop in ELEM.values()])
+                n_of_group = max(len(prop[key]) for prop in ELEM.values())
                 if n_of_group:
                     group_set = {_key: _spec for _key, _spec in GRPS.items() if _spec["group"] == spec["group"]}
                     group_key = list(set([_spec["group"] for _spec in group_set.values()]))
