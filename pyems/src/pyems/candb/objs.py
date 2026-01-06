@@ -111,6 +111,8 @@ class CanSignal(object):
                (self.name.startswith("VVDIN_CRC"))
 
     def isAliveCounter(self) -> bool:
+        if self.name == "HU_AliveStatus":
+            return False
         return ((self["Message"] == "TMU_01_200ms") and (self.name == "VSVI_AlvCntVal")) or \
                (("alv" in self.name.lower() or "alivec" in self.name.lower()) and self["StartBit"] <= 16) or \
                ("alive" in self.name.lower()) or \
@@ -215,13 +217,14 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
 
-    src = r'D:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dev\KEFICO-EMS_CANFD_V25.08.01.json'
+    src = r'E:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database\dev\KEFICO-EMS_CANFD_V25.08.01.json'
     rdb = read_json(src, orient='index')
     # print(rdb)
 
     # sig = CanSignal(rdb.iloc[100])
     # print(sig)
 
-    msg = CanMessage(rdb[rdb["Message"] == 'ABS_ESC_01_10ms'])
+    msg = CanMessage(rdb[rdb["Message"] == 'HU_GW_PE_01'])
     print(msg)
+    print(msg.hasAliveCounter())
 
