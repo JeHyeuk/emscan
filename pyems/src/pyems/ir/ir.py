@@ -486,25 +486,27 @@ if __name__ == "__main__":
 
 
     ir = IntegrationRequest(
-        r"E:\TEMP\CanCNG\CanCNG.main.amd",  # 신규 모델은 전체 경로 사용
-        r"E:\TEMP\CanEMS_CNG\CanEMS_CNG.main.amd", # 신규 모델은 전체 경로 사용
-        r"E:\TEMP\CanEMSM_CNG\CanEMSM_CNG.main.amd",  # 신규 모델은 전체 경로 사용
-        "CanFDEMS06",
+        # r"E:\TEMP\CanCNG\CanCNG.main.amd",  # 신규 모델은 전체 경로 사용
+        # r"E:\TEMP\CanEMS_CNG\CanEMS_CNG.main.amd", # 신규 모델은 전체 경로 사용
+        # r"E:\TEMP\CanEMSM_CNG\CanEMSM_CNG.main.amd",  # 신규 모델은 전체 경로 사용
+        # "CanFDEMS06",
+        "CanHSFPCMD",
+        "CanHSFPCMD_HEV"
     )
-    ir.deliverables      = r'D:\Archive\00_프로젝트\2017 통신개발-\2025\DS1229 CR10785896 CNG PIO'
+    ir.deliverables      = r'D:\Archive\00_프로젝트\2017 통신개발-\2026\DS0106 CR- FPCM 진단 FuPmp_On 조건 추가'
     ir.User              = "이제혁"
-    ir.Comment           = "VCDM CR10785896 CNG PIO CAN-FD 대응"
+    ir.Comment           = "VCDM CR- FPCM 통신 진단 FuPmp_On 조건 추가"
 
     # PRE-ACTION
     ir.pre_action(path='')
 
-    # ppt = ChangeHistoryManager(path=ir.deliverables.change_history)
+    ppt = ChangeHistoryManager(path=ir.deliverables.change_history)
     # # ppt.name        = "" # TODO
-    # ppt.title       = "[CAN/ICE] CNG PIO CAN-FD 사양 대응"
-    # ppt.developer   = "이제혁"
-    # ppt.issue       = "VCDM CR10785896"
-    # ppt.lcr         = "LCRPT251112004-1"
-    # ppt.ir          = ir.table          # pre_action()의 후행
+    ppt.title       = "[CANFD] FPCM 통신 진단 FuPmp_On 조건 추가(임시)"
+    ppt.developer   = "이제혁"
+    ppt.issue       = "VCDM CR 미발행"
+    ppt.lcr         = "자체 대응(임시)"
+    ppt.ir          = ir.table          # pre_action()의 후행
 
     # ppt.close()
 
@@ -529,6 +531,7 @@ if __name__ == "__main__":
     # ir.compare_parameter(path_prev='', path_post='', copy_to_clipboard=True)
     #
     print(ir)
-    print(ir.table.loc[3, 'ElementDeleted'])
-    print(ir.table.loc[3, 'ElementAdded'])
+    for n in ir.table.index:
+        row = ir.table.loc[n]
+        print(f"{row['FunctionName']}\n-> 삭제: {row['ElementDeleted']}\n-> 추가: {row['ElementAdded']}")
     # ir.to_clipboard(index=False)
