@@ -172,6 +172,7 @@ def download_conf(conf:str=Form(...), tables:str=Form(...)):
     summary, event_list, path_list, fid_list, dtr_list, sig_list = tableParser(tables)
     summary["Date"] = datetime.today().strftime("%Y-%m-%d")
 
+    os.makedirs(os.path.join(os.path.dirname(__file__), rf"bin"), exist_ok=True)
     file = os.path.join(os.path.dirname(__file__), rf"bin/{conf}")
     with open(file, "w", encoding="utf-8") as f:
         confgen.Summary_Sheet(f, summary)
