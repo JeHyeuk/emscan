@@ -180,6 +180,8 @@ def tableParser(src : str) -> tuple:
                           "DENOM_PHYRLS": column[label.index("IUMPR 분모 Release 방식")] if pd.notna(column[label.index("IUMPR 분모 Release 방식")]) else "",  # [11]IUMPR 분모 Release 방식
                           "NUM_RLS": column[label.index("IUMPR 분자 Release Event")] if pd.notna(column[label.index("IUMPR 분자 Release Event")]) else "",  # [12]IUMPR 분자 Release Event
                           "ENG_MODE": column[label.index("Ready 조건 GDI 모드")] if pd.notna(column[label.index("Ready 조건 GDI 모드")]) else "",  # [13]Ready 조건 GDI 모드
+                          "IUMPR_EVENT" : column[[i for i, v in enumerate(label) if v == "IUMPR 관련 Event"]].fillna("").tolist() ,  # IUMPR 관련 Event (list)
+                          "IUMPR_EVENT_SYSCON" : column[[i for i, v in enumerate(label) if v == "상기 Event 요건의 System Constant"]].fillna("").tolist() ,  # 상기 Event 요건의 System Constant (list)
                           "EXCLUSION": column[[i for i, v in enumerate(label) if v == "배타적 FID 관계"]].fillna("").tolist() ,  # 배타적 FID 관계 (list)
                           "EXCLU_PRIO": column[[i for i, v in enumerate(label) if v == "배타적 FID 처리 순서"]].fillna("").tolist() ,  # 배타적 FID 처리 순서 (list)
                           "EXCLUSIVE_SYSCON": column[[i for i, v in enumerate(label) if v == "배타적 FID System Constant 조건"]].fillna("").tolist(),  # 배타적 FID System Constant 조건 (list)
@@ -216,7 +218,8 @@ def tableParser(src : str) -> tuple:
                                 "ELEMENT_NAME": column[label.index("DTR test 명칭")] if pd.notna(column[label.index("DTR test 명칭")]) else "",  # [0]DTR test 명칭
                                 "DESC": column[label.index("DTR test 설명(영문)")] if pd.notna(column[label.index("DTR test 설명(영문)")]) else "",  # [1]DTR test 설명(영문)
                                 "DESC_KR": column[label.index("DTR test 설명(한글)")] if pd.notna(column[label.index("DTR test 설명(한글)")]) else "",  # [2]DTR test 설명(한글)
-                                "EVENT": column[label.index("관련 Event")] if pd.notna(column[label.index("관련 Event")]) else "",  # [4]관련 Event
+                                "EVENT": column[[i for i, v in enumerate(label) if v == "관련 Event"]].fillna("").tolist(),  # [4]관련 Event
+                                "EVENT_SYSCON": column[[i for i, v in enumerate(label) if v == "Event System Constant 조건"]].fillna("").tolist(),  # [4]Event System Constant 조건 Event System Constant 조건
                                 "ELEMENT_COUNT": column[label.index("소속 DTR 개수")] if pd.notna(column[label.index("소속 DTR 개수")]) else "",  # [5]소속 DTR 개수
                                 "UASID": column[label.index("Unit and Scaling ID")] if pd.notna(column[label.index("Unit and Scaling ID")]) else "",  # [6]Unit and Scaling ID
                                 "OBDMID": column[label.index("OBD MID")] if pd.notna(column[label.index("OBD MID")]) else "",  # [7]OBD MID
