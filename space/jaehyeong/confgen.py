@@ -378,6 +378,8 @@ def FID_Sheet(f, Fid_list):
                     f.write(f'												<SHORT-NAME>FID_GROUP</SHORT-NAME>\n')
                     f.write(f'												<VF>{element["FID_GROUP"]}</VF>\n')
                     f.write(f'											</CONF-ITEM>\n')
+                    f.write(f'										</CONF-ITEMS>\n')
+                    f.write(f'									</CONF-ITEM>\n')
 
                     # j1979-2 대응
                     if "IUMPR_EVENT" in element and element["IUMPR_EVENT"]:  # IUMPR_EVENT 존재하고 비어 있지 않으면
@@ -393,19 +395,16 @@ def FID_Sheet(f, Fid_list):
                                 if event.strip():  # 값이 있는 경우만 처리
                                     iumpr_event_syscon = iumpr_syscon_list[w] if w < len(
                                         iumpr_syscon_list) else ""  # 시스콘 정보가 없으면 빈 문자열 "" 할당
-                                    f.write(f'											<CONF-ITEM>\n')
-                                    f.write(
-                                        f'												<SHORT-NAME>IUMPR_EVENT</SHORT-NAME>\n')
+                                    f.write(f'									<CONF-ITEM>\n')
+                                    f.write(f'										<SHORT-NAME>IUMPR_EVENT</SHORT-NAME>\n')
                                     if iumpr_event_syscon:
                                         iumpr_event_syscon = iumpr_event_syscon.replace("&", "&amp;").replace(">",
                                                                                                               "&gt;").replace(
                                             "<", "&lt;")
-                                        f.write(f'												<SW-SYSCOND>{iumpr_event_syscon}</SW-SYSCOND>\n')
-                                    f.write(f'												<VF>{event}</VF>\n')
-                                    f.write(f'											</CONF-ITEMS>\n')
+                                        f.write(f'										<SW-SYSCOND>{iumpr_event_syscon}</SW-SYSCOND>\n')
+                                    f.write(f'										<VF>{event}</VF>\n')
+                                    f.write(f'									</CONF-ITEM>\n')
 
-                    f.write(f'										</CONF-ITEMS>\n')
-                    f.write(f'									</CONF-ITEM>\n')
 
                 # Scheduling Mode
                 f.write(f'									<CONF-ITEM>\n')
