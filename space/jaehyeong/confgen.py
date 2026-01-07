@@ -616,30 +616,27 @@ def DTR_Sheet(f, DTR_list):
                     f.write(f'									</CONF-ITEM>\n')
 
                 # J1979-2 대응
-                if "EVENT" in element and element["EVENT"]:  # INHIBITED_SIGS가 존재하고 비어 있지 않으면
-                    if any(event.strip() for event in element["EVENT"]):  # 빈 값만 있는 경우 출력 생략
-                        if isinstance(element["EVENT"], list):
-                            event_list = element["EVENT"]
-                            syscon_list = element["EVENT_SYSCON"]
-                        else:
-                            event_list = [element["EVENT"]]
-                            syscon_list = [element["EVENT_SYSCON"]]
+                if "EVENT" in element and element["EVENT"]:  # EVENT가 존재하고 비어 있지 않으면
+                    if isinstance(element["EVENT"], list):
+                        event_list = element["EVENT"]
+                        syscon_list = element["EVENT_SYSCON"]
+                    else:
+                        event_list = [element["EVENT"]]
+                        syscon_list = [element["EVENT_SYSCON"]]
 
-                        for q, event in enumerate(event_list):
-                            if event.strip():  # 값이 있는 경우만 처리
-                                event_syscon = syscon_list[q] if q < len(syscon_list) else ""  # 시스콘 정보가 없으면 빈 문자열 "" 할당
-                                f.write(f'									<CONF-ITEM>\n')
-                                f.write(f'										<SHORT-NAME>EVENT</SHORT-NAME>\n')
+                    for q, event in enumerate(event_list):
+                        # event.strip() 체크 제거해서 빈 값이어도 처리하도록 함
+                        event_syscon = syscon_list[q] if q < len(syscon_list) else ""  # 시스콘 정보가 없으면 빈 문자열 "" 할당
+                        f.write(f'									<CONF-ITEM>\n')
+                        f.write(f'										<SHORT-NAME>EVENT</SHORT-NAME>\n')
 
-                                # J1979-2 대응
-                                if event_syscon:
-                                    event_syscon = event_syscon.replace("&", "&amp;").replace(">", "&gt;").replace("<",
-                                                                                                                   "&lt;")
-                                    f.write(
-                                        f'										<SW-SYSCOND>{event_syscon}</SW-SYSCOND>\n')  # System Constant 조건
+                        # J1979-2 대응
+                        if event_syscon:
+                            event_syscon = event_syscon.replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
+                            f.write(f'										<SW-SYSCOND>{event_syscon}</SW-SYSCOND>\n')  # System Constant 조건
 
-                                f.write(f'										<VF>{event}</VF>\n')
-                                f.write(f'									</CONF-ITEM>\n')
+                        f.write(f'										<VF>{event}</VF>\n')
+                        f.write(f'									</CONF-ITEM>\n')
 
                 # ELEMENT_COUNT 값이 있을 때만 추가
                 if element.get("ELEMENT_COUNT"):
