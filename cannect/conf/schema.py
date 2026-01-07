@@ -315,7 +315,7 @@ FID:Dict[str, Dict[str, str]] = {
         "note": "THIS IS GUIDE NOTE"
     },
     "IUMPR_EVENT_SYSCON": {
-        "label": "상기 Event 요건의 System Constant",
+        "label": "상기 IUMPR Event 요건의 System Constant",
         "class": "optional-strong",
         "group": "IUMPR_EVENT",
         "write": "writable",
