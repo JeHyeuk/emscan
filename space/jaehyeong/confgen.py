@@ -346,8 +346,7 @@ def FID_Sheet(f, Fid_list):
                 if element.get("PROVIDING_EVENT"):
                     f.write(f'									<CONF-ITEM>\n')
                     f.write(f'										<SHORT-NAME>PROVIDING_EVENT</SHORT-NAME>\n')  # 모듈에서 이 FID가 진단 조건인 Event
-                    PROVIDING_EVENT = element["PROVIDING_EVENT"].replace("&", "&amp;").replace(">", "&gt;").replace("<",
-                                                                                                                    "&lt;")
+                    PROVIDING_EVENT = element["PROVIDING_EVENT"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
                     f.write(f'										<VF>{PROVIDING_EVENT}</VF>\n')
                     f.write(f'									</CONF-ITEM>\n')
                 # PROVIDING_SIGNAL(모듈에서 이 FID가 진단 조건인 Signal) 값이 있을 때만 추가
@@ -431,17 +430,14 @@ def FID_Sheet(f, Fid_list):
                     f.write(f'												<VF>{element["SHORT_TEST"]}</VF>\n')
                     f.write(f'											</CONF-ITEM>\n')
 
+
                     # 리스트 개수 결정 (EXCLUSION[배타적 FID 관계], EXCLU_PRIO[배타적 FID 처리 순서], EXCLUSIVE_SYSCON[시스콘]의 길이가 같다고 가정)
-                    num_items = max(len(element.get("EXCLUSION", [])), len(element.get("EXCLU_PRIO", [])),
-                                    len(element.get("EXCLUSIVE_SYSCON", [])))
+                    num_items = max(len(element.get("EXCLUSION", [])), len(element.get("EXCLU_PRIO", [])), len(element.get("EXCLUSIVE_SYSCON", [])))
 
                     for i in range(num_items):
                         f.write(f'											<CONF-ITEM>\n')
                         f.write(f'												<SHORT-NAME>EXCLUSIVE</SHORT-NAME>\n')
-                        exclusive_syscon = (element.get("EXCLUSIVE_SYSCON", [""])[i] if i < len(
-                            element.get("EXCLUSIVE_SYSCON", [])) else "").replace("&", "&amp;").replace(">",
-                                                                                                        "&gt;").replace(
-                            "<", "&lt;")
+                        exclusive_syscon = (element.get("EXCLUSIVE_SYSCON", [""])[i] if i < len(element.get("EXCLUSIVE_SYSCON", [])) else "").replace("&", "&amp;").replace(">","&gt;").replace("<", "&lt;")
                         # 공란이 아닌 경우에만 <SW-SYSCOND> 태그 생성
                         if exclusive_syscon.strip():
                             f.write(f'												<SW-SYSCOND>{exclusive_syscon}</SW-SYSCOND>\n')
@@ -463,6 +459,7 @@ def FID_Sheet(f, Fid_list):
                     f.write(f'										</CONF-ITEMS>\n')
                     f.write(f'									</CONF-ITEM>\n')
 
+
                 if "INHIBITED_EVENT" in element and element["INHIBITED_EVENT"]:  # INHIBITED_SIGS가 존재하고 비어 있지 않으면
                     if any(event.strip() for event in element["INHIBITED_EVENT"]):  # 빈 값만 있는 경우 출력 생략
                         if isinstance(element["INHIBITED_EVENT"], list):
@@ -482,8 +479,7 @@ def FID_Sheet(f, Fid_list):
                                 f.write(f'										<SHORT-NAME>INHIBITED_EVENT</SHORT-NAME>\n')
 
                                 if event_syscon:
-                                    event_syscon = event_syscon.replace("&", "&amp;").replace(">", "&gt;").replace("<",
-                                                                                                                   "&lt;")
+                                    event_syscon = event_syscon.replace("&", "&amp;").replace(">", "&gt;").replace("<","&lt;")
                                     f.write(f'										<SW-SYSCOND>{event_syscon}</SW-SYSCOND>\n')
 
                                 if event_mask:  # event_mask 값이 있을 때
@@ -515,9 +511,7 @@ def FID_Sheet(f, Fid_list):
                                 f.write(f'										<SHORT-NAME>INHIBITED_SUM_EVENT</SHORT-NAME>\n')
 
                                 if sum_event_syscon:
-                                    sum_event_syscon = sum_event_syscon.replace("&", "&amp;").replace(">",
-                                                                                                      "&gt;").replace(
-                                        "<", "&lt;")
+                                    sum_event_syscon = sum_event_syscon.replace("&", "&amp;").replace(">","&gt;").replace("<", "&lt;")
                                     f.write(f'										<SW-SYSCOND>{sum_event_syscon}</SW-SYSCOND>\n')
 
                                 if sum_event_mask:  # sum_event_mask 값이 있을 때
@@ -546,8 +540,7 @@ def FID_Sheet(f, Fid_list):
                                 f.write(f'										<SHORT-NAME>INHIBITED_SIG</SHORT-NAME>\n')
 
                                 if sig_syscon:
-                                    sig_syscon = sig_syscon.replace("&", "&amp;").replace(">", "&gt;").replace("<",
-                                                                                                               "&lt;")
+                                    sig_syscon = sig_syscon.replace("&", "&amp;").replace(">", "&gt;").replace("<","&lt;")
                                     f.write(f'										<SW-SYSCOND>{sig_syscon}</SW-SYSCOND>\n')
 
                                 if sig_mask:  # sig_mask 값이 있을 때
@@ -562,8 +555,7 @@ def FID_Sheet(f, Fid_list):
                     f.write(f'									<CONF-ITEM>\n')
                     f.write(f'										<SHORT-NAME>PROVIDED</SHORT-NAME>\n')  # 함수 식별자 설명(영문)
                     if element.get("PROVIDED_SYSCON"):
-                        PROVIDED_SYSCON = element["PROVIDED_SYSCON"].replace("&", "&amp;").replace(">", "&gt;").replace(
-                            "<", "&lt;")
+                        PROVIDED_SYSCON = element["PROVIDED_SYSCON"].replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
                         f.write(f'										<SW-SYSCOND>{PROVIDED_SYSCON}</SW-SYSCOND>\n')  # System Constant 조건
                     f.write(f'										<VF>{element["PROVIDED"]}</VF>\n')
                     f.write(f'									</CONF-ITEM>\n')
