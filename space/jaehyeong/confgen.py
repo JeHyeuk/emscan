@@ -6,7 +6,7 @@ Out_path = r"D:\Confdata.xml"
 def Summary_Sheet(f, summary):
     f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
     f.write('<!DOCTYPE MSRSW PUBLIC "-//MSR//DTD MSR SOFTWARE DTD:V2.2.2:HMC:LAI:IAI:XML:MSRSW.DTD//EN" "msrsw_v222_hmc.xml.dtd">\n')
-    f.write('<!-- File Format is generated for DEM_ASW_Conf_Tool version 1.2 by J.H.JO at 21:14:14, 01 Jun 2025 -->\n')
+    f.write('<!-- File Format is generated for DEM_ASW_Conf_Tool version 1.2 by J.H.JO at 21:14:14, 01 Jun 2026 -->\n')
     f.write('<MSRSW>\n')
     f.write('	<CATEGORY>ConfData</CATEGORY>\n')
     f.write('	<ADMIN-DATA>\n')
@@ -579,18 +579,16 @@ def FID_Sheet(f, Fid_list):
     RESULT_FID = "PASS"
     COMMENT_FID = "Data 검사를 완료하였습니다"
 
-    for FID in Fid_list:
-        for element in FID:
-            if isinstance(element, dict):
-                # LOCKED = element.get("LOCKED", "")
-                LOCKED = element.get("LOCKED", "")
-                SHORT_TEST = element.get("SHORT_TEST", "")
-                FID_GROUP = element.get("FID_GROUP", "")
-
-                # if not is_valid_element_count(LOCKED):
-                #     RESULT_FID = "FAIL"
-                #     COMMENT_FID = "오류 : O 또는 X 값 입력 필요"
-                #     return RESULT_FID, COMMENT_FID
+    # for FID in Fid_list:
+    #     for element in FID:
+    #         if isinstance(element, dict):
+    #             LOCKED = element.get("LOCKED", "")
+    #
+    #
+    #             if not is_valid_element_count(LOCKED):
+    #                 RESULT_FID = "FAIL"
+    #                 COMMENT_FID = "오류 : O 또는 X 값 입력 필요"
+    #                 return RESULT_FID, COMMENT_FID
 
     return RESULT_FID, COMMENT_FID
 
