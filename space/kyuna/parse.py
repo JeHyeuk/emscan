@@ -180,7 +180,7 @@ def tableParser(src : str) -> tuple:
                           "DENOM_PHYRLS": column[label.index("IUMPR 분모 Release 방식")] if pd.notna(column[label.index("IUMPR 분모 Release 방식")]) else "",  # [11]IUMPR 분모 Release 방식
                           "NUM_RLS": column[label.index("IUMPR 분자 Release Event")] if pd.notna(column[label.index("IUMPR 분자 Release Event")]) else "",  # [12]IUMPR 분자 Release Event
                           "ENG_MODE": column[label.index("Ready 조건 GDI 모드")] if pd.notna(column[label.index("Ready 조건 GDI 모드")]) else "",  # [13]Ready 조건 GDI 모드
-                          "IUMPR_EVENT" : column[[i for i, v in enumerate(label) if v == "IUMPR 관련 Event"]].fillna("").tolist() ,  # IUMPR 관련 Event (list)
+                          "IUMPR_EVENT" : column[[i for i, v in enumerate(label) if v == "IUMPR 관련 EVENT"]].fillna("").tolist() ,  # IUMPR 관련 Event (list)
                           "IUMPR_EVENT_SYSCON" : column[[i for i, v in enumerate(label) if v == "상기 Event 요건의 System Constant"]].fillna("").tolist() ,  # 상기 Event 요건의 System Constant (list)
                           "EXCLUSION": column[[i for i, v in enumerate(label) if v == "배타적 FID 관계"]].fillna("").tolist() ,  # 배타적 FID 관계 (list)
                           "EXCLU_PRIO": column[[i for i, v in enumerate(label) if v == "배타적 FID 처리 순서"]].fillna("").tolist() ,  # 배타적 FID 처리 순서 (list)
