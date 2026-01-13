@@ -147,6 +147,10 @@ class CanMessage(object):
         else:
             __attr__["timeoutTime"] = 5.0
 
+        # NON-ES G-PROJECT EXCEPTION
+        if __attr__["Cycle Time"] == 10:
+            __attr__["timeoutTime"] = 0.25
+
         self.__attr__ = __attr__
         self.signals = signals
         self.name = __attr__["Message"]

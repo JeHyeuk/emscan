@@ -16,17 +16,24 @@ class ComRx:
         engine_spec:str,
         base_model:str='',
     ):
-        # 모델 이름 정의
-        name = 'ComRx_HEV' if engine_spec == 'HEV' else 'ComRx'
-        host = 'ComDef_HEV' if engine_spec == 'HEV' else 'ComDef'
+        if base_model:
+            name = os.path.basename(base_model).split(".")[0]
+            host = name.replace("Rx", "Def")
+        else:
+            # 모델 이름 정의
+            if engine_spec == "HEV":
+                name = "ComRx_HEV"
+                host = "ComDef_HEV"
+            else:
+                name = "ComRx"
+                host = "ComDef"
+            # 베이스 모델이 없는 경우 SVN의 최신 모델 사용
+            if not base_model:
+                base_model = os.path.join(self._root, rf'{name}\{name}.zip')
 
         # 모델 저장 경로
         path = os.path.join(ENV['USERPROFILE'], rf'Downloads\{name}')
         os.makedirs(path, exist_ok=True)
-
-        # 베이스 모델이 없는 경우 SVN의 최신 모델 사용
-        if not base_model:
-            base_model = os.path.join(self._root, rf'{name}\{name}.zip')
 
         # amd 파일 Source Control
         amd = AmdSC(base_model)
@@ -111,8 +118,9 @@ if __name__ == "__main__":
 
     from pyems.candb import CanDb
 
-    db = CanDb()
-    engine_spec = "ICE"
+    # db = CanDb()
+    db = CanDb(ENV["CANDB"]["dev"]["G-PROJECT_KEFICO-EMS_CANFD_r21676@01.json"])
+    engine_spec = "HEV"
 
     # DB CUSTOMIZE ------------------------------------------------------
     exclude_ecus = ["EMS", "CVVD", "MHSG", "NOx"]
@@ -123,14 +131,10 @@ if __name__ == "__main__":
     # db = db[db["Status"] != "TSW"] # TSW 제외
     # db = db[~db["Requirement ID"].isin(["VCDM CR10777888"])] # 특정 CR 제외
     # db = db[~db["Required Date"].isin(["2024-08-27"])] # 특정 일자 제외
-    db = db[~db["Message"].isin([ # 특정 메시지 제외
-        "ADAS_UX_02_50ms",
-        "HU_CLU_USM_01_00ms",
-        "HU_CLU_USM_E_01",
-        "HU_NAVI_05_200ms",
-        "HU_NAVI_V2_3_POS_PE",
-        "HU_CLOCK_01_1000ms",
-        "HU_CLOCK_PE_02",
+    db = db[~db["Message"].isin([  # 특정 메시지 제외
+        "L_H8L_01_10ms",
+        "H8L_01_10ms",
+        "H8L_02_10ms",
     ])]
     # db.revision = "TEST SW" # 공식SW는 주석 처리
     # DB CUSTOMIZE END --------------------------------------------------
@@ -140,7 +144,6 @@ if __name__ == "__main__":
         db=db,
         engine_spec=engine_spec,
         # base_model="",
-        # base_model=r'D:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\StandardDB\NetworkDefinition\ComDef\ComDef-22368\ComDef.main.amd'
-        # base_model=ENV['ASCET_EXPORT_PATH']
+        base_model=f"{ENV['ASCET_EXPORT_PATH']}\\ComRx_G\\ComRx_G.main.amd"
     )
     model.export()

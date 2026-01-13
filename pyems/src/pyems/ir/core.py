@@ -46,15 +46,18 @@ class Deliverables:
             if path == "Model":
                 os.makedirs(os.path.join(full_path, f'Prev'), exist_ok=True)
                 os.makedirs(os.path.join(full_path, f'Post'), exist_ok=True)
-        try:
-            util.copy_to(os.path.join(ENV['SVN'], r'GSL_Build\8_IntegrationRequest\0000_HNB_SW_IR_.xlsm'), root)
-        except PermissionError:
-            pass
 
-        try:
-            util.copy_to(os.path.join(ENV['SVN'], r'GSL_Release\4_SW변경이력\0000_변경내역서 양식.pptx'), root)
-        except PermissionError:
-            pass
+        if not any(file.endswith('.xlsm') for file in os.listdir(root)):
+            try:
+                util.copy_to(os.path.join(ENV['SVN'], r'GSL_Build\8_IntegrationRequest\0000_HNB_SW_IR_.xlsm'), root)
+            except PermissionError:
+                pass
+
+        if not any(file.endswith('.pptx') for file in os.listdir(root)):
+            try:
+                util.copy_to(os.path.join(ENV['SVN'], r'GSL_Release\4_SW변경이력\0000_변경내역서 양식.pptx'), root)
+            except PermissionError:
+                pass
         return
 
     def __str__(self) -> str:
