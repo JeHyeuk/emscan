@@ -4,6 +4,7 @@ from pptx.enum.text import PP_ALIGN
 from pptx.dml.color import RGBColor
 from pandas import DataFrame
 from pywintypes import com_error
+from typing import Generator, List
 import win32com.client as win32
 import pandas as pd
 import os
@@ -145,7 +146,9 @@ class PptRW:
         cls.app.Visible = True
         return super().__new__(cls)
 
-    def __init__(self, path:str):
+    def __init__(self, path:str, logger=None):
+        if logger is not None:
+            logger.log(f'[WRITE PPT ON "{os.path.basename(path)}"]')
         if self.app.Presentations.Count > 0:
             for n in range(1, self.app.Presentations.Count + 1):
                 _ppt = self.app.Presentations.Item(n)
@@ -153,7 +156,12 @@ class PptRW:
                     self.ppt = _ppt
                     return
         self.ppt = self.app.Presentations.Open(path)
+        self.log = logger
         return
+
+    def __iter__(self) -> Generator[win32.CDispatch, None, None]:
+        for i in range(1, self.ppt.Slides.Count + 1):
+            yield self.ppt.Slides.Item(i)
 
     def _get_table(self, n_slide:int, n_table:int):
         slide = self.ppt.Slides.Item(n_slide)
@@ -166,8 +174,29 @@ class PptRW:
                 return shape.Table
         raise com_error(f'Table Not Found')
 
-    def set_width(self, n_slide:int, n_shape:int, width:float):
-        self.ppt.Slides.Item(n_slide).Shapes(n_shape).Width = width
+    def get_slide_n(self, title:str) -> List:
+        ns = []
+        for n, slide in enumerate(self, start=1):
+            if slide.Shapes.Count == 0:
+                continue
+            for m in range(1, slide.Shapes.Count + 1):
+                shape = slide.Shapes.Item(1)
+                if not shape.HasTextFrame:
+                    continue
+                text = shape.TextFrame.TextRange.Text
+                if (title.lower() in text.lower()) and (not n in ns):
+                    ns.append(n)
+        return ns
+
+    def set_shape(self, n_slide:int, n_shape:int, width:float=None, height:float=None, left=None, top=None):
+        if width:
+            self.ppt.Slides.Item(n_slide).Shapes(n_shape).Width = width
+        if height:
+            self.ppt.Slides.Item(n_slide).Shapes(n_shape).Height = height
+        if left:
+            self.ppt.Slides.Item(n_slide).Shapes(n_shape).Left = left
+        if top:
+            self.ppt.Slides.Item(n_slide).Shapes(n_shape).Top = top
         return
 
     def set_table_height(self, n_slide:int, n_table:int, row:int, height:float):
@@ -221,11 +250,31 @@ class PptRW:
         shape = self.ppt.Slides.Item(n_slide).Shapes(n_shape)
         if shape.HasTextFrame:
             if pos.lower() == 'after':
-                shape.TextFrame.TextRange.InsertAfter(text)
+                shape.TextFrame.TextRange.InsertAfter(text) # Error
             elif pos.lower() == 'before':
                 shape.TextFrame.TextRange.InsertBefore(text)
             else:
                 shape.TextFrame.TextRange.Text = text
+        return
+
+    def set_text_font(
+        self,
+        n_slide:int,
+        n_shape:int,
+        name:str=None,
+        size:int=None,
+        bold:bool=None,
+        color:str=None,
+    ):
+        font = self.ppt.Slides.Item(n_slide).Shapes(n_shape).TextFrame.TextRange.Font
+        if name is not None:
+            font.Name = name
+        if size is not None:
+            font.Size = size
+        if bold is not None:
+            font.Bold = bold
+        if color is not None:
+            font.Color.RGB = color
         return
 
     def set_text_in_table(

@@ -1,5 +1,5 @@
 from pyems.logger import Logger
-from typing import Union, List, Iterable
+from typing import Union, List, Iterable, AnyStr
 from xml.etree.ElementTree import Element, ElementTree
 from xml.dom import minidom
 import os, zipfile, shutil, io, re
@@ -29,14 +29,18 @@ def unzip(src: str, to: str = "") -> bool:
         raise KeyError(f"src: {src}는 .zip 압축 파일만 입력할 수 있습니다.")
     return True
 
-def zip(path:str):
+def zip(path:str, move:bool=False):
     name = os.path.basename(path)
     shutil.make_archive(name, "zip", path)
-    shutil.move(f'{name}.zip', path)
+    if move:
+        shutil.move(f'{name}.zip', path)
     return
 
 def copy_to(file:str, dst:str) -> str:
-    shutil.copy(file, dst)
+    if '.' in os.path.basename(file):
+        shutil.copy(file, dst)
+    else:
+        shutil.move(file, dst)
     return os.path.join(dst, os.path.basename(file))
 
 def find_file(root:str, filename:str) -> Union[str, List[str]]:

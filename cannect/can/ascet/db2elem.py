@@ -144,7 +144,7 @@ class MessageElement:
             oid_tag = {}
         comment_id = f'{message.name}({message["ID"]})'
         timer_formula = f"Ti_q{str(message['taskTime']).replace('.', 'p')}_s".replace('p0_s', '_s')
-
+        timer_round = 3 if message["taskTime"] == 0.001 else 2
         """
         신규 Element OID 부여
         """
@@ -233,7 +233,7 @@ class MessageElement:
             write="false",
             quantization="0",
             formula=timer_formula,
-            physType="real64", physMin="0.0", physMax=f'{round(255 * message["taskTime"], 2)}',
+            physType="real64", physMin="0.0", physMax=f'{round(255 * message["taskTime"], timer_round)}',
             implType="uint8", implMin="0", implMax="255",
             value=f'{math.ceil(message["timeoutTime"] / message["taskTime"]) * message["taskTime"]: .2f}'
         ))
@@ -279,7 +279,7 @@ class MessageElement:
             scope="local",
             quantization="0",
             formula=timer_formula,
-            physType="real64", physMin="0.0", physMax=f'{round(255 * message["taskTime"], 2)}',
+            physType="real64", physMin="0.0", physMax=f'{round(255 * message["taskTime"], timer_round)}',
             implType="uint8", implMin="0", implMax="255",
             value=f'0.0'
         ))
@@ -320,7 +320,7 @@ class MessageElement:
                 scope="local",
                 quantization="0",
                 formula=timer_formula,
-                physType="real64", physMin="0.0", physMax=f'{round(255 * message["taskTime"], 2)}',
+                physType="real64", physMin="0.0", physMax=f'{round(255 * message["taskTime"], timer_round)}',
                 implType="uint8", implMin="0", implMax="255",
                 value=f'0.0'
             ))
@@ -365,7 +365,7 @@ class MessageElement:
                 scope="local",
                 quantization="0",
                 formula=timer_formula,
-                physType="real64", physMin="0.0", physMax=f'{round(255 * message["taskTime"], 2)}',
+                physType="real64", physMin="0.0", physMax=f'{round(255 * message["taskTime"], timer_round)}',
                 implType="uint8", implMin="0", implMax="255",
                 value=f'0.0'
             ))

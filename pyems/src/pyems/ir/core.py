@@ -1,11 +1,9 @@
 from pyems import util
 from pyems.environ import ENV
 from pyems.typesys import Path
-from pyems.ppt import PptRW
 
 from datetime import datetime
-from pandas import DataFrame, Series
-from typing import Callable, Dict, Iterable, Iterator, List, Union
+from typing import Callable, Dict
 import pandas as pd
 import os, sqlite3
 
@@ -30,9 +28,9 @@ class Deliverables:
         @base_path : [str] 산출물 관리 경로
         """
         if base_path:
-            self.Root = base_path
+            self.Root = Path(base_path)
         else:
-            self.Root = os.path.join(ENV["DOWNLOADS"], f'{datetime.now().strftime("%Y%m%d")}_IR_산출물')
+            self.Root = Path(os.path.join(ENV["DOWNLOADS"], f'{datetime.now().strftime("%Y%m%d")}_IR_산출물'))
         root = self.Root
 
         os.makedirs(root, exist_ok=True)
@@ -60,6 +58,9 @@ class Deliverables:
                 pass
         return
 
+    def __getitem__(self, item):
+        return self.Root[item]
+
     def __str__(self) -> str:
         indent = max(len(path) for path in self.__slots__)
         return "\n".join(f'{path:>{indent}}: {self.__getattribute__(path)}' for path in self.__slots__)
@@ -72,170 +73,11 @@ class Deliverables:
         raise FileExistsError('변경 내역서 없음')
 
 
-class SourceIterator:
+class OsTask:
 
-    def __init__(self, source:Series, root:str=''):
-        """
-        Source 파일 R/W 목적 Iterator
-        @root 미입력(='') 시 SVN 경로로 간주
-        """
-        if not root:
-            if str(source.name) == "SCMName":
-                root = ENV["MODEL"]
-            elif str(source.name) == "DSMName":
-                root = ENV["CONF"]
-            elif str(source.name) == "SDDName":
-                root = ENV["SDD"]
-            elif str(source.name) == "PolyspaceName":
-                root = ENV["POLYSPACE"]
-            else:
-                raise Exception(f"리소스 제어 불가 항목: {source.name}")
-        else:
-            root = Path(root)
-        root.readonly = True
-        self.root = root
-        self.name = str(source.name).replace("Name", "")
-        self.src = source
+    def __init__(self, pre:str, post:str):
         return
 
-    def __iter__(self) -> Iterator[str]:
-        for val in self.src:
-            if pd.isna(val):
-                yield ''
-            else:
-                if self.name == "SCM":
-                    val += '.zip'
-                try:
-                    yield self.root[val]
-                except (FileNotFoundError, FileExistsError):
-                    yield ''
-
-
-class ChangeHistoryManager(PptRW):
-
-    @property
-    def title(self) -> str:
-        return self.__dict__.get('_title', '')
-
-    @title.setter
-    def title(self, title:str):
-        self.__dict__['_title'] = title
-        self.set_text(n_slide=1, n_shape=1, text=title, pos='new')
-
-    @property
-    def developer(self) -> str:
-        return self.__dict__.get('_developer', '')
-
-    @developer.setter
-    def developer(self, developer:str):
-        self.__dict__['_developer'] = developer
-        self.set_text_in_table(n_slide=1, n_table=1, cell=(2, 1), text=developer, pos='new')
-
-    @property
-    def issue(self) -> str:
-        return self.__dict__.get('_issue', '')
-
-    @issue.setter
-    def issue(self, issue:str):
-        self.__dict__['_issue'] = issue
-        self.set_table_font(n_slide=1, n_table=2, cell=(3, 8), name="현대하모니 L")
-        self.set_text_in_table(n_slide=1, n_table=2, cell=(3, 8), text=issue, pos='new')
-
-    @property
-    def lcr(self) -> str:
-        return self.__dict__.get('_lcr', '')
-
-    @lcr.setter
-    def lcr(self, lcr:str):
-        self.__dict__['_lcr'] = lcr
-        self.set_text_in_table(n_slide=1, n_table=2, cell=(4, 8), text=lcr, pos='before')
-
-    @property
-    def ir(self) -> DataFrame:
-        return self.__dict__.get('_ir', DataFrame())
-
-    @ir.setter
-    def ir(self, ir:DataFrame):
-        self.__dict__['_ir'] = ir
-        self.set_width(n_slide=3, n_shape=1, width=25.6 * 28.346)
-        self.set_table_height(n_slide=3, n_table=1, row=2, height=11 * 28.346)
-        self.set_table_height(n_slide=3, n_table=1, row=3, height=3 * 28.346)
-        self.set_table_text_align(n_slide=3, n_table=1, cell=(3, 1))
-        self.set_table_text_align(n_slide=3, n_table=1, cell=(3, 2))
-        self.set_table_font(n_slide=3, n_table=1, cell=(3, 1), size=12)
-        self.set_table_font(n_slide=3, n_table=1, cell=(3, 2), size=12)
-        for n in range(3 * len(ir) - 1):
-            self.ppt.Slides(3).Duplicate()
-
-        objs = []
-        for n, i in enumerate(ir.index, start=1):
-            n_default = 3 * i + 3
-            n_element = 3 * i + 4
-            n_formula = 3 * i + 5
-
-            name, rev = ir.loc[i]["FunctionName"], ir.loc[i]["SCMRev"]
-            if pd.isna(rev) or rev == '':
-                rev = "-"
-            objs.append(f'{ir.loc[i]["FunctionName"]} <r.{rev}>')
-
-            self.set_text(n_slide=n_default, n_shape=1, text=f'SW 변경 내용 상세: %{name}', pos='new')
-            self.set_text(n_slide=n_element, n_shape=1, text=f'SW 변경 내용 상세: %{name} / Element', pos='new')
-            self.set_text(n_slide=n_formula, n_shape=1, text=f'SW 변경 내용 상세: %{name} / Implementation', pos='new')
-            self.replace_text_in_table(n_slide=n_default, n_table=1, cell=(1, 1), prev="Rev.", post=f"Rev.{rev}")
-            self.replace_text_in_table(n_slide=n_element, n_table=1, cell=(1, 1), prev="Rev.", post=f"Rev.{rev}")
-            self.replace_text_in_table(n_slide=n_formula, n_table=1, cell=(1, 1), prev="Rev.", post=f"Rev.{rev}")
-            self.set_text_in_table(n_slide=n_element, n_table=1, cell=(3, 1), text="Element 삭제\x0b" + ir.loc[i]["ElementDeleted"], pos="new")
-            self.set_text_in_table(n_slide=n_element, n_table=1, cell=(3, 2), text="Element 추가\x0b" + ir.loc[i]["ElementAdded"], pos="new")
-
-        text = '\x0b\n'.join(objs)
-        self.set_text_in_table(n_slide=1, n_table=2, cell=(3, 2), text=", ".join(ir["FunctionName"]), pos='new')
-        self.set_text_in_table(n_slide=2, n_table=1, cell=(2, 1), text=text, pos='new')
-        return
-
-    @property
-    def parameters(self) -> List[DataFrame]:
-        return self.__dict__.get('_parameters', [])
-
-    @parameters.setter
-    def parameters(self, parameters: List[DataFrame]):
-        if len(parameters) == 0:
-            return
-        self.__dict__['_parameters'] = parameters
-
-        n_param = 1
-        for n, slide in enumerate(self.ppt.Slides, start=1):
-            shape = slide.Shapes(1)
-            if not shape.HasTextFrame:
-                continue
-            if "Calibration" in shape.TextFrame.TextRange.Text:
-                n_param = n
-                break
-
-        for n in range(len(parameters) - 1):
-            self.ppt.Slides(n_param).Duplicate()
-
-        for n, param in enumerate(parameters):
-            table = self._get_table(n_param + n, 1)
-            if len(param) > 3:
-                for _ in range(len(param) - 3):
-                    table.Rows.Add()
-            table.Columns(1).Width = 5.0 * 28.346
-            table.Columns(2).Width = 7.0 * 28.346
-            table.Columns(3).Width = 4.0 * 28.346
-            table.Columns(5).Width = 2.0 * 28.346
-            table.Columns(6).Width = 2.0 * 28.346
-            table.Columns(7).Width = 2.0 * 28.346
-            for r, index in enumerate(param.index, start=1):
-                row = param.loc[index]
-                for c, val in enumerate(row.values, start=1):
-                    cell = table.Cell(r + 1, c).Shape
-                    cell.TextFrame.TextRange.Text = str(val)
-                    cell.TextFrame.TextRange.Font.Name = "현대하모니 L"
-                    cell.TextFrame.TextRange.Font.Size = 10
-
-                    cell.TextFrame.TextRange.ParagraphFormat.Alignment = 1 if c == 2 else 2
-                    cell.TextFrame.VerticalAnchor = 3
-        return
 
 def model_path(*models:str, logger:Callable=print) -> Dict[str, str]:
     """

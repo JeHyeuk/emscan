@@ -67,11 +67,29 @@ def commit(path, message:str, logger:Logger=print):
     return
 
 
+def save_revision(file:str, revision:Union[int, str], dst:str, logger:Logger=print):
+    # svn export -r [리비전] [파일경로/URL] [저장할경로]
+    dst = os.path.join(dst, os.path.basename(file).replace(".zip", f"-{revision}.zip"))
+    command = ['svn', 'export', '-r', str(revision), file, dst, '--force']
+
+    try:
+        subprocess.run(command, check=True, capture_output=True, text=True)
+        logger(f"Save {os.path.basename(file)} as {os.path.basename(dst)}")
+    except subprocess.CalledProcessError as e:
+        logger(f"Error: {e.stderr}")
+
+
 if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    commit(
-        path=r"E:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database",
-        message="[LEE JEHYEUK] CAN DB Commit"
+    # commit(
+    #     path=r"E:\SVN\dev.bsw\hkmc.ems.bsw.docs\branches\HEPG_Ver1p1\11_ProjectManagement\CAN_Database",
+    #     message="[LEE JEHYEUK] CAN DB Commit"
+    # )
+
+    save_revision(
+        r"E:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\EMS\Message\CanEMSM_CNG\CanEMSM_CNG.zip",
+        23000,
+        r"E:\SVN\model\ascet\trunk\HNB_GASOLINE\_29_CommunicationVehicle\CANInterface\EMS\Message\CanEMSM_CNG",
     )

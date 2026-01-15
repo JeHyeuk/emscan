@@ -6,6 +6,24 @@ import os, hashlib
 
 class AmdDiff:
 
+    @classmethod
+    def parameters2table(cls, elem:DataFrame, value:DataFrame):
+        elem = elem[
+            (elem['kind'] == 'parameter') &
+            (elem['scope'] != 'imported')
+        ]
+        elem.set_index(keys='OID', inplace=True)
+
+        data = value[value['elementName'].isin(elem['name'])]
+        data.set_index(keys='elementOID', inplace=True)
+        elem = elem.join(data[['value']], how='left')
+        elem = elem[["name", "comment", "model", "value"]]
+        elem.columns = ['Name', 'Description', 'Module', 'Recommendation Cal']
+        elem['Default Cal'] = elem['Recommendation Cal']
+        elem['Disable Cal'] = '-'
+        elem['Remark'] = '-'
+        return elem
+
     def __init__(
         self,
         prev:str,
@@ -48,20 +66,24 @@ class AmdDiff:
 
     @property
     def added_parameters(self) -> DataFrame:
-        elem = self.post_elem[
-            self.post_elem['name'].isin(self.added) &
-            (self.post_elem['kind'] == 'parameter')
-        ]
-        elem.set_index(keys='OID', inplace=True)
+        elem = self.post_elem[self.post_elem['name'].isin(self.added)]
         data = self.post_data[self.post_data['elementName'].isin(elem['name'])]
-        data.set_index(keys='elementOID', inplace=True)
-        elem = elem.join(data[['value']], how='left')
-        elem = elem[["name", "comment", "model", "value"]]
-        elem.columns = ['Name', 'Description', 'Module', 'Recommendation Cal']
-        elem['Default Cal'] = elem['Recommendation Cal']
-        elem['Disable Cal'] = '-'
-        elem['Remark'] = '-'
-        return elem
+        return self.parameters2table(elem, data)
+        # elem = self.post_elem[
+        #     self.post_elem['name'].isin(self.added) &
+        #     (self.post_elem['kind'] == 'parameter') &
+        #     (self.post_elem['scope'] != 'imported')
+        # ]
+        # elem.set_index(keys='OID', inplace=True)
+        # data = self.post_data[self.post_data['elementName'].isin(elem['name'])]
+        # data.set_index(keys='elementOID', inplace=True)
+        # elem = elem.join(data[['value']], how='left')
+        # elem = elem[["name", "comment", "model", "value"]]
+        # elem.columns = ['Name', 'Description', 'Module', 'Recommendation Cal']
+        # elem['Default Cal'] = elem['Recommendation Cal']
+        # elem['Disable Cal'] = '-'
+        # elem['Remark'] = '-'
+        # return elem
 
 
 if __name__ == "__main__":
