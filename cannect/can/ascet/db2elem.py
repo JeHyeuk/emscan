@@ -5,10 +5,13 @@ from pyems.candb import CanMessage, CanSignal
 
 from cannect.can.rule import naming
 from cannect.can.ascet.db2code import MessageCode
+from cannect.can.ascet.formula import read_formula
 from typing import Dict, Iterator, Optional, Union
 from xml.etree.ElementTree import Element
 import math
 
+
+F = read_formula(r"D:\ETASData\ASCET6.1\Export\_Formula\HNB_I4GDI_EU7.xml")
 
 def elementWrapper(**kwargs) -> DataDictionary:
     return DataDictionary(
@@ -100,19 +103,22 @@ def SignalElement(signal:CanSignal, oid_tag:Optional[Dict[str, str]]=None) -> Da
     kwargs.implMin = f"-{2 ** (size - 1)}" if signal["Value Type"].startswith("Signed") else "0"
     kwargs.implMax = f"{2 ** (size - 1) - 1}" if signal["Value Type"].startswith("Signed") else f"{2 ** size - 1}"
 
-    min_val = int(kwargs.implMin) * signal.Factor + signal.Offset
-    max_val = int(kwargs.implMax) * signal.Factor + signal.Offset
-    if len(str(float(min_val)).split(".")[-1]) > 9:
-        min_val = round(min_val, 9)
-    if len(str(float(max_val)).split(".")[-1]) > 9:
-        max_val = round(max_val, 9)
+    if not signal.Formula in F:
+        min_val = int(kwargs.implMin) * signal.Factor + signal.Offset
+        max_val = int(kwargs.implMax) * signal.Factor + signal.Offset
+    else:
+        f = F[signal.Formula]
+        min_val = int(kwargs.implMin) * f.quantization + f.offset
+        max_val = int(kwargs.implMax) * f.quantization + f.offset
+
     kwargs.physMin = f"{min_val}" if kwargs.basicModelType == "cont" else f"{int(min_val)}"
+    kwargs.physMax = f"{max_val}" if kwargs.basicModelType == "cont" else f"{int(max_val)}"
     if str(signal.name).startswith("FPCM_ActlPrsrVal"):
         kwargs.physMax = "800.0"
-    elif str(signal.name).startswith("TCU_GrRatioChngProg"):
+    if str(signal.name).startswith("TCU_GrRatioChngProg"):
         kwargs.physMax = "1.0"
-    else:
-        kwargs.physMax = f"{max_val}" if kwargs.basicModelType == "cont" else f"{int(max_val)}"
+
+
     kwargs.value = "false" if kwargs.basicModelType == "log" else "0.0" if kwargs.basicModelType == "cont" else "0"
     return elementWrapper(**kwargs)
 

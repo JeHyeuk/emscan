@@ -24,14 +24,6 @@ class CanSignal(object):
             "Length", "Cycle Time", "GenSigStartValue", "Factor", "Offset", "Value Type", "SignedProcessing"
         ]]
 
-        # TODO
-        # 샘플 타임 신호 단위 연산에서 미참조 확인 시 아래 코드 삭제
-        # Sample Time in [sec]
-        # if not cycleTime or cycleTime is None:
-        #     signal["Ts"] = 0.01
-        # else:
-        #     signal["Ts"] = cycleTime / 1000
-
         # Physical Start Value (Initial Value)
         signal["StartValue"] = int(startValueInHex, 16) * factor + offset
 

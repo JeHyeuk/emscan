@@ -18,15 +18,15 @@ class Template(Amd):
             if not message in db.messages:
                 raise KeyError(f'{message} NOT EXIST IN CAN DB.')
 
-        super().__init__(ENV['CAN'][
-                             "CAN_Model/"
-                             "_29_CommunicationVehicle/"
-                             "StandardDB/"
-                             "StandardTemplate/"
-                             "CanDiagTmplt/"
-                             "CanDiagTmplt.main.amd"
-                         ])
-        # super().__init__(r'D:\ETASData\ASCET6.1\Export\CanDiagTmplt\CanDiagTmplt.main.amd')
+        # super().__init__(ENV['CAN'][
+        #                      "CAN_Model/"
+        #                      "_29_CommunicationVehicle/"
+        #                      "StandardDB/"
+        #                      "StandardTemplate/"
+        #                      "CanDiagTmplt/"
+        #                      "CanDiagTmplt.main.amd"
+        #                  ])
+        super().__init__(r'D:\ETASData\ASCET6.1\Export\CanDiagTmplt\CanDiagTmplt.main.amd')
 
         self.dsm = ENV['MODEL'][
             "HMC_ECU_Library/"
@@ -87,12 +87,25 @@ class Template(Amd):
         """
         log = ''
 
-        # 모델 Comment 생성
-        message_list = "[MESSAGE LIST]\n- " + "\n- ".join(self.messages)
-        traceability = INFO(self.db.revision)
-        self.main.find('Component/Comment').text = f"{traceability}{message_list}"
 
-        # *.main.amd 파일 정보 복사
+        # [ 모델 Comment 생성 ]
+        # <ComponentMain  toolVersion="V6.1.0-Win10" schemaVersion="6.1.0.0">
+        #     <Component * >
+        #         <TimeStamp * />
+        #         <Comment>{ 이 자리의 Comment 생성 }</Comment>
+        #    </Component>
+        #    ...
+        # </ComponentMain>
+        message_list = "[MESSAGE LIST]\n- " + "\n- ".join(self.messages)
+        self.main.find('Component/Comment').text = f"{INFO(self.db.revision)}{message_list}"
+
+        # [ Base 모델의 *.main.amd 기본 정보 복사 ]
+        # <ComponentMain  toolVersion="V6.1.0-Win10" schemaVersion="6.1.0.0">
+        #     <Component { 이 자리의 Attribute 복사 } >
+        #         ...
+        #     </Component>
+        #     ...
+        # </ComponentMain>
         self.name = self.main.name = base.main['name']
         self.main['name'] = base.main['name']
         self.main['nameSpace'] = base.main['nameSpace']
@@ -105,9 +118,23 @@ class Template(Amd):
         self.main.digestValue = base.main.digestValue
         self.main.signatureValue = base.main.signatureValue
 
-        # BASE 모델의 MethodSignature 정보 복사
-        # : _100msRun, _Init, _fcmclr, _EEPRes
-        # *.main.amd
+
+        # [ Base 모델의 *.main.amd Method OID 정보 복사 ]
+        # 대상 Method: ▲_100msRun ▲_Init ▲_fcmclr ▲_EEPRes ▲ClearDTCFilter ▲SetDTCFilter
+        # Base 모델의 예외적 Method는 차후 처리한다.
+        # <ComponentMain  toolVersion="V6.1.0-Win10" schemaVersion="6.1.0.0">
+        #     <Component * >
+        #         ...
+        #         <Elements>
+        #             ...
+        #         </Elements>
+        #         <MethodSignatures>
+        #             <MethodSignature name="_100msRun" OID="{ 이 자리의 OID 복사 }" />
+        #             ...
+        #         </MethodSignatures>
+        #     </Component>
+        #     ...
+        # </ComponentMain>
         base_method = base.main.dataframe('MethodSignature', depth='shallow')[['name', 'OID']]
         base_method = dict(zip(base_method['name'], base_method['OID']))
         for method in self.main.iter('MethodSignature'):
@@ -351,7 +378,10 @@ class Template(Amd):
             else:
                 data_local.append(copied)
 
-        template = copy.deepcopy(self.spec.strictFind('Hierarchy', name=f'__M1_NAME__{cp}'))
+        if str(nm) == "FPCM_01_100ms":
+            template = copy.deepcopy(self.spec.strictFind('Hierarchy', name=f'__FPCM_01_100ms__NN'))
+        else:
+            template = copy.deepcopy(self.spec.strictFind('Hierarchy', name=f'__M1_NAME__{cp}'))
         offset = max([int(tag.attrib.get('graphicOID', '0')) for tag in template.iter()])
         template.set('graphicOID', str(int(template.get('graphicOID')) + (n - 1) * offset))
         template.set('name', f'{nm}')
@@ -405,7 +435,8 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
         removals = []
         for elem in self.spec.iter():
             try:
-                if elem[0].get('name').startswith('__M1_NAME__'):
+                if elem[0].get('name').startswith('__M1_NAME__') or \
+                   elem[0].get('name') == '__FPCM_01_100ms__NN':
                     removals.append(elem)
             except (AttributeError, IndexError, KeyError):
                 continue
@@ -422,10 +453,15 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
             self.spec.strictFind('MethodBodies') \
                 .remove(self.spec.strictFind('MethodBody', methodName=elem.get('name')))
 
+        used = []
+        for tag in self.spec.iter():
+            if 'elementName' in tag.attrib:
+                used.append(tag.get('elementName'))
+
         # Template Element 제거
         removals = []
         for elem in self.main.iter('Element'):
-            if '__M1_' in elem.get('name', ''):
+            if not elem.get('name') in used:
                 removals.append(elem)
         for elem in removals:
             self.main.strictFind('Elements').remove(elem)
@@ -434,8 +470,10 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
             impl = self.impl.strictFind('ImplementationSet', name=name)
             removals = []
             for elem in impl.iter('ImplementationEntry'):
-                if '__M1_' in elem[0][0].get('elementName', ''):
+                if not elem[0][0].get('elementName') in used:
                     removals.append(elem)
+                # if '__M1_' in elem[0][0].get('elementName', ''):
+                #     removals.append(elem)
             for elem in removals:
                 impl.remove(elem)
 
@@ -443,7 +481,8 @@ CHANNEL     : {db[f'{self.hw} Channel']}-CAN
             data = self.data.strictFind('DataSet', name=name)
             removals = []
             for elem in data.iter('DataEntry'):
-                if '__M1_' in elem.get('elementName', ''):
+                if not elem.get('elementName') in used:
+                # if '__M1_' in elem.get('elementName', ''):
                     removals.append(elem)
             for elem in removals:
                 data.remove(elem)
@@ -656,7 +695,7 @@ if __name__ == "__main__":
     # : 모델명 입력 시, 단일 모델 생성
     # : 모델명 공백 시, 전체 모델 생성
     # * 수기로 수정해야하는 사항을 꼭 파악한 후 반영하세요.
-    unit = "CanNOXD"
+    unit = "CanHSFPCMD"
     # unit = ''
     for model, messages in target.items():
         if unit and unit != model:

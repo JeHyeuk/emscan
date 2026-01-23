@@ -15,9 +15,9 @@ class CanDbVersionControl:
     """
     CAN DB Version Control System
     RPA를 위한 CAN DB 버전 시스템이다. json 포맷으로 구성된 데이터파일에 대한 버전이며
-    pandas DataFrame과 호환한다. 데이터파일의 집합은 GitHub, BitBucket 등 외부로
-    공개되어서는 안 되며 구동하는 호스트내 경로를 입력하여야 한다. 경로는 환경변수로 관리하거나
-    HMG 보안 처리된 서버가 Check-Out된 경로를 사용한다.
+    pandas DataFrame과 호환한다. 데이터파일의 집합은 외부로 공개되어서는 안 되며
+    구동하는 호스트내 경로를 입력하여야 한다. 경로는 환경변수로 관리하거나 HMG 보안 처리된
+    서버가 Check-Out된 경로를 사용한다.
     """
     NAME = "자체제어기_KEFICO-EMS_CANFD.xlsx"
     FILE = SVN_PATH["CANDB"][NAME]

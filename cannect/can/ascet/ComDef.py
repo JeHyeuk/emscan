@@ -238,7 +238,7 @@ if __name__ == "__main__":
     from pyems.candb import CanDb
 
     # db = CanDb()
-    db = CanDb(ENV["CANDB"]["dev"]["G-PROJECT_KEFICO-EMS_CANFD_r21676@01.json"])
+    db = CanDb(ENV["CANDB"]["dev"]["G-PROJECT_KEFICO-EMS_CANFD_r21704@02.json"])
     engine_spec = "HEV"
 
     # DB CUSTOMIZE ------------------------------------------------------

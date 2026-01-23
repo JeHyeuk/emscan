@@ -229,6 +229,8 @@ class MessageCode:
             bsw = "CAN_MSGNAME_YRS_01_10ms_P"
         if self.message.isTsw() and self.exclude_tsw:
             bsw = 255
+        if "M2S" in self["Message"] or "S2M" in self["Message"]:
+            bsw = "_".join([c for c in bsw.split("_") if not "ms" in c])
         asw = f'MSGNAME_{naming(self["Message"]).tag}'
         return f"#define {asw}\t{bsw}"
 
