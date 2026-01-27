@@ -12,6 +12,7 @@ DIAGNOSIS_ICE = {
         "ADAS_CMD_20_20ms",
         "ADAS_PRK_20_20ms",
         "ADAS_PRK_21_20ms",
+        "ADAS_UX_02_50ms",
     ],
     "CanFDBCMD": [
         "BCM_02_200ms",
@@ -77,6 +78,10 @@ DIAGNOSIS_ICE = {
         "HU_OTA_01_500ms",
         "HU_OTA_PE_00",
         "HU_TMU_02_200ms",
+        "HU_NAVI_V2_3_POS_PE",
+        "HU_NAVI_05_200ms",
+        "HU_CLOCK_PE_02",
+        "HU_CLOCK_01_1000ms",
     ],
     "CanFDICSCD": [
         "ICSC_02_100ms",
