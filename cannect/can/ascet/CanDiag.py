@@ -18,15 +18,15 @@ class Template(Amd):
             if not message in db.messages:
                 raise KeyError(f'{message} NOT EXIST IN CAN DB.')
 
-        # super().__init__(ENV['CAN'][
-        #                      "CAN_Model/"
-        #                      "_29_CommunicationVehicle/"
-        #                      "StandardDB/"
-        #                      "StandardTemplate/"
-        #                      "CanDiagTmplt/"
-        #                      "CanDiagTmplt.main.amd"
-        #                  ])
-        super().__init__(r'D:\ETASData\ASCET6.1\Export\CanDiagTmplt\CanDiagTmplt.main.amd')
+        super().__init__(ENV['CAN'][
+                             "CAN_Model/"
+                             "_29_CommunicationVehicle/"
+                             "StandardDB/"
+                             "StandardTemplate/"
+                             "CanDiagTmplt/"
+                             "CanDiagTmplt.main.amd"
+                         ])
+        # super().__init__(r'D:\ETASData\ASCET6.1\Export\CanDiagTmplt\CanDiagTmplt.main.amd')
 
         self.dsm = ENV['MODEL'][
             "HMC_ECU_Library/"
@@ -653,7 +653,7 @@ if __name__ == "__main__":
     target = {
         "CanFDABSD": ["ABS_ESC_01_10ms", "WHL_01_10ms", ],
         "CanFDACUD": ["ACU_01_100ms", "IMU_01_10ms", ],
-        "CanFDADASD": ["ADAS_CMD_10_20ms", "ADAS_CMD_20_20ms", "ADAS_PRK_20_20ms", "ADAS_PRK_21_20ms", ],
+        "CanFDADASD": ["ADAS_CMD_10_20ms", "ADAS_CMD_20_20ms", "ADAS_PRK_20_20ms", "ADAS_PRK_21_20ms", "ADAS_UX_02_50ms"],
         "CanFDBCMD": ["BCM_02_200ms", "BCM_07_200ms", "BCM_10_200ms", "BCM_20_200ms", "BCM_22_200ms", ],
         "CanFDBDCD": ["BDC_FD_05_200ms", "BDC_FD_07_200ms", "BDC_FD_08_200ms", "BDC_FD_10_200ms",
                       "BDC_FD_SMK_02_200ms", ],
@@ -667,7 +667,8 @@ if __name__ == "__main__":
         "CanHSFPCMD": ["FPCM_01_100ms", ],
         "CanFDFRCMRD": ["FR_CMR_02_100ms", "FR_CMR_03_50ms", ],
         "CanFDHFEOPD": ["L_HFEOP_01_10ms", ],
-        "CanFDHUD": ["HU_GW_03_200ms", "HU_GW_PE_01", "HU_OTA_01_500ms", "HU_OTA_PE_00", "HU_TMU_02_200ms", ],
+        "CanFDHUD": ["HU_GW_03_200ms", "HU_GW_PE_01", "HU_OTA_01_500ms", "HU_OTA_PE_00", "HU_TMU_02_200ms",
+                     "HU_NAVI_V2_3_POS_PE", "HU_NAVI_05_200ms", "HU_CLOCK_PE_02", "HU_CLOCK_01_1000ms"],
         "CanFDICSCD": ["ICSC_02_100ms", "ICSC_03_100ms", ],
         "CanFDICUD": ["ICU_02_200ms", "ICU_04_200ms", "ICU_05_200ms", "ICU_07_200ms", "ICU_09_200ms", "ICU_10_200ms", ],
         "CanFDILCUD": ["ILCU_RH_01_200ms", "ILCU_RH_FD_01_200ms", ],
@@ -687,7 +688,7 @@ if __name__ == "__main__":
         "CanNOXD": ["Main_Status_Rear", "O2_Rear"]
     }
 
-    proj = ProjectIO(r"E:\SVN\model\ascet\trunk\HNB_GASOLINE")
+    proj = ProjectIO(r"D:\SVN\model\ascet\trunk\HNB_GASOLINE")
     comm = proj.bcTree(29)
     CANDB = CanDb()
 
@@ -695,7 +696,7 @@ if __name__ == "__main__":
     # : 모델명 입력 시, 단일 모델 생성
     # : 모델명 공백 시, 전체 모델 생성
     # * 수기로 수정해야하는 사항을 꼭 파악한 후 반영하세요.
-    unit = "CanHSFPCMD"
+    unit = "CanFDHUD"
     # unit = ''
     for model, messages in target.items():
         if unit and unit != model:
