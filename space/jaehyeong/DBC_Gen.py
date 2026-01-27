@@ -489,6 +489,7 @@ dbc_file_path = fr'D:\자체제어기_EMS_V{today_date}.dbc'
 
 
 # 하기 CANDB 사양, CVVD 사양, 48V 사양 DBC 필요 시, 시스콘값 변경 필요!!!!
+# 기타 모든 엑셀 시트 종료 필요(좀비 엑셀 포함)
 edit_dbc_file(dbc_file_path, data,
               CanSTDDB_filters=[0],
               Cvvd_filters    =[0],
