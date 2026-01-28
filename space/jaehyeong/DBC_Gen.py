@@ -49,46 +49,39 @@ print(data)
 
 #----------------------------------------------------------------------------------------------------------------------
 
-# DBC 파일 생성 함수
-def edit_dbc_file(dbc_file_path, df, CanSTDDB_filters, Cvvd_filters, MeptSys_filters):
+def check_codeword(codeword, filter_dict):
+    if pd.isna(codeword) or not str(codeword).strip():
+        return True
+
+    # codeword에 포함된 키워드 찾기
+    found_keyword = next((kw for kw in filter_dict if kw in codeword), None)
+
+    # 키워드가 없으면 통과
+    if not found_keyword:
+        return True
+
+    # 찾은 키워드에 해당하는 리스트([0] 등)를 바로 가져옴
+    for val in filter_dict[found_keyword]:
+        try:
+            # eval 검증
+            if eval(str(codeword).replace(found_keyword, str(val))):
+                return True
+        except:
+            continue
+    return False
+
+
+def edit_dbc_file(dbc_file_path, df, filter_config):
     try:
-        # 입력 숫자에 따라 Codeword 조건 생성
-        def check_codeword(codeword, CanSTDDB_filters, Cvvd_filters, MeptSys_filters):
-            if pd.isna(codeword) or not codeword.strip():
-                # Codeword가 비어 있으면 필터 통과
-                return True
-
-            # 처리 대상 키워드 정의
-            known_keywords = ["Cfg_CanSTDDB_C", "Cfg_Vvd_C", "Cfg_MeptSys_C"]
-            # 세 가지 키워드 모두 포함되지 않으면 무조건 통과
-            if not any(kw in codeword for kw in known_keywords):
-                return True
-
-            # Cfg_CanSTDDB_C 필터링
-            if "Cfg_CanSTDDB_C" in codeword:
-                for filter_value in CanSTDDB_filters:
-                    if eval(codeword.replace("Cfg_CanSTDDB_C", str(filter_value))):
-                        return True
-            # Cfg_Vvd_C 필터링
-            elif "Cfg_Vvd_C" in codeword:
-                for filter_value in Cvvd_filters:
-                    if eval(codeword.replace("Cfg_Vvd_C", str(filter_value))):
-                        return True
-            # Cfg_MeptSys_C 필터링
-            elif "Cfg_MeptSys_C" in codeword:
-                for filter_value in MeptSys_filters:
-                    if eval(codeword.replace("Cfg_MeptSys_C", str(filter_value))):
-                        return True
-            # Cfg_CanSTDDB_C나 Cfg_Vvd_C, Cfg_MeptSys_C가 없다면 필터 통과
-            return False
-
-        # Codeword 컬럼이 있는지 확인
         if "Codeword" in df.columns:
-            # Codeword 필터링
-            filtered_df = df[df["Codeword"].apply(lambda x: check_codeword(x, CanSTDDB_filters, Cvvd_filters, MeptSys_filters))]
+            # lambda를 통해 filter_config 딕셔너리를 전달
+            mask = df["Codeword"].apply(lambda x: check_codeword(x, filter_config))
+            filtered_df = df[mask]
+
+            # (참고) 실제 저장 로직이 필요하다면 여기서 filtered_df를 사용하세요.
+            print(f"필터링 완료: {len(filtered_df)}개 행 유지")
         else:
-            print("Warning: 'Codeword' 컬럼이 없습니다. 모든 데이터가 필터링 없이 통과됩니다.")
-            filtered_df = df  # Codeword 컬럼이 없으면 필터링 생략
+            filtered_df = df
 
 
         with open(dbc_file_path, 'w') as f:
@@ -487,13 +480,23 @@ today_date = datetime.now().strftime("%y%m%d")
 dbc_file_path = fr'D:\자체제어기_EMS_V{today_date}.dbc'
 
 
-
 # 하기 CANDB 사양, CVVD 사양, 48V 사양 DBC 필요 시, 시스콘값 변경 필요!!!!
 # 기타 모든 엑셀 시트 종료 필요(좀비 엑셀 포함)
-edit_dbc_file(dbc_file_path, data,
-              CanSTDDB_filters=[0],
-              Cvvd_filters    =[0],
-              MeptSys_filters =[1])
+FILTER_DATA = {
+    "Cfg_CanSTDDB_C": [0],
+    "Cfg_Vvd_C": [0],
+    "Cfg_MeptSys_C": [1]
+}
+
+edit_dbc_file(dbc_file_path, data, FILTER_DATA)
+
+#예시
+#BCM_02_200ms  0x3E0                           Cfg_CanSTDDB_C == 0
+#CVVD1  0x300                                      Cfg_Vvd_C > 0
+#HU_OTA_01_500ms  0x3B9                        Cfg_CanSTDDB_C == 2
+#HU_OTA_PE_00  0x3B9                             Cfg_CanSTDDB_C == 0
+#PDC_FD_01_200ms  0x3E0                         Cfg_CanSTDDB_C == 2
+
 
 
 
