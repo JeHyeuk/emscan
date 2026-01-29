@@ -2,6 +2,7 @@ from pyems.ascet import generateOID, AmdElements
 from pyems.typesys import DataDictionary
 from pyems.util import xml
 from pyems.candb import CanMessage, CanSignal
+from pyems.environ import ENV
 
 from cannect.can.rule import naming
 from cannect.can.ascet.db2code import MessageCode
@@ -11,7 +12,7 @@ from xml.etree.ElementTree import Element
 import math
 
 
-F = read_formula(r"D:\ETASData\ASCET6.1\Export\_Formula\HNB_I4GDI_EU7.xml")
+F = read_formula(ENV["CAN"]["CAN_Model/Formula/HNB_I4GDI_I4MPI.xml"])
 
 def elementWrapper(**kwargs) -> DataDictionary:
     return DataDictionary(
