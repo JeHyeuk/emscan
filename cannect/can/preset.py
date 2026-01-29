@@ -42,6 +42,10 @@ DIAGNOSIS_ICE = {
         "CLU_02_100ms",
         "CLU_18_20ms",
     ],
+    "CanFDCTMD": [
+        "CTM_01_200ms",
+        "CTM_FD_02_200ms",
+    ],
     "CanCVVDD": [
         "CVVD1",
         "CVVD2",
