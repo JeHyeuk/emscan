@@ -660,6 +660,7 @@ if __name__ == "__main__":
         "CanBMSD_48V": ["BMS5", "BMS6", "BMS7", ],
         "CanFDCCUD": ["CCU_OBM_01_1000ms", "CCU_OTA_01_200ms", ],
         "CanFDCLUD": ["CLU_01_20ms", "CLU_02_100ms", "CLU_18_20ms", ],
+        "CanFDCTMD": ["CTM_01_200ms", "CTM_FD_02_200ms", ],
         "CanCVVDD": ["CVVD1", "CVVD2", "CVVD3", "CVVD4", ],
         "CanFDDATCD": ["DATC_01_20ms", "DATC_02_20ms", "DATC_07_200ms", "DATC_17_200ms", ],
         "CanFDEPBD": ["EPB_01_50ms", ],
