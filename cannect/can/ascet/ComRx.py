@@ -118,9 +118,9 @@ if __name__ == "__main__":
 
     from pyems.candb import CanDb
 
-    # db = CanDb()
-    db = CanDb(ENV["CANDB"]["dev"]["G-PROJECT_KEFICO-EMS_CANFD_r21676@01.json"])
-    engine_spec = "HEV"
+    db = CanDb()
+    # db = CanDb(ENV["CANDB"]["dev"]["G-PROJECT_KEFICO-EMS_CANFD_r21676@01.json"])
+    engine_spec = "ICE"
 
     # DB CUSTOMIZE ------------------------------------------------------
     exclude_ecus = ["EMS", "CVVD", "MHSG", "NOx"]
@@ -131,11 +131,11 @@ if __name__ == "__main__":
     # db = db[db["Status"] != "TSW"] # TSW 제외
     # db = db[~db["Requirement ID"].isin(["VCDM CR10777888"])] # 특정 CR 제외
     # db = db[~db["Required Date"].isin(["2024-08-27"])] # 특정 일자 제외
-    db = db[~db["Message"].isin([  # 특정 메시지 제외
-        "L_H8L_01_10ms",
-        "H8L_01_10ms",
-        "H8L_02_10ms",
-    ])]
+    # db = db[~db["Message"].isin([  # 특정 메시지 제외
+    #     "L_H8L_01_10ms",
+    #     "H8L_01_10ms",
+    #     "H8L_02_10ms",
+    # ])]
     # db.revision = "TEST SW" # 공식SW는 주석 처리
     # DB CUSTOMIZE END --------------------------------------------------
     db = db.to_developer_mode(engine_spec)
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     model = ComRx(
         db=db,
         engine_spec=engine_spec,
-        # base_model="",
-        base_model=f"{ENV['ASCET_EXPORT_PATH']}\\ComRx_G\\ComRx_G.main.amd"
+        base_model="",
+        # base_model=f"{ENV['ASCET_EXPORT_PATH']}\\ComRx_G\\ComRx_G.main.amd"
     )
     model.export()
