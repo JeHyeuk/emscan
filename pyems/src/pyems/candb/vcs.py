@@ -100,5 +100,5 @@ if __name__ == "__main__":
     # print(vcs.file_list)
     # print(vcs.file_latest)
     # print(vcs.file_allocated)
-    # vcs.clipbd2db(save=True, save_as="")
-    vcs.clipbd2db(save=False, save_as=f"{vcs.PATH}\G-PROJECT_KEFICO-EMS_CANFD_r21676@01.json")
+    vcs.clipbd2db(save=True, save_as="")
+    # vcs.clipbd2db(save=False, save_as=f"{vcs.PATH}\G-PROJECT_KEFICO-EMS_CANFD_r21676@01.json")
