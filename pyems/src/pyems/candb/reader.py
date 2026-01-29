@@ -79,10 +79,11 @@ class CanDb:
 
     @constrain("ICE", "HEV")
     def to_developer_mode(self, engine_spec:str):
-        base = self[self[f'{engine_spec} Channel'] != ""].copy()
+        channel = f'{engine_spec} Channel'
+        base = self[self[channel] != ""].copy()
 
         # Channel P,H 메시지 구분
-        def _msg2chn(msg:str, chn:str) -> str:
+        def _msg2chn(msg: str, chn: str) -> str:
             if not msg.endswith("ms"):
                 return f"{msg}_{chn}"
             empty = []
@@ -91,24 +92,32 @@ class CanDb:
                     empty.append(chn)
                 empty.append(part)
             return "_".join(empty)
+
+        base["Channel"] = base[channel]
+        base["WakeUp"] = base[f"{engine_spec} WakeUp"]
         base["Signal"] = base[["Signal", "SignalRenamed"]].apply(
             lambda x: x["SignalRenamed"] if x["SignalRenamed"] else x["Signal"],
             axis=1
         )
 
-        ph = base[base[f"{engine_spec} Channel"] == "P,H"]
-        base = base.drop(index=ph.index)
-        ph_p, ph_h = ph.copy(), ph.copy()
-        ph_p["Message"] = ph_p["Message"].apply(lambda x: _msg2chn(x, "P"))
-        ph_p["Signal"] = ph_p["Signal"] + "_P"
-        ph_p[f"{engine_spec} Channel"] = "P"
-        ph_h["Message"] = ph_h["Message"].apply(lambda x: _msg2chn(x, "H"))
-        ph_h["Signal"] = ph_h["Signal"] + "_H"
-        ph_h[f"{engine_spec} Channel"] = "H"
+        multi_channel_message = base[base[channel].str.contains(',')]['Message'].unique()
+        objs = [base]
+        for msg in multi_channel_message:
+            signals = base[base["Message"] == msg]
+            channels = []
+            for chn in signals[channel].unique():
+                if len(chn) >= len(channels):
+                    channels = chn.split(",")
+            for chn in channels:
+                unique = signals[signals[channel].str.contains(chn)].copy()
+                unique["Message"] = unique["Message"].apply(lambda x: _msg2chn(x, chn))
+                unique["Signal"] = unique["Signal"] + f"_{chn}"
+                unique["SignalRenamed"] = unique["SignalRenamed"].apply(lambda x: x + f"_{chn}" if x else "")
+                unique["Channel"] = chn
+                objs.append(unique)
 
-        base = pd.concat(objs=[base, ph_p, ph_h], axis=0, ignore_index=True)
-        base["Channel"] = base[f"{engine_spec} Channel"]
-        base["WakeUp"] = base[f"{engine_spec} WakeUp"]
+        base = pd.concat(objs=objs, axis=0, ignore_index=True)
+        base = base[~base["Message"].isin(multi_channel_message)]
         return CanDb(base, source=self.source, traceability=self.traceability)
 
 
@@ -123,3 +132,5 @@ if __name__ == "__main__":
     # print(db.revision)
     # print(db.to_developer_mode("ICE").revision)
     # print(db.messages['ABS_ESC_01_10ms'])
+    db2 = db.to_developer_mode("HEV")
+    print(db2[db2["Message"].str.contains("MCU")])
