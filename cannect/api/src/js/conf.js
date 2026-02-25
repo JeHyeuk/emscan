@@ -209,8 +209,9 @@ function editCell(cell) {
 	if ($cell.find("input, textarea").length) return;
   	$(`td[value="${$cell.attr("value")}"`).addClass('column-selected');
 
-  	var originalHtml = $cell.html().replace(/<br>\s*\/?>/gi, "\n");
-	$('<input type="text">')
+  	var originalHtml = $cell.html().replace("<br>", "\n");
+//	$('<input type="text">')
+	$('<textarea>')
 //	.val($cell.text())
     .val(originalHtml)
 	.appendTo(
