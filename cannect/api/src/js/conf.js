@@ -191,6 +191,12 @@ function backTest() {
 		API로 confdata 파일 생성 요청 및 파일 응답
 ------------------------------------------------- */
 }
+
+function editCellEscape($cell, value) {
+    var htmlValue = value.replace(/\n/g, "<br>");
+    $cell.html(htmlValue).removeClass('on-edit');
+    updateKey($cell, value);
+}
   
 function editCell(cell) {
 /* -------------------------------------------------
@@ -200,22 +206,25 @@ function editCell(cell) {
 		Cell 수정: *Select 요소는 별개로 처리
 ------------------------------------------------- */
 	var $cell = $(cell);
-	if ($cell.find("input").length) return;
+	if ($cell.find("input, textarea").length) return;
   	$(`td[value="${$cell.attr("value")}"`).addClass('column-selected');
+
+  	var originalHtml = $cell.html().replace(/<br>\s*\/?>/gi, "\n");
 	$('<input type="text">')
-	.val($cell.text())
+//	.val($cell.text())
+    .val(originalHtml)
 	.appendTo(
 		$cell.empty().addClass('on-edit')
 	)
 	.on('keydown', function(e) {
-		if (e.key == 'Enter') {
+		if (e.key == 'Enter' && !e.shiftKey) {
 			$cell.text($(this).val()).removeClass('on-edit');		
-			updateKey($cell, $(this).val());
+			editCellEscape($cell, $(this).val());
 		}		
 	})
 	.on('blur', function() {
 		$cell.text($(this).val()).removeClass('on-edit');
-		updateKey($cell, $(this).val());
+		editCellEscape($cell, $(this).val());
 	})
 	.focus();
 }
