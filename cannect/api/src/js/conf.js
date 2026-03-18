@@ -287,6 +287,42 @@ function updateKey(cell, newVal) {
 		$(`td[value="${uid}"]`).attr("value", `${keyName}-${keySysc}`.replaceAll(" ", ""));
 	}
 }
+
+function moveColumn(pos) {
+/* -------------------------------------------------
+	AUTHOR      : JEHYEUK LEE
+	PUBLISHED   : 2026-03-18
+	DESCRIPTION :
+		열 이동
+------------------------------------------------- */
+    if (currentTable().find('thead tr td.column-selected').length > 1){
+        alert('열 이동은 단일 열에 대해서만 가능합니다!');
+        return;
+    }
+    let $cellIndex = (pos == "left" ? $('td.column-selected').first() : $('td.column-selected').last()).index();
+    if (pos === "left") {
+        if ($cellIndex === 1) return;
+        currentTable().find('tr').each(function() {
+		    const $refCell = $(this).children().eq($cellIndex);
+		    $refCell.prev().before($refCell);
+        })
+    }
+
+    if (pos === 'right'){
+        if ($('thead tr td').length === $cellIndex) return;
+        currentTable().find('tr').each(function() {
+		    const $refCell = $(this).children().eq($cellIndex);
+		    $refCell.next().after($refCell);
+        })
+    }
+
+    currentTable().find('thead tr td').each(function(n, elem) {
+        if ($(elem).hasClass('row')) {
+            return true;
+        }
+        $(elem).html(n);
+    })
+}
   
 function appendColumn(pos) {
 /* -------------------------------------------------
@@ -530,6 +566,14 @@ $(document)
 .on("click", ".copy-column", function() {
 	snapShot();
 	copyColumn();
+})
+.on("click", ".move-column-left", function() {
+	snapShot();
+    moveColumn('left');
+})
+.on("click", ".move-column-right", function() {
+	snapShot();
+    moveColumn('right');
 })
 .on("click", ".add-row-bottom", function() {
 	snapShot();
